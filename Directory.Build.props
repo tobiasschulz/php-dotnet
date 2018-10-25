@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Authors>PHP Interpreter</Authors>
+    <Copyright>2018 PHP Interpreter</Copyright>
+    <PackageLicenseUrl>http://choosealicense.com/no-license/</PackageLicenseUrl>
+    <PackageIconUrl>https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Brocoli_02.jpg/145px-Brocoli_02.jpg</PackageIconUrl>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>True</IncludeSymbols>
+    <IncludeSource>True</IncludeSource>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts</PackageOutputPath>
+  </PropertyGroup>
+</Project>

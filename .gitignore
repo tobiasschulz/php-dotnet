@@ -1,0 +1,60 @@
+# Executables
+*.exe
+*.dll
+*.pdb
+*.mdb
+*.bin
+
+# Packages
+*.nupkg
+
+# Build directories
+bin
+obj
+Debug
+Release
+packages
+build
+pub
+publish
+
+# IDE-specific directories
+.idea
+*.userprefs
+.suo
+.vs
+.droidres
+
+# Nuget
+*.lock.json
+*.nuget.props
+*.nuget.targets
+
+# backup files
+*.save
+*.bak
+*.backup
+*.suo
+*.user
+
+# Temporary directories
+tmp
+temp
+x
+*.so.0
+xxx
+
+# UWP
+AppPackages
+BundleArtifacts
+
+# macos
+.DS_Store
+
+# version incrementer
+AndroidManifest.temp.xml
+Info.plist
+BuildVersion.gen.cs
+
+# xaml
+*.xaml.gen.cs
