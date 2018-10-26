@@ -95,7 +95,14 @@ namespace PHP
         {
             if (tok is RegularToken2 tokr && tokr.Type == TokenType2.FLOW_CONTROL)
             {
-                return new RegularToken2 (TokenType2.BLOCK, string.Empty, tokr.Children);
+                if (tokr.Children.Count == 1)
+                {
+                    return tokr.Children.First ();
+                }
+                else
+                {
+                    return new RegularToken2 (TokenType2.BLOCK, string.Empty, tokr.Children);
+                }
             }
             return tok;
         }
@@ -113,7 +120,7 @@ namespace PHP
                     FunctionToken2 tok_fixed = new FunctionToken2 (
                         function_ref: tok,
                         caller: null,
-                        arguments: Transform (tok_next)
+                        arguments: _makeBlock (Transform (tok_next))
                     );
                     output.Add (tok_fixed);
                     i += 1; // one extra

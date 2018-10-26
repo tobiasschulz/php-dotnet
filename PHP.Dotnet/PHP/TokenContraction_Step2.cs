@@ -11,7 +11,7 @@ namespace PHP
 {
     internal class TokenContraction_Step2
     {
-        private static string [] _operator_precedence = new [] { "*", "/", "%", "+", "-", ".", "&", "^", "|", "&&", "||", "?:", "??", "=>", ",", ";", };
+        private static string [] _operator_precedence = new [] { "*", "/", "%", "+", "-", ".", "&", "^", "|", "&&", "||", "?:", "??", "=>", "as", ",", "=", ";", };
 
         internal static RegularToken2 GroupOperators (RegularToken2 input_tok)
         {
