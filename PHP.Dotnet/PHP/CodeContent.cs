@@ -4,6 +4,8 @@ using System.Text;
 using System.IO;
 using PHP.Helper;
 using PHP.Standard;
+using PHP.Antlr;
+using Antlr4.Runtime;
 
 namespace PHP
 {
@@ -27,6 +29,15 @@ namespace PHP
 ";
             //content_string = a;
 
+
+            PhpLexer lexer = new PhpLexer (new AntlrInputStream (a));
+            CommonTokenStream tokens = new CommonTokenStream (lexer);
+            PhpParser parser = new PhpParser (tokens);
+
+            Log.Debug (parser.Context.children);
+
+            return;
+
             _content_tokenized = Tokenizer.Tokenize (content_string);
             _syntax_tree = SyntaxTreeAnalyzer.Analyze (_content_tokenized);
 
@@ -34,6 +45,9 @@ namespace PHP
 
         internal void Run ()
         {
+
+            return;
+
             _content_tokenized.DumpLog ();
 
             Console.ReadLine ();

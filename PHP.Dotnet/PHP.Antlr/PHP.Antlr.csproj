@@ -10,20 +10,17 @@
     <FileVersion>1.0.0.0</FileVersion>
     <Authors>Digitalkraft</Authors>
     <Description>PHP interpreter for .NET (library)</Description>
-    <PackageId>PHP.Dotnet</PackageId>
-    <PackageVersion>3.0.31.170</PackageVersion>
+    <PackageId>PHP.Dotnet.Antlr</PackageId>
+    <PackageVersion>3.0.0.1</PackageVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.*" />
-    <PackageReference Include="Sprache" Version="2.2.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.*" />
-    <PackageReference Include="System.Memory" Version="4.5.1" />
+    <PackageReference Include="Antlr4" Version="4.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PHP.Antlr\PHP.Antlr.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
