@@ -5,6 +5,7 @@ using System.IO;
 using PHP.Helper;
 using PHP.Standard;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace PHP
 {
@@ -17,20 +18,23 @@ namespace PHP
         internal static char [] CommentBlockStart = "/*".ToCharArray ();
         internal static char [] CommentBlockStop = "*/".ToCharArray ();
 
-        internal static char [] CommentLineStart1 ="//".ToCharArray ();
-        internal static char [] CommentLineStart2= "#".ToCharArray ();
+        internal static char [] CommentLineStart1 = "//".ToCharArray ();
+        internal static char [] CommentLineStart2 = "#".ToCharArray ();
 
         internal static char [] ArrowArray = "=>".ToCharArray ();
         internal static char [] ArrowCall = "->".ToCharArray ();
         internal static char [] DoubleColon = "::".ToCharArray ();
 
-        internal static char [] CharsControlSyntax = "(){}[]<>=-,;+/\\*:".ToCharArray ();
+        internal static char [] CharsControlSyntax = "(){}[]<>=-,;+/\\*:.%&|?:!".ToCharArray ();
+        internal static string [] OperatorsMultiChar = new [] { "===", "==", "!==", "!=", "&&", "||", "?:", "??", "<<", ">>", "+=", "-=", "*=", "/=", "&=", "|=", "%=", "^=", };
 
         internal static TokenizedContent Tokenize (string content_string)
         {
+            content_string = content_string.Replace ("else if", "elseif");
+
             ReadOnlyMemory<char> content_memory = content_string.AsMemory ();
             ReadOnlySpan<char> content_span = content_memory.Span;
-            List<Token> tokens = new List<Token> ();
+            List<Token1> tokens = new List<Token1> ();
 
             int length = content_span.Length;
             int token_index_start = 0;
@@ -46,7 +50,7 @@ namespace PHP
                 if (content_span.Matches (i, CloseTag))
                 {
                     int token_index_stop = i;
-                    tokens.Add (_makeToken (TokenType.OUTSIDE, token_index_start, token_index_stop, content_memory));
+                    tokens.Add (_makeToken (TokenType1.OUTSIDE, token_index_start, token_index_stop, content_memory));
                     i += CloseTag.Length;
                     is_outside = true;
                     continue;
@@ -101,7 +105,7 @@ namespace PHP
                         {
                             i += CommentBlockStop.Length;
                             int token_index_stop = i;
-                            tokens.Add (_makeToken (TokenType.COMMENT, token_index_start, token_index_stop, content_memory));
+                            tokens.Add (_makeToken (TokenType1.COMMENT, token_index_start, token_index_stop, content_memory));
                             is_inside_comment_block = false;
                         }
                         else
@@ -115,7 +119,7 @@ namespace PHP
                         {
                             i += 1;
                             int token_index_stop = i;
-                            tokens.Add (_makeToken (TokenType.COMMENT, token_index_start, token_index_stop, content_memory));
+                            tokens.Add (_makeToken (TokenType1.COMMENT, token_index_start, token_index_stop, content_memory));
                             is_inside_comment_line = false;
                         }
                         else
@@ -132,7 +136,7 @@ namespace PHP
                         else if (c == is_inside_string_end)
                         {
                             int token_index_stop = i;
-                            tokens.Add (_makeToken (TokenType.STRING, token_index_start, token_index_stop, content_memory));
+                            tokens.Add (_makeToken (TokenType1.STRING, token_index_start, token_index_stop, content_memory));
                             is_inside_string = false;
                             i++;
                         }
@@ -162,34 +166,48 @@ namespace PHP
                             if (is_inside_identifier)
                             {
                                 int token_index_stop = i;
-                                tokens.Add (_makeToken (TokenType.IDENTIFIER, token_index_start, token_index_stop, content_memory));
+                                tokens.Add (_makeToken (TokenType1.IDENTIFIER, token_index_start, token_index_stop, content_memory));
                                 is_inside_identifier = false;
                             }
 
                             if (content_span.Matches (i, ArrowArray))
                             {
                                 int token_index_stop = i;
-                                tokens.Add (_makeToken (TokenType.ARROW_ARRAY));
+                                tokens.Add (_makeToken (TokenType1.ARROW_ARRAY));
                                 i += ArrowArray.Length;
                             }
                             else if (content_span.Matches (i, ArrowCall))
                             {
                                 int token_index_stop = i;
-                                tokens.Add (_makeToken (TokenType.ARROW_CALL));
+                                tokens.Add (_makeToken (TokenType1.ARROW_INSTANCE));
                                 i += ArrowCall.Length;
                             }
                             else if (content_span.Matches (i, DoubleColon))
                             {
                                 int token_index_stop = i;
-                                tokens.Add (_makeToken (TokenType.DOUBLE_COLON));
+                                tokens.Add (_makeToken (TokenType1.DOUBLE_COLON));
                                 i += DoubleColon.Length;
                             }
                             else
                             {
-                                tokens.Add (_makeToken (TokenType.CONTROL_CHAR, c));
+                                bool any_multi_op_matched = false;
+                                foreach (string op_multi_char in OperatorsMultiChar)
+                                {
+                                    if (content_span.Matches (i, op_multi_char))
+                                    {
+                                        int token_index_stop = i;
+                                        tokens.Add (_makeToken (TokenType1.CONTROL_CHAR, op_multi_char));
+                                        i += DoubleColon.Length;
+                                        any_multi_op_matched = true;
+                                    }
+                                }
 
-                                token_index_start = i;
-                                i++;
+                                if (!any_multi_op_matched)
+                                {
+                                    tokens.Add (_makeToken (TokenType1.CONTROL_CHAR, c));
+                                    token_index_start = i;
+                                    i++;
+                                }
                             }
                         }
                         else if (char.IsWhiteSpace (c))
@@ -197,10 +215,10 @@ namespace PHP
                             if (is_inside_identifier)
                             {
                                 int token_index_stop = i;
-                                tokens.Add (_makeToken (content_span [token_index_start] == '$' ? TokenType.VARIABLE : TokenType.IDENTIFIER, token_index_start, token_index_stop, content_memory));
+                                tokens.Add (_makeToken (content_span [token_index_start] == '$' ? TokenType1.VARIABLE : TokenType1.IDENTIFIER, token_index_start, token_index_stop, content_memory));
                                 is_inside_identifier = false;
                             }
-                            if (tokens.Count == 0 || tokens [tokens.Count - 1].Type != TokenType.SPACE)
+                            if (tokens.Count == 0 || tokens [tokens.Count - 1].Type != TokenType1.SPACE)
                             {
                                 //tokens.Add (_makeToken (TokenType.SPACE));
                             }
@@ -222,23 +240,28 @@ namespace PHP
             }
 
             return new TokenizedContent (
-                tokens.ToImmutableArray ()
+                TokenContraction.Contract (tokens.ToImmutableArray ())
             );
         }
 
-        private static Token _makeToken (TokenType type, int i_start, int i_stop, ReadOnlyMemory<char> s)
+        private static Token1 _makeToken (TokenType1 type, int i_start, int i_stop, ReadOnlyMemory<char> s)
         {
-            return new Token (type, s.Slice (i_start, i_stop - i_start).Span.ToString ());
+            return new Token1 (type, s.Slice (i_start, i_stop - i_start).Span.ToString ());
         }
 
-        private static Token _makeToken (TokenType type, char c)
+        private static Token1 _makeToken (TokenType1 type, char c)
         {
-            return new Token (type, c.ToString ());
+            return new Token1 (type, c.ToString ());
         }
 
-        private static Token _makeToken (TokenType type)
+        private static Token1 _makeToken (TokenType1 type, string s)
         {
-            return new Token (type, string.Empty);
+            return new Token1 (type, s);
+        }
+
+        private static Token1 _makeToken (TokenType1 type)
+        {
+            return new Token1 (type, string.Empty);
         }
 
         private static bool _is_identifier_char (char value)
@@ -247,6 +270,22 @@ namespace PHP
         }
 
         public static bool Matches (this ReadOnlySpan<char> haystack, int offset, char [] needle)
+        {
+            if (haystack.Length >= offset + needle.Length)
+            {
+                for (int i = 0; i < needle.Length; i++)
+                {
+                    if (haystack [offset + i] != needle [i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public static bool Matches (this ReadOnlySpan<char> haystack, int offset, string needle)
         {
             if (haystack.Length >= offset + needle.Length)
             {

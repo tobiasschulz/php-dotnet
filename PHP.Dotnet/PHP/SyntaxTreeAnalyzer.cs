@@ -14,6 +14,8 @@ namespace PHP
     {
         internal static SyntaxTree Analyze (TokenizedContent content_tokenized)
         {
+            return null;
+            /*
             ReadOnlySpan<Token> tokens = content_tokenized.Tokens.ToArray ().AsSpan ();
 
             ImmutableArray<SyntaxTreeElement> elements = Analyze<object> (tokens, new Type [0]);
@@ -21,9 +23,10 @@ namespace PHP
             return new SyntaxTree (
                 elements.ToImmutableArray ()
             );
+            */
         }
 
-        internal static ImmutableArray<SyntaxTreeElement> Analyze<TOuterElement> (ReadOnlySpan<Token> tokens, Type [] skip_types = null, bool allow_array_entry = false, bool all_complex_skipped = false)
+        internal static ImmutableArray<SyntaxTreeElement> Analyze<TOuterElement> (ReadOnlySpan<Token1> tokens, Type [] skip_types = null, bool allow_array_entry = false, bool all_complex_skipped = false)
         {
             if (typeof (TOuterElement) == typeof (SyntaxTreeArray))
             {
@@ -49,7 +52,7 @@ namespace PHP
 
             for (int i = 0; i < tokens.Length;)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
 
                 if (!is_skipped_type (typeof (SyntaxTreeArrayEntry)) && allow_array_entry && SyntaxTreeArrayEntry.TryDetect (tokens, offset: ref i, out var result_array_entry))
                 {

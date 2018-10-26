@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace PHP
 {
-    public enum TokenType
+    public enum TokenType1
     {
         NONE = 0,
         OUTSIDE = 1,
@@ -18,17 +18,17 @@ namespace PHP
         COMMENT = 5,
         ARROW_ARRAY = 6,
         SPACE = 7,
-        ARROW_CALL = 8,
+        ARROW_INSTANCE = 8,
         DOUBLE_COLON = 9,
         VARIABLE = 10,
     }
 
-    public sealed class Token
+    public sealed class Token1
     {
-        public readonly TokenType Type;
+        public readonly TokenType1 Type;
         public readonly string Buffer;
 
-        public Token (TokenType type, string buffer)
+        public Token1 (TokenType1 type, string buffer)
         {
             Type = type;
             Buffer = buffer;
@@ -39,4 +39,5 @@ namespace PHP
             return $"[Token: {Type} '{Buffer}']";
         }
     }
+
 }

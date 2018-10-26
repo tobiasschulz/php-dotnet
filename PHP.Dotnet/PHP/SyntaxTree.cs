@@ -35,13 +35,13 @@ namespace PHP
             Elements = elements;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeStatement result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeStatement result)
         {
             result = null;
             for (int i = offset; i < tokens.Length; i++)
             {
-                Token token = tokens [i];
-                if (token.Type == TokenType.CONTROL_CHAR && token.Buffer == ";")
+                Token1 token = tokens [i];
+                if (token.Type == TokenType1.CONTROL_CHAR && token.Buffer == ";")
                 {
                     result = new SyntaxTreeStatement (
                         SyntaxTreeAnalyzer.Analyze<SyntaxTreeStatement> (
@@ -75,24 +75,24 @@ namespace PHP
             Elements = elements;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeLeftValue result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeLeftValue result)
         {
             result = null;
             int i = offset;
-            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
             if (i < tokens.Length)
             {
-                Token token = tokens [i];
-                if (token.Type.IsAny (TokenType.VARIABLE, TokenType.IDENTIFIER))
+                Token1 token = tokens [i];
+                if (token.Type.IsAny (TokenType1.VARIABLE, TokenType1.IDENTIFIER))
                 {
                     i++;
-                    _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT, TokenType.VARIABLE);
-                    while (i + 1 < tokens.Length && tokens [i].Type.IsAny (TokenType.ARROW_CALL, TokenType.DOUBLE_COLON))
+                    _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT, TokenType1.VARIABLE);
+                    while (i + 1 < tokens.Length && tokens [i].Type.IsAny (TokenType1.ARROW_INSTANCE, TokenType1.DOUBLE_COLON))
                     {
-                        if (token.Type.IsAny (TokenType.VARIABLE, TokenType.IDENTIFIER))
+                        if (token.Type.IsAny (TokenType1.VARIABLE, TokenType1.IDENTIFIER))
                         {
                             i += 2;
-                            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT, TokenType.VARIABLE);
+                            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT, TokenType1.VARIABLE);
                         }
                     }
 
@@ -130,15 +130,15 @@ namespace PHP
             ElementsRight = elements_right;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeAssignment result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeAssignment result)
         {
             result = null;
             int i = offset;
             if (SyntaxTreeLeftValue.TryDetect (tokens, ref i, out var result_leftvalue) && i < tokens.Length)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
                 Log.Debug ($"ass: {token}");
-                if (token.Type == TokenType.CONTROL_CHAR && token.Buffer == "=")
+                if (token.Type == TokenType1.CONTROL_CHAR && token.Buffer == "=")
                 {
                     i++;
                     result = new SyntaxTreeAssignment (
@@ -175,15 +175,15 @@ namespace PHP
         {
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeTry result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeTry result)
         {
             result = null;
             int i = offset;
-            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
             if (i + 1 < tokens.Length)
             {
-                Token token = tokens [i];
-                if (token.Type == TokenType.IDENTIFIER && token.Buffer == "try")
+                Token1 token = tokens [i];
+                if (token.Type == TokenType1.IDENTIFIER && token.Buffer == "try")
                 {
                     i++;
                     if (_detectBlock (tokens, "{", "}", i, out int block_index_start, out int block_index_stop))
@@ -212,15 +212,15 @@ namespace PHP
         {
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeArray result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeArray result)
         {
             result = null;
             int i = offset;
-            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
             if (i + 1 < tokens.Length)
             {
-                Token token = tokens [i];
-                if (token.Type == TokenType.IDENTIFIER && token.Buffer == "array")
+                Token1 token = tokens [i];
+                if (token.Type == TokenType1.IDENTIFIER && token.Buffer == "array")
                 {
                     i++;
                     token = tokens [i];
@@ -267,19 +267,19 @@ namespace PHP
             Elements = elements;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeArrayKey result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeArrayKey result)
         {
             result = null;
             int i = offset;
-            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
             if (i < tokens.Length)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
                 Log.Debug ($"array entry test: {token}");
-                if (token.Type.IsAny (TokenType.IDENTIFIER, TokenType.STRING))
+                if (token.Type.IsAny (TokenType1.IDENTIFIER, TokenType1.STRING))
                 {
                     i++;
-                    _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+                    _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
 
                     result = new SyntaxTreeArrayKey (
                         SyntaxTreeAnalyzer.Analyze<SyntaxTreeArrayKey> (
@@ -315,21 +315,21 @@ namespace PHP
             Value = value;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeArrayEntry result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeArrayEntry result)
         {
             result = null;
             int i = offset;
             if (SyntaxTreeArrayKey.TryDetect (tokens, ref i, out var result_array_key) && i < tokens.Length)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
                 Log.Debug ($"array entry: {token}");
-                if (token.Type == TokenType.ARROW_ARRAY)
+                if (token.Type == TokenType1.ARROW_ARRAY)
                 {
                     i++;
                 }
             }
 
-            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            _skipTokens (tokens, ref i, TokenType1.SPACE, TokenType1.OUTSIDE, TokenType1.COMMENT);
             int index_start_value = i;
             int index_stop_value = tokens.Length - 1;
 
@@ -337,7 +337,7 @@ namespace PHP
 
             for (; i < tokens.Length; i++)
             {
-                if (tokens [i].Type == TokenType.CONTROL_CHAR && tokens [i].Buffer == ",")
+                if (tokens [i].Type == TokenType1.CONTROL_CHAR && tokens [i].Buffer == ",")
                 {
                     index_stop_value = i;
                     break;
@@ -381,13 +381,13 @@ namespace PHP
             ElementsRight = elements_right;
         }
 
-        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeCall result)
+        internal static bool TryDetect (ReadOnlySpan<Token1> tokens, ref int offset, out SyntaxTreeCall result)
         {
             result = null;
             int i = offset;
             if (SyntaxTreeLeftValue.TryDetect (tokens, ref i, out var result_leftvalue) && i < tokens.Length)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
                 Log.Debug ($"call: {token}");
                 if (_detectBlock (tokens, "(", ")", i, out int block_index_start, out int block_index_stop))
                 {
@@ -448,9 +448,9 @@ namespace PHP
 
     public sealed class SyntaxTreeXXX : SyntaxTreeElement
     {
-        public readonly Token Token;
+        public readonly Token1 Token;
 
-        public SyntaxTreeXXX (Token token)
+        public SyntaxTreeXXX (Token1 token)
         {
             Token = token;
         }
@@ -474,11 +474,11 @@ namespace PHP
             Log.Debug ($"{new string (' ', indent * 4) }- {value}");
         }
 
-        protected static void _skipTokens (ReadOnlySpan<Token> tokens, ref int i, params TokenType [] skip_token_types)
+        protected static void _skipTokens (ReadOnlySpan<Token1> tokens, ref int i, params TokenType1 [] skip_token_types)
         {
             while (i < tokens.Length)
             {
-                Token token = tokens [i];
+                Token1 token = tokens [i];
                 if (token.Type.IsAny (skip_token_types))
                 {
                     i++;
@@ -490,10 +490,10 @@ namespace PHP
             }
         }
 
-        protected static bool _detectBlock (ReadOnlySpan<Token> tokens, string block_char_start, string block_char_stop, int i, out int block_index_start, out int block_index_stop)
+        protected static bool _detectBlock (ReadOnlySpan<Token1> tokens, string block_char_start, string block_char_stop, int i, out int block_index_start, out int block_index_stop)
         {
-            Token token = tokens [i];
-            if (token.Type == TokenType.CONTROL_CHAR && token.Buffer == block_char_start)
+            Token1 token = tokens [i];
+            if (token.Type == TokenType1.CONTROL_CHAR && token.Buffer == block_char_start)
             {
                 i++;
                 block_index_start = i;
@@ -501,11 +501,11 @@ namespace PHP
                 while (i < tokens.Length)
                 {
                     token = tokens [i];
-                    if (token.Type == TokenType.CONTROL_CHAR && token.Buffer == block_char_start)
+                    if (token.Type == TokenType1.CONTROL_CHAR && token.Buffer == block_char_start)
                     {
                         in_braces++;
                     }
-                    else if (token.Type == TokenType.CONTROL_CHAR && token.Buffer == block_char_stop)
+                    else if (token.Type == TokenType1.CONTROL_CHAR && token.Buffer == block_char_stop)
                     {
                         if (in_braces == 0)
                         {

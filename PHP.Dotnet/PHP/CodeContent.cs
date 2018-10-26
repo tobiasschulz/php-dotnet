@@ -17,31 +17,32 @@ namespace PHP
         {
             _content_string = content_string;
 
-            _content_tokenized = Tokenizer.Tokenize (content_string);
-            _syntax_tree = SyntaxTreeAnalyzer.Analyze (_content_tokenized);
-        }
 
-        internal void Run ()
-        {
             string a = @"
-
+<?php
 
     $wrapper = Default_Wrapper::getInstance();
     $a = $wrapper->getMainWrapper()->getBaseModules();
 
 ";
-            a = @"
+            //content_string = a;
 
+            _content_tokenized = Tokenizer.Tokenize (content_string);
+            _syntax_tree = SyntaxTreeAnalyzer.Analyze (_content_tokenized);
 
-    $wrapper = Default_WrappergetInstance()
+        }
 
-";
+        internal void Run ()
+        {
+            _content_tokenized.DumpLog ();
 
-            _syntax_tree.DumpLog ();
+            Console.ReadLine ();
+
+            _syntax_tree?.DumpLog ();
 
             Console.WriteLine ();
 
-            foreach (Token t in _content_tokenized.Tokens)
+            foreach (RegularToken2 t in _content_tokenized.Tokens)
             {
                 Log.Debug (t);
             }
