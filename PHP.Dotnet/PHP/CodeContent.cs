@@ -16,12 +16,33 @@ namespace PHP
         public CodeContent (string content_string)
         {
             _content_string = content_string;
-            _content_tokenized = Tokenizer.Tokenize (content_string);
-            _syntax_tree = SyntaxTreeAnalyzer.Analyze (_content_tokenized);
+
+            //_content_tokenized = Tokenizer.Tokenize (content_string);
+            //_syntax_tree = SyntaxTreeAnalyzer.Analyze (_content_tokenized);
         }
 
         internal void Run ()
         {
+            string a = @"
+
+
+    $wrapper = Default_Wrapper::getInstance();
+    $a = $wrapper->getMainWrapper()->getBaseModules();
+
+";
+            a = @"
+
+
+    $wrapper = Default_WrappergetInstance()
+
+";
+
+
+            var res =   CodeParser.Instance.Value.ParseScript (a);
+            Console.WriteLine (res);
+
+            return;
+
             _syntax_tree.DumpLog ();
 
             Console.WriteLine ();

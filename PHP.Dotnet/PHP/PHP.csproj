@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.*" />
+    <PackageReference Include="Sprache" Version="2.2.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.*" />
     <PackageReference Include="System.Memory" Version="4.5.1" />
   </ItemGroup>
