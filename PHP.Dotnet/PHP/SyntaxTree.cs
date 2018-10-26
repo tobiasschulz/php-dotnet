@@ -231,7 +231,8 @@ namespace PHP
                         result = new SyntaxTreeArray (
                             SyntaxTreeAnalyzer.Analyze<SyntaxTreeArray> (
                                 tokens.Slice (block_index_start, i - block_index_start),
-                                new [] { typeof (SyntaxTreeArray) }
+                                new [] { typeof (SyntaxTreeArray) },
+                                allow_array_entry: true
                             )
                         );
                         offset = i + 1;
@@ -244,7 +245,8 @@ namespace PHP
                     result = new SyntaxTreeArray (
                         SyntaxTreeAnalyzer.Analyze<SyntaxTreeArray> (
                             tokens.Slice (block_index_start, i - block_index_start),
-                            new [] { typeof (SyntaxTreeArray) }
+                            new [] { typeof (SyntaxTreeArray) },
+                            allow_array_entry: true
                         )
                     );
                     offset = i + 1;
@@ -254,6 +256,118 @@ namespace PHP
             return false;
         }
 
+    }
+
+    public sealed class SyntaxTreeArrayKey : SyntaxTreeElement
+    {
+        public readonly ImmutableArray<SyntaxTreeElement> Elements;
+
+        public SyntaxTreeArrayKey (ImmutableArray<SyntaxTreeElement> elements)
+        {
+            Elements = elements;
+        }
+
+        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeArrayKey result)
+        {
+            result = null;
+            int i = offset;
+            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            if (i < tokens.Length)
+            {
+                Token token = tokens [i];
+                Log.Debug ($"array entry test: {token}");
+                if (token.Type.IsAny (TokenType.IDENTIFIER, TokenType.STRING))
+                {
+                    i++;
+                    _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+
+                    result = new SyntaxTreeArrayKey (
+                        SyntaxTreeAnalyzer.Analyze<SyntaxTreeArrayKey> (
+                            tokens.Slice (offset, i - offset),
+                            all_complex_skipped: true
+                        )
+                    );
+                    offset = i;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal override void DumpLog (int indent)
+        {
+            _log (indent, $"{this.GetType ().Name}:");
+            foreach (var e in Elements)
+            {
+                e.DumpLog (indent + 1);
+            }
+        }
+    }
+
+    public sealed class SyntaxTreeArrayEntry : SyntaxTreeElement
+    {
+        public readonly SyntaxTreeArrayKey Key;
+        public readonly ImmutableArray<SyntaxTreeElement> Value;
+
+        public SyntaxTreeArrayEntry (SyntaxTreeArrayKey key, ImmutableArray<SyntaxTreeElement> value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        internal static bool TryDetect (ReadOnlySpan<Token> tokens, ref int offset, out SyntaxTreeArrayEntry result)
+        {
+            result = null;
+            int i = offset;
+            if (SyntaxTreeArrayKey.TryDetect (tokens, ref i, out var result_array_key) && i < tokens.Length)
+            {
+                Token token = tokens [i];
+                Log.Debug ($"array entry: {token}");
+                if (token.Type == TokenType.ARROW_ARRAY)
+                {
+                    i++;
+                }
+            }
+
+            _skipTokens (tokens, ref i, TokenType.SPACE, TokenType.OUTSIDE, TokenType.COMMENT);
+            int index_start_value = i;
+            int index_stop_value = tokens.Length - 1;
+
+            Log.Debug ($"array entry start value: {tokens[index_start_value]}");
+
+            for (; i < tokens.Length; i++)
+            {
+                if (tokens [i].Type == TokenType.CONTROL_CHAR && tokens [i].Buffer == ",")
+                {
+                    index_stop_value = i;
+                    break;
+                }
+            }
+
+            Log.Debug ($"array entry stop value: {tokens [index_stop_value]}");
+
+            result = new SyntaxTreeArrayEntry (
+                  result_array_key,
+                  SyntaxTreeAnalyzer.Analyze<SyntaxTreeArrayEntry> (
+                      tokens.Slice (index_start_value, index_stop_value - index_start_value),
+                      new [] { typeof (SyntaxTreeArrayEntry) }
+                  )
+              );
+            offset = index_stop_value + 1;
+            return true;
+        }
+
+        internal override void DumpLog (int indent)
+        {
+            _log (indent, $"{this.GetType ().Name}:");
+            _log (indent, $"  key:");
+            Key.DumpLog (indent + 1);
+            _log (indent, $"  value:");
+            foreach (var e in Value)
+            {
+                e.DumpLog (indent + 1);
+            }
+        }
     }
 
     public sealed class SyntaxTreeCall : SyntaxTreeElement

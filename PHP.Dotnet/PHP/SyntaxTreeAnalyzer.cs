@@ -23,18 +23,19 @@ namespace PHP
             );
         }
 
-        internal static ImmutableArray<SyntaxTreeElement> Analyze<TOuterElement> (ReadOnlySpan<Token> tokens, Type [] skip_types)
+        internal static ImmutableArray<SyntaxTreeElement> Analyze<TOuterElement> (ReadOnlySpan<Token> tokens, Type [] skip_types = null, bool allow_array_entry = false, bool all_complex_skipped = false)
         {
-            if (false && typeof (TOuterElement) != typeof (object))
+            if (typeof (TOuterElement) == typeof (SyntaxTreeArray))
             {
-                Log.Debug ($"Analyze for {typeof (TOuterElement).Name}:");
+                Log.Debug ($"Analyze for {typeof (TOuterElement).Name}: (allow_array_entry = {allow_array_entry})");
                 foreach (var t in tokens) Log.Debug ($"  - {t}");
                 Log.Debug ("");
             }
 
             bool is_skipped_type (Type t)
             {
-                return typeof (TOuterElement) == t || skip_types.Contains (t);
+                if (all_complex_skipped) return true;
+                return typeof (TOuterElement) == t || (skip_types != null && skip_types.Contains (t));
             }
 
             List<SyntaxTreeElement> elements = new List<SyntaxTreeElement> ();
@@ -49,9 +50,16 @@ namespace PHP
             for (int i = 0; i < tokens.Length;)
             {
                 Token token = tokens [i];
-                if (!is_skipped_type (typeof (SyntaxTreeTry)) && SyntaxTreeTry.TryDetect (tokens, offset: ref i, out var result_try))
-                {
 
+                if (!is_skipped_type (typeof (SyntaxTreeArrayEntry)) && allow_array_entry && SyntaxTreeArrayEntry.TryDetect (tokens, offset: ref i, out var result_array_entry))
+                {
+                    tryPutStack ();
+                    elements.Add (result_array_entry);
+                }
+                else if (!is_skipped_type (typeof (SyntaxTreeTry)) && SyntaxTreeTry.TryDetect (tokens, offset: ref i, out var result_try))
+                {
+                    tryPutStack ();
+                    elements.Add (result_try);
                 }
                 else if (!is_skipped_type (typeof (SyntaxTreeStatement)) && SyntaxTreeStatement.TryDetect (tokens, offset: ref i, out var result_statement))
                 {
