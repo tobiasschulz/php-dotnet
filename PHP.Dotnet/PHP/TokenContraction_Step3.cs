@@ -23,7 +23,7 @@ namespace PHP
 
         private static IReadOnlyList<BaseToken2> _transform (IReadOnlyList<BaseToken2> input)
         {
-            return _makeFunctions (_makeFlowControls (_transformInstanceAccess (input)));
+            return  _makeFunctions (_makeFlowControls (_transformInstanceAccess (input)));
         }
 
         private static IReadOnlyList<BaseToken2> _makeFlowControls (IReadOnlyList<BaseToken2> input)
