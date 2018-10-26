@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHP", "PHP\PHP.csproj", "{C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHP.Interpreter", "PHP.Interpreter\PHP.Interpreter.csproj", "{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Antlr", "PHP.Antlr\PHP.Antlr.csproj", "{01B3DFEC-88DC-40FB-BA9A-1017228027FB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01B3DFEC-88DC-40FB-BA9A-1017228027FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01B3DFEC-88DC-40FB-BA9A-1017228027FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01B3DFEC-88DC-40FB-BA9A-1017228027FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01B3DFEC-88DC-40FB-BA9A-1017228027FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

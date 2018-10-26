@@ -22,8 +22,4 @@
     <PackageReference Include="System.Memory" Version="4.5.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PHP.Antlr\PHP.Antlr.csproj" />
-  </ItemGroup>
-
 </Project>
