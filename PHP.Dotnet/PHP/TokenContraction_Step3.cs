@@ -42,7 +42,7 @@ namespace PHP
                             FlowControlToken2 tok_fixed = new FlowControlToken2 (
                                 name: tokr.Buffer,
                                 condition: null,
-                                block: Transform (tok_next)
+                                block: _makeBlock(Transform (tok_next))
                             );
                             output.Add (tok_fixed);
                             i += 1; // one extra
@@ -51,12 +51,12 @@ namespace PHP
 
                         if (i + 2 < input.Count && input [i + 2] is RegularToken2 tok_next2)
                         {
-                            if (tokr.Buffer.IsAny ("if", "elseif", "while", "for") && tok_next.Type == TokenType2.FLOW_CONTROL && tok_next.Buffer == "()" && tok_next2.Type == TokenType2.FLOW_CONTROL && tok_next2.Buffer == "{}")
+                            if (tokr.Buffer.IsAny ("if", "elseif", "while", "for", "catch") && tok_next.Type == TokenType2.FLOW_CONTROL && tok_next.Buffer == "()" && tok_next2.Type == TokenType2.FLOW_CONTROL && tok_next2.Buffer == "{}")
                             {
                                 FlowControlToken2 tok_fixed = new FlowControlToken2 (
                                     name: tokr.Buffer,
-                                    condition: Transform (tok_next),
-                                    block: Transform (tok_next2)
+                                    condition: _makeBlock ( Transform (tok_next)),
+                                    block: _makeBlock( Transform (tok_next2))
                                 );
                                 output.Add (tok_fixed);
                                 i += 2; // two extra
@@ -69,8 +69,8 @@ namespace PHP
                                 {
                                     FlowControlToken2 tok_fixed = new FlowControlToken2 (
                                         name: tokr.Buffer,
-                                        condition: Transform (tok_next3),
-                                        block: Transform (tok_next)
+                                        condition: _makeBlock (Transform (tok_next3)),
+                                        block: _makeBlock(Transform (tok_next))
                                     );
                                     output.Add (tok_fixed);
                                     i += 3; // three extra
@@ -89,6 +89,15 @@ namespace PHP
             }
 
             return output;
+        }
+
+        private static BaseToken2 _makeBlock (BaseToken2 tok)
+        {
+            if (tok is RegularToken2 tokr && tokr.Type == TokenType2.FLOW_CONTROL)
+            {
+                return new RegularToken2 (TokenType2.BLOCK, string.Empty, tokr.Children);
+            }
+            return tok;
         }
 
         private static IReadOnlyList<BaseToken2> _makeFunctions (IReadOnlyList<BaseToken2> input)
@@ -141,10 +150,10 @@ namespace PHP
 
                     if (!is_func_access)
                     {
-                        FunctionToken2 tok_fixed = new FunctionToken2 (
-                            function_ref: tok_next,
+                        ClassAccessToken2 tok_fixed = new ClassAccessToken2 (
+                            kind: tok_next.Buffer,
                             caller: _transform (tok),
-                            arguments: _transform (tok_next2)
+                            property: _transform (tok_next2)
                         );
 
                         list.RemoveAt (i + 2);

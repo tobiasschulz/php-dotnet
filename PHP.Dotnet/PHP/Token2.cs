@@ -95,13 +95,42 @@ namespace PHP
 
         internal override void DumpLog (int indent)
         {
-            _log (indent, $"Call:");
+            _log (indent, $"Function Call:");
             _log (indent + 1, $"FunctionRef:");
             FunctionRef?.DumpLog (indent + 2);
             _log (indent + 1, $"Caller:");
             Caller?.DumpLog (indent + 2);
             _log (indent + 1, $"Arguments:");
             Arguments.DumpLog (indent + 2);
+        }
+
+    }
+
+    public sealed class ClassAccessToken2 : BaseToken2
+    {
+        public readonly string Kind;
+        public readonly BaseToken2 Caller;
+        public readonly BaseToken2 Property;
+
+        public ClassAccessToken2 (string kind, BaseToken2 caller, BaseToken2 property)
+        {
+            Kind = kind;
+            Caller = caller;
+            Property = property;
+        }
+
+        public override string ToString ()
+        {
+            return $"[Access: {Kind}]";
+        }
+
+        internal override void DumpLog (int indent)
+        {
+            _log (indent, $"Access: ({Kind})");
+            _log (indent + 1, $"Caller:");
+            Caller.DumpLog (indent + 2);
+            _log (indent + 1, $"Property:");
+            Property.DumpLog (indent + 2);
         }
 
     }
