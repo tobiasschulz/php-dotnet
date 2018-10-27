@@ -25,8 +25,20 @@ namespace PHP
     $a = $wrapper->getMainWrapper()->getBaseModules();
 
 ";
-            //content_string = a;
 
+            a = @"
+
+    $wrapper = Default_Wrapper::getInstance();
+    $a = $wrapper->getMainWrapper()->getBaseModules();
+
+";
+
+            a = @"
+1+2
+
+";
+
+            new CodeGrammar ().Parse (a);
 
 
             return;

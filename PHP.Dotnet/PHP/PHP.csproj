@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Eto.Parse" Version="1.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.*" />
     <PackageReference Include="Sprache" Version="2.2.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.*" />
