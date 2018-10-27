@@ -12,7 +12,8 @@ namespace PHP
         public readonly string Path;
         public readonly string PathNormalized;
 
-        public CodeScriptFile (string path)
+        public CodeScriptFile (Context context, string path)
+            : base (context)
         {
             Path = path;
             PathNormalized = PathHelper.NormalizePath (path);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -195,6 +196,21 @@ namespace PHP.Standard
         public static bool None<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             return !source.Any (predicate);
+        }
+
+        /// <summary>
+        /// Converts list to <see cref="ImmutableArray{T}"/> safely. If the list is <c>null</c>, empty array is returned.
+        /// </summary>
+        public static ImmutableArray<T> AsImmutableSafe<T> (this IList<T> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return ImmutableArray<T>.Empty;
+            }
+            else
+            {
+                return list.ToImmutableArray ();
+            }
         }
     }
 

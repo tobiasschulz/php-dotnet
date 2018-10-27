@@ -11,17 +11,19 @@ namespace PHP
 {
     public sealed class CodeDirectory
     {
+        private readonly Context _context;
         public readonly string Path;
         public readonly ImmutableArray<CodeScriptFile> Files = ImmutableArray<CodeScriptFile>.Empty;
 
-        public CodeDirectory (string path)
+        public CodeDirectory (Context context, string path)
         {
+            _context = context;
             Path = path;
 
             if (Directory.Exists (path))
             {
                 Files = Directory.GetFiles (path, "*.php", SearchOption.AllDirectories)
-                    .Select (p => new CodeScriptFile (p))
+                    .Select (p => new CodeScriptFile (context, p))
                     .ToImmutableArray ();
             }
         }

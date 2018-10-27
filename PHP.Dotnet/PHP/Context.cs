@@ -11,10 +11,11 @@ namespace PHP
     public sealed class Context
     {
         public readonly List<CodeDirectory> RootDirectories = new List<CodeDirectory> ();
+        public readonly Dictionary<string, string> Defines = new Dictionary<string, string> ();
 
         public void AddDirectory (string value)
         {
-            RootDirectories.Add (new CodeDirectory (value));
+            RootDirectories.Add (new CodeDirectory (this, value));
         }
 
         public void RunFile (string value)
