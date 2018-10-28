@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using PHP.Helper;
 using PHP.Standard;
+using PHP.Tree;
 
 namespace PHP
 {
@@ -12,6 +13,8 @@ namespace PHP
     {
         public readonly List<CodeDirectory> RootDirectories = new List<CodeDirectory> ();
         public readonly Dictionary<string, string> Defines = new Dictionary<string, string> ();
+
+        public readonly GlobalScope GlobalScope = new GlobalScope ();
 
         public void AddDirectory (string value)
         {
@@ -28,7 +31,7 @@ namespace PHP
                 throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");
             }
 
-            file.GetContent ().Run ();
+            file.GetContent ().Run (GlobalScope);
         }
     }
 }

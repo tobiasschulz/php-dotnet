@@ -100,6 +100,12 @@ namespace PHP.Tree
         {
             return new VariableName (other.Value);
         }
+
+        public static implicit operator VariableName (Devsense.PHP.Syntax.VariableNameRef other)
+        {
+            return new VariableName (other.Name.Value);
+        }
+
     }
 
 }

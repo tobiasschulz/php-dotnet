@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Devsense.PHP.Syntax;
 using Devsense.PHP.Syntax.Ast;
 
 namespace PHP.Tree
 {
-    public sealed class Variable : Expression
+    public abstract class LikeVariable : Expression
+    {
+    }
+
+    public sealed class Variable : LikeVariable
     {
         public readonly VariableName Name;
 
@@ -18,9 +23,14 @@ namespace PHP.Tree
             Name = variable.VarName;
         }
 
+        public Variable (Name name)
+        {
+            Name = new VariableName (name.Value);
+        }
+
         protected override string GetTypeName ()
         {
-            return "variable";
+            return $"variable: {Name}";
         }
     }
 

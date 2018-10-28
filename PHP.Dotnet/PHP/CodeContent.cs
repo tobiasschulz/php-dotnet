@@ -7,6 +7,7 @@ using PHP.Standard;
 using Devsense.PHP.Syntax;
 using PHP.Parser;
 using PHP.Tree;
+using PHP.Execution;
 
 namespace PHP
 {
@@ -42,38 +43,21 @@ namespace PHP
             _syntax_tree = PhpSyntaxTree.ParseCode (context, a, "a.php");
         }
 
-        internal void Run ()
+        internal void Run (Scope previous_scope)
         {
             Console.WriteLine ("----------");
 
             Expression tree = Expressions.Parse (_syntax_tree.Root);
             tree.Print ();
 
+            ScriptScope script_scope = new ScriptScope (previous_scope);
+            Interpreters.Run (tree, script_scope);
+
             Console.WriteLine ("----------");
 
             foreach (var diag in _syntax_tree.Diagnostics)
             {
                 Log.Debug (diag);
-            }
-
-            foreach (var type in _syntax_tree.Types)
-            {
-                Log.Debug (type);
-            }
-            foreach (var func in _syntax_tree.Functions)
-            {
-                Log.Debug (func);
-            }
-            foreach (var y in _syntax_tree.YieldNodes)
-            {
-                Log.Debug (y);
-            }
-
-            Log.Debug (_syntax_tree.Root);
-
-            foreach (var y in _syntax_tree.Root.Statements)
-            {
-                Log.Debug (y);
             }
 
             Console.ReadLine ();

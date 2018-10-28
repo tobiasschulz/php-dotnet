@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Devsense.PHP.Syntax.Ast;
+using PHP.Standard;
 
 namespace PHP.Tree
 {
@@ -11,6 +11,51 @@ namespace PHP.Tree
 
     public abstract class Expression
     {
+        private static ImmutableHashSet<string> FalseStrings = new []
+        {
+            "false",
+            "False",
+            "FALSE",
+            "null",
+            "Null",
+            "NULL",
+            "0",
+            "0.0",
+        }.ToImmutableHashSet ();
+
+        public override string ToString ()
+        {
+            return $"[{this.GetType ().Name}: '{GetTypeName ()}']";
+        }
+
+        public virtual string GetStringValue ()
+        {
+            return "";
+        }
+
+        public virtual bool GetBoolValue ()
+        {
+            string s = GetStringValue ();
+            return !string.IsNullOrEmpty (s) && !FalseStrings.Contains (s);
+        }
+
+        public virtual double GetDoubleValue ()
+        {
+            string s = GetStringValue ();
+            return s.ToDouble ();
+        }
+
+        public virtual long GetLongValue ()
+        {
+            string s = GetStringValue ();
+            return s.ToLong ();
+        }
+
+        public virtual ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.STRING;
+        }
+
         public void Print (TreeParams p = default)
         {
             _printSelf (p);
@@ -56,7 +101,7 @@ namespace PHP.Tree
                     {
                         bool is_last_child_of_group = k + 1 == count_children;
                         bool is_last_child_ever = is_last_group && is_last_child_of_group;
-                        child.Print (new TreeParams (p4, diff: 4, is_not_last: !is_last_child_of_group, add_line: !is_last_child_ever));
+                        child.Print (new TreeParams (p4, diff: 4, is_not_last: !is_last_child_of_group, add_line: !is_last_child_of_group));
                         k++;
                     }
                 }
@@ -110,7 +155,7 @@ namespace PHP.Tree
                 {
                     foreach (int i in lines)
                     {
-                     if (i < indent)   sb [i] = '|';
+                        if (i < indent) sb [i] = '|';
                     }
                 }
                 indent_str = sb.ToString ();
@@ -145,34 +190,11 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class EmptyExpression : Expression
+    public sealed class DocExpression : Expression
     {
-
         protected override string GetTypeName ()
         {
-            return "empty";
-        }
-    }
-
-    public sealed class GlobalCodeExpression : Expression
-    {
-        public readonly ImmutableArray<Expression> Body;
-
-        public GlobalCodeExpression (GlobalCode e)
-        {
-            Body = e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ();
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("body", Body)
-            };
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "root";
+            return "doc";
         }
     }
 
@@ -188,144 +210,13 @@ namespace PHP.Tree
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup []{
-                ("vars", VarList)
+                ("vars", VarList),
             };
         }
 
         protected override string GetTypeName ()
         {
             return "global statement";
-        }
-    }
-
-    public sealed class ConditionalBlockExpression : Expression
-    {
-        public readonly ImmutableArray<BaseIfExpression> Ifs = ImmutableArray<BaseIfExpression>.Empty;
-        public readonly ElseExpression Else;
-
-        public ConditionalBlockExpression (IfStmt e)
-        {
-            foreach (var c in e.Conditions)
-            {
-                if (c.Condition == null)
-                {
-                    if (Else == null)
-                    {
-                        Else = new ElseExpression (c);
-                    }
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException ($"Multiple else expressions ???");
-                    }
-                }
-                else
-                {
-                    if (Ifs.Length == 0)
-                    {
-                        Ifs = Ifs.Add (new IfExpression (c));
-                    }
-                    else
-                    {
-                        Ifs = Ifs.Add (new ElseIfExpression (c));
-                    }
-                }
-            }
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("", Ifs),
-                ("", Else)
-            };
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "condition";
-        }
-    }
-
-    public abstract class BaseIfExpression : Expression
-    {
-        public readonly Expression Condition;
-        public readonly Expression Body;
-
-        public BaseIfExpression (ConditionalStmt e)
-        {
-            Condition = Expressions.Parse (e.Condition);
-            Body = Expressions.Parse (e.Statement);
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("condition", Condition),
-                ("body", Body)
-            };
-        }
-    }
-
-    public sealed class IfExpression : BaseIfExpression
-    {
-        public IfExpression (ConditionalStmt e)
-            : base (e)
-        {
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "if";
-        }
-    }
-
-    public sealed class ElseIfExpression : BaseIfExpression
-    {
-        public ElseIfExpression (ConditionalStmt e)
-            : base (e)
-        {
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "else if";
-        }
-    }
-
-    public sealed class ElseExpression : Expression
-    {
-        public readonly Expression Body;
-
-        public ElseExpression (ConditionalStmt e)
-        {
-            Body = Expressions.Parse (e.Statement);
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("body", Body)
-            };
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "else";
-        }
-    }
-
-    public sealed class BlockExpression : Expression
-    {
-        public readonly ImmutableArray<Expression> Body;
-
-        public BlockExpression (BlockStmt e)
-        {
-            Body = e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ();
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "block";
         }
     }
 
@@ -344,7 +235,7 @@ namespace PHP.Tree
         {
             return new TreeChildGroup [] {
                 ("left", Left),
-                ("right", Right)
+                ("right", Right),
             };
         }
 
@@ -354,89 +245,62 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class FunctionCallExpression : Expression
+    public sealed class InstanceOfExpression : Expression
     {
-        public readonly FunctionSignature Signature;
+        public readonly Name? TypeName;
+        public readonly Expression Value;
 
-        public FunctionCallExpression (DirectFcnCall e)
+        public InstanceOfExpression (InstanceOfEx e)
         {
-            Log.Debug ($"function call name: {e.FullName.Name},  {e.FullName.OriginalName},  {e.FullName.FallbackName}");
-            Signature = new FunctionSignature (e.CallSignature);
+            TypeName = e.ClassNameRef.QualifiedName;
+            Value = Expressions.Parse (e.Expression);
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("parameters", Signature.Parameters)
+                ("value", Value),
             };
         }
 
         protected override string GetTypeName ()
         {
-            return "function call";
+            return $"instance of: {TypeName}";
         }
     }
 
-    public sealed class StaticMethodCallExpression : Expression
+    public sealed class RequireFileExpression : Expression
     {
-        public readonly FunctionName MethodName;
-        public readonly FunctionSignature Signature;
+        public readonly InclusionType Mode;
+        public readonly Expression FilePath;
 
-        public StaticMethodCallExpression (DirectStMtdCall e)
+        public RequireFileExpression (IncludingEx e)
         {
-            MethodName = e.MethodName;
-            Signature = new FunctionSignature (e.CallSignature);
+            Mode = (InclusionType)e.InclusionType;
+            FilePath = Expressions.Parse (e.Target);
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("parameters", Signature.Parameters)
+                ("file", FilePath),
             };
         }
 
         protected override string GetTypeName ()
         {
-            return $"function call: {MethodName}";
-        }
-    }
-    
-
-    public sealed class CatchExpression : Expression
-    {
-        public readonly Expression Body;
-        public readonly Variable Variable;
-        public readonly TypeRef TargetType;
-
-        public CatchExpression (CatchItem e)
-        {
-            Body = Expressions.Parse (e.Body);
-            Variable = new Variable (e.Variable);
-            TargetType = e.TargetType;
+            return $"require: {Mode}";
         }
 
-        protected override string GetTypeName ()
+        public enum InclusionType
         {
-            return "catch";
+            Include = 0,
+            IncludeOnce = 1,
+            Require = 2,
+            RequireOnce = 3,
+            Prepended = 4,
+            Appended = 5
         }
     }
 
-    public sealed class TryExpression : Expression
-    {
-        public readonly Expression Body;
-        public readonly Expression Finally;
-        public readonly ImmutableArray<CatchExpression> Catches;
-
-        public TryExpression (TryStmt e)
-        {
-            Body = Expressions.Parse (e.Body);
-            Finally = Expressions.Parse (e.FinallyItem?.Body);
-            Catches = e.Catches.Select (c => new CatchExpression (c)).ToImmutableArray ();
-        }
-
-        protected override string GetTypeName ()
-        {
-            return "try";
-        }
-    }
 }

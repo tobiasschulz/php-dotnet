@@ -7,19 +7,20 @@ using Devsense.PHP.Syntax.Ast;
 
 namespace PHP.Tree
 {
-    public sealed class FunctionSignature
+    public sealed class CallSignature
     {
-        public readonly ImmutableArray<FunctionParameter> Parameters;
+        public readonly ImmutableArray<CallParameter> Parameters;
        
-        public FunctionSignature (CallSignature e)
+        public CallSignature (Devsense.PHP.Syntax.Ast.CallSignature e)
         {
-            Parameters = e.Parameters.Select (p => new FunctionParameter (p)).ToImmutableArray ();
+            Parameters = e.Parameters.Select (p => new CallParameter (p)).ToImmutableArray ();
         }
     }
 
-    public sealed class FunctionParameter : Expression
+    public sealed class CallParameter : Expression
     {
         public readonly Expression Expression;
+
         //
         // Summary:
         //     Gets value indicating whether the parameter is prefixed by & character.
@@ -30,7 +31,7 @@ namespace PHP.Tree
         //     it has to be unpacked before passing to the function call.
         public bool IsUnpack { get; }
 
-        public FunctionParameter (ActualParam p)
+        public CallParameter (ActualParam p)
         {
             Expression = Expressions.Parse (p.Expression);
             Ampersand = p.Ampersand;
@@ -46,7 +47,7 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"parameter: {0}";
+            return $"parameter";
         }
 
     }

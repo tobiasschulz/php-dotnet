@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PHP.Tree
 {
@@ -32,110 +33,46 @@ namespace PHP.Tree
         public static readonly Name ClosureFunctionName = new Name ("{closure}");
         public static readonly Name AnonymousClassName = new Name ("class@anonymous");
 
-        /// <summary>
-        /// Contains special (or &quot;magic&quot;) method names.
-        /// </summary>
-        public static class SpecialMethodNames
-        {
-            /// <summary>Constructor.</summary>
-            public static readonly Name Construct = new Name ("__construct");
+        // magic
+        public static readonly Name Construct = new Name ("__construct");
+        public static readonly Name Destruct = new Name ("__destruct");
+        public static readonly Name Clone = new Name ("__clone");
+        public static readonly Name Tostring = new Name ("__tostring");
+        public static readonly Name Sleep = new Name ("__sleep");
+        public static readonly Name Wakeup = new Name ("__wakeup");
+        public static readonly Name Get = new Name ("__get");
+        public static readonly Name Set = new Name ("__set");
+        public static readonly Name Call = new Name ("__call");
+        public static readonly Name Invoke = new Name ("__invoke");
+        public static readonly Name CallStatic = new Name ("__callStatic");
+        public static readonly Name Unset = new Name ("__unset");
+        public static readonly Name Isset = new Name ("__isset");
 
-            /// <summary>Destructor.</summary>
-            public static readonly Name Destruct = new Name ("__destruct");
-
-            /// <summary>Invoked when cloning instances.</summary>
-            public static readonly Name Clone = new Name ("__clone");
-
-            /// <summary>Invoked when casting to string.</summary>
-            public static readonly Name Tostring = new Name ("__tostring");
-
-            /// <summary>Invoked when serializing instances.</summary>
-            public static readonly Name Sleep = new Name ("__sleep");
-
-            /// <summary>Invoked when deserializing instanced.</summary>
-            public static readonly Name Wakeup = new Name ("__wakeup");
-
-            /// <summary>Invoked when an unknown field is read.</summary>
-            public static readonly Name Get = new Name ("__get");
-
-            /// <summary>Invoked when an unknown field is written.</summary>
-            public static readonly Name Set = new Name ("__set");
-
-            /// <summary>Invoked when an unknown method is called.</summary>
-            public static readonly Name Call = new Name ("__call");
-
-            /// <summary>Invoked when an object is called like a function.</summary>
-            public static readonly Name Invoke = new Name ("__invoke");
-
-            /// <summary>Invoked when an unknown method is called statically.</summary>
-            public static readonly Name CallStatic = new Name ("__callStatic");
-
-            /// <summary>Invoked when an unknown field is unset.</summary>
-            public static readonly Name Unset = new Name ("__unset");
-
-            /// <summary>Invoked when an unknown field is tested for being set.</summary>
-            public static readonly Name Isset = new Name ("__isset");
-        };
-
-        public bool IsCloneName
-        {
-            get { return this.Equals (SpecialMethodNames.Clone); }
-        }
-
-        public bool IsConstructName
-        {
-            get { return this.Equals (SpecialMethodNames.Construct); }
-        }
-
-        public bool IsDestructName
-        {
-            get { return this.Equals (SpecialMethodNames.Destruct); }
-        }
-
-        public bool IsCallName
-        {
-            get { return this.Equals (SpecialMethodNames.Call); }
-        }
-
-        public bool IsCallStaticName => this.Equals (SpecialMethodNames.CallStatic);
-
-        public bool IsToStringName => this.Equals (SpecialMethodNames.Tostring); }
-
-        public bool IsParentClassName => this.Equals (Name.ParentClassName); }
-
-        public bool IsSelfClassName => this.Equals (Name.SelfClassName); }
-
-        public bool IsStaticClassName => this.Equals (Name.StaticClassName); }
-
-        public bool IsReservedClassName
-        {
-            get { return IsParentClassName || IsSelfClassName || IsStaticClassName; }
-        }
+        public bool IsCloneName => this.Equals (Clone);
+        public bool IsConstructName => this.Equals (Construct);
+        public bool IsDestructName => this.Equals (Destruct);
+        public bool IsCallName => this.Equals (Call);
+        public bool IsCallStaticName => this.Equals (CallStatic);
+        public bool IsToStringName => this.Equals (Tostring);
+        public bool IsParentClassName => this.Equals (ParentClassName);
+        public bool IsSelfClassName => this.Equals (SelfClassName);
+        public bool IsStaticClassName => this.Equals (StaticClassName);
+        public bool IsReservedClassName => IsParentClassName || IsSelfClassName || IsStaticClassName;
 
         /// <summary>
         /// <c>true</c> if the name was generated for the 
         /// <see cref="Devsense.PHP.Syntax.Ast.AnonymousTypeDecl"/>, 
         /// <c>false</c> otherwise.
         /// </summary>
-        public bool IsGenerated
-        {
-            get { return _value.StartsWith (AnonymousClassName.Value); }
-        }
+        public bool IsGenerated => _value.StartsWith (AnonymousClassName.Value);
 
-        #endregion
 
-        /// <summary>
-        /// Creates a name. 
-        /// </summary>
-        /// <param name="value">The name shouldn't be <B>null</B>.</param>
         public Name (string value)
         {
             Debug.Assert (value != null);
             this._value = value;
             this._hashcode = StringComparer.OrdinalIgnoreCase.GetHashCode (value);
         }
-
-        #region Utils
 
         /// <summary>
         /// Separator of class name and its static field in a form of <c>CLASS::MEMBER</c>.
@@ -178,10 +115,6 @@ namespace PHP.Tree
             return value != null && value.Contains (ClassMemberSeparator);
         }
 
-        #endregion
-
-        #region Basic Overrides
-
         public override bool Equals (object obj)
         {
             return obj != null && obj.GetType () == typeof (Name) && Equals ((Name)obj);
@@ -196,10 +129,6 @@ namespace PHP.Tree
         {
             return this._value;
         }
-
-        #endregion
-
-        #region IEquatable<Name> Members
 
         public bool Equals (Name other)
         {
@@ -216,17 +145,30 @@ namespace PHP.Tree
             return !name.Equals (other);
         }
 
-        #endregion
-
-        #region IEquatable<string> Members
-
         public bool Equals (string other)
         {
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion
-    }
+        public static implicit operator Name (Devsense.PHP.Syntax.Name other)
+        {
+            return new Name (other.Value);
+        }
 
+        public static implicit operator Name (Devsense.PHP.Syntax.NameRef other)
+        {
+            return new Name (other.Name.Value);
+        }
+
+        public static implicit operator Name (Devsense.PHP.Syntax.QualifiedName other)
+        {
+            return new Name (other.Name.Value);
+        }
+
+        public static implicit operator Name (Devsense.PHP.Syntax.TranslatedQualifiedName other)
+        {
+            return new Name (other.Name.QualifiedName.Name.Value);
+        }
+    }
 
 }

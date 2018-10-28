@@ -1,0 +1,256 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using Devsense.PHP.Syntax.Ast;
+
+namespace PHP.Tree
+{
+    public enum ScalarAffinity
+    {
+        STRING,
+        NULL,
+        BOOL,
+        LONG,
+        DOUBLE,
+    }
+
+    public abstract class LiteralExpression : Expression
+    {
+    }
+
+    public sealed class StringExpression : LiteralExpression
+    {
+        public readonly string Value;
+
+        public StringExpression (StringLiteral e)
+        {
+            Value = e.Value ?? string.Empty;
+        }
+
+        public StringExpression (string value)
+        {
+            Value = value;
+        }
+
+        public override string GetStringValue ()
+        {
+            return Value;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.STRING;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"string: {Value}";
+        }
+    }
+
+    public sealed class LongExpression : LiteralExpression
+    {
+        public readonly long Value;
+
+        public LongExpression (LongIntLiteral e)
+        {
+            Value = e.Value;
+        }
+
+        public LongExpression (long value)
+        {
+            Value = value;
+        }
+
+        public override string GetStringValue ()
+        {
+            return Value.ToString (CultureInfo.InvariantCulture);
+        }
+
+        public override long GetLongValue ()
+        {
+            return Value;
+        }
+
+        public override double GetDoubleValue ()
+        {
+            return Value;
+        }
+
+        public override bool GetBoolValue ()
+        {
+            return Value != 0;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.LONG;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"long: {GetStringValue ()}";
+        }
+    }
+
+    public sealed class DoubleExpression : LiteralExpression
+    {
+        public readonly double Value;
+
+        public DoubleExpression (DoubleLiteral e)
+        {
+            Value = e.Value;
+        }
+
+        public DoubleExpression (double value)
+        {
+            Value = value;
+        }
+
+        public override string GetStringValue ()
+        {
+            return Value.ToString (CultureInfo.InvariantCulture);
+        }
+
+        public override long GetLongValue ()
+        {
+            return (long)Math.Round (Value);
+        }
+
+        public override double GetDoubleValue ()
+        {
+            return Value;
+        }
+
+        public override bool GetBoolValue ()
+        {
+            return Value != 0;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.DOUBLE;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"double: {GetStringValue ()}";
+        }
+    }
+
+    public sealed class BoolExpression : LiteralExpression
+    {
+        public readonly bool Value;
+
+        public BoolExpression (BoolLiteral e)
+        {
+            Value = e.Value;
+        }
+
+        public BoolExpression (bool value)
+        {
+            Value = value;
+        }
+
+        public override string GetStringValue ()
+        {
+            return Value ? "true" : "false";
+        }
+
+        public override long GetLongValue ()
+        {
+            return Value ? 1 : 0;
+        }
+
+        public override double GetDoubleValue ()
+        {
+            return Value ? 1 : 0;
+        }
+
+        public override bool GetBoolValue ()
+        {
+            return Value;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.BOOL;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"bool: {GetStringValue ()}";
+        }
+    }
+
+    public sealed class EmptyExpression : Expression
+    {
+        public override string GetStringValue ()
+        {
+            return "";
+        }
+
+        public override long GetLongValue ()
+        {
+            return 0;
+        }
+
+        public override double GetDoubleValue ()
+        {
+            return 0;
+        }
+
+        public override bool GetBoolValue ()
+        {
+            return false;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.NULL;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return "empty";
+        }
+    }
+
+    public sealed class NullExpression : Expression
+    {
+        protected override string GetTypeName ()
+        {
+            return "null";
+        }
+
+        public override string GetStringValue ()
+        {
+            return "null";
+        }
+
+        public override long GetLongValue ()
+        {
+            return 0;
+        }
+
+        public override double GetDoubleValue ()
+        {
+            return 0;
+        }
+
+        public override bool GetBoolValue ()
+        {
+            return false;
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.NULL;
+        }
+
+    }
+
+}
