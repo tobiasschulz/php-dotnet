@@ -11,8 +11,19 @@ namespace PHP.Execution
     {
         public static Result Run (BinaryExpression expression, Scope scope)
         {
-            Expression left = expression.Left;
-            Expression right = expression.Right;
+            Result left_result = Interpreters.Execute (expression.Left, scope);
+            if (left_result.FastReturn)
+            {
+                return left_result;
+            }
+            Result right_result = Interpreters.Execute (expression.Right, scope);
+            if (right_result.FastReturn)
+            {
+                return right_result;
+            }
+
+            FinalExpression left = left_result.ResultValue;
+            FinalExpression right = right_result.ResultValue;
 
             switch (expression.Operation)
             {
@@ -41,6 +52,7 @@ namespace PHP.Execution
                         return new Result (new LongExpression (left.GetLongValue () / right.GetLongValue ()));
 
                 case BinaryOp.CONCAT:
+                    Log.Debug ($"concat result: left = " + left + ", right = " + right + ", concat = " + new StringExpression (left.GetStringValue () + right.GetStringValue ()));
                     return new Result (new StringExpression (left.GetStringValue () + right.GetStringValue ()));
 
                 case BinaryOp.EQUAL:

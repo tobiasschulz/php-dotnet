@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using PHP.Library;
 
 namespace PHP.Tree
 {
@@ -11,35 +12,88 @@ namespace PHP.Tree
         {
         }
 
-        public abstract GlobalScope GetGlobalScope ();
+        public abstract RootScope Root { get; }
+        public abstract string GetScopeName ();
+
+        public override string ToString ()
+        {
+            return $"[Scope: '{GetScopeName ()}']";
+        }
     }
 
-    public sealed class GlobalScope : Scope
+    public sealed class RootScope : Scope
     {
-        public readonly FunctionCollection GlobalFunctions;
+        private readonly Context _context;
+        private readonly FunctionCollection _globalfunctions;
 
-        public GlobalScope ()
+        public RootScope (Context context)
         {
+            _context = context;
+            _globalfunctions = new FunctionCollection ();
+
+            StandardLibrary.Populate (_globalfunctions);
         }
 
-        public override GlobalScope GetGlobalScope ()
+        public override RootScope Root
         {
-            return this;
+            get => this;
+        }
+
+        public Context Context
+        {
+            get => _context;
+        }
+
+        public FunctionCollection GlobalFunctions
+        {
+            get => _globalfunctions;
+        }
+
+        public override string GetScopeName ()
+        {
+            return "root";
         }
     }
 
     public sealed class ScriptScope : Scope
     {
-        public readonly GlobalScope GlobalScope;
+        private readonly Scope _parentscope;
 
         public ScriptScope (Scope value)
         {
-            GlobalScope = value.GetGlobalScope ();
+            _parentscope = value;
         }
 
-        public override GlobalScope GetGlobalScope ()
+        public override RootScope Root
         {
-            return GlobalScope;
+            get => _parentscope.Root;
+        }
+
+        public override string GetScopeName ()
+        {
+            return "script";
+        }
+    }
+
+    public sealed class FunctionScope : Scope
+    {
+        private readonly Scope _parentscope;
+        private readonly IFunctionDeclaration _function;
+
+        public FunctionScope (Scope value, IFunctionDeclaration function)
+        {
+            _parentscope = value;
+            _function = function;
+        }
+
+        public override RootScope Root
+        {
+            get => _parentscope.Root;
+        }
+
+        public override string GetScopeName ()
+        {
+            return $"function: {_function.Name}";
         }
     }
 

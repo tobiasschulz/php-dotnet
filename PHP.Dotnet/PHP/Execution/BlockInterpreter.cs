@@ -19,7 +19,7 @@ namespace PHP.Execution
             Result res = Result.NULL;
             foreach (Expression expression in expressions)
             {
-                res = Interpreters.Run (expression, scope);
+                res = Interpreters.Execute (expression, scope);
                 if (res.FastReturn)
                 {
                     return res;

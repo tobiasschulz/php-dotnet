@@ -11,44 +11,9 @@ namespace PHP.Tree
 
     public abstract class Expression
     {
-        private static ImmutableHashSet<string> FalseStrings = new []
-        {
-            "false",
-            "False",
-            "FALSE",
-            "null",
-            "Null",
-            "NULL",
-            "0",
-            "0.0",
-        }.ToImmutableHashSet ();
-
         public override string ToString ()
         {
             return $"[{this.GetType ().Name}: '{GetTypeName ()}']";
-        }
-
-        public virtual string GetStringValue ()
-        {
-            return "";
-        }
-
-        public virtual bool GetBoolValue ()
-        {
-            string s = GetStringValue ();
-            return !string.IsNullOrEmpty (s) && !FalseStrings.Contains (s);
-        }
-
-        public virtual double GetDoubleValue ()
-        {
-            string s = GetStringValue ();
-            return s.ToDouble ();
-        }
-
-        public virtual long GetLongValue ()
-        {
-            string s = GetStringValue ();
-            return s.ToLong ();
         }
 
         public virtual ScalarAffinity GetScalarAffinity ()

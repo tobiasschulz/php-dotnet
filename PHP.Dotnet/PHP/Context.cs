@@ -6,15 +6,21 @@ using System.Linq;
 using PHP.Helper;
 using PHP.Standard;
 using PHP.Tree;
+using PHP.Library.Internal;
 
 namespace PHP
 {
     public sealed class Context
     {
+        public readonly RootScope RootScope;
         public readonly List<CodeDirectory> RootDirectories = new List<CodeDirectory> ();
         public readonly Dictionary<string, string> Defines = new Dictionary<string, string> ();
+        public readonly IConsole Console = new StandardConsole ();
 
-        public readonly GlobalScope GlobalScope = new GlobalScope ();
+        public Context ()
+        {
+            RootScope = new RootScope (this);
+        }
 
         public void AddDirectory (string value)
         {
@@ -31,7 +37,7 @@ namespace PHP
                 throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");
             }
 
-            file.GetContent ().Run (GlobalScope);
+            file.GetContent ().Run (RootScope);
         }
     }
 }

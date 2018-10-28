@@ -10,15 +10,15 @@ namespace PHP.Tree
 {
     public abstract class CallExpression : Expression
     {
-        public readonly CallSignature Signature;
+        public readonly CallSignature CallSignature;
 
         protected CallExpression (CallSignature signature)
         {
-            Signature = signature;
+            CallSignature = signature;
         }
     }
 
-    public sealed class FunctionCallExpression : CallExpression
+    public class FunctionCallExpression : CallExpression
     {
         public readonly Name Name;
         public readonly Expression MemberOf;
@@ -30,11 +30,17 @@ namespace PHP.Tree
             MemberOf = Expressions.Parse (e.IsMemberOf);
         }
 
+        public FunctionCallExpression (Name name, CallSignature call_signature)
+            : base (call_signature)
+        {
+            Name = name;
+        }
+
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
                 ("member of", MemberOf),
-                ("parameters", Signature.Parameters),
+                ("parameters", CallSignature.Parameters),
             };
         }
 
@@ -60,7 +66,7 @@ namespace PHP.Tree
         {
             return new TreeChildGroup [] {
                 ("member of", MemberOf),
-                ("parameters", Signature.Parameters),
+                ("parameters", CallSignature.Parameters),
             };
         }
 
@@ -83,7 +89,7 @@ namespace PHP.Tree
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("parameters", Signature.Parameters),
+                ("parameters", CallSignature.Parameters),
             };
         }
 
@@ -93,20 +99,11 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class EchoExpression : Expression
+    public sealed class EchoExpression : FunctionCallExpression
     {
-        public readonly ImmutableArray<Expression> Parameters;
-
         public EchoExpression (EchoStmt e)
+            : base ("echo", new CallSignature (e.Parameters.Select (c => Expressions.Parse (c))))
         {
-            Parameters = e.Parameters.Select (c => Expressions.Parse (c)).ToImmutableArray ();
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("parameters", Parameters),
-            };
         }
 
         protected override string GetTypeName ()
@@ -115,25 +112,18 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class DieExpression : Expression
+    public sealed class DieExpression : FunctionCallExpression
     {
         public readonly Expression Result;
 
         public DieExpression (ExitEx e)
+            : base ("die", new CallSignature (Expressions.Parse (e.ResulExpr)))
         {
-            Result = Expressions.Parse (e.ResulExpr);
-        }
-
-        protected override TreeChildGroup [] _getChildren ()
-        {
-            return new TreeChildGroup [] {
-                ("result", Result),
-            };
         }
 
         protected override string GetTypeName ()
         {
-            return $"echo";
+            return $"die";
         }
     }
 

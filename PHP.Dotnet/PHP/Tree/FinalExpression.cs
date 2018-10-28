@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Devsense.PHP.Syntax.Ast;
+using PHP.Standard;
 
 namespace PHP.Tree
 {
@@ -17,11 +18,46 @@ namespace PHP.Tree
         DOUBLE,
     }
 
-    public abstract class LiteralExpression : Expression
+    public abstract class FinalExpression : Expression
     {
+        private static ImmutableHashSet<string> FalseStrings = new []
+        {
+            "false",
+            "False",
+            "FALSE",
+            "null",
+            "Null",
+            "NULL",
+            "0",
+            "0.0",
+        }.ToImmutableHashSet ();
+
+        public virtual string GetStringValue ()
+        {
+            return "";
+        }
+
+        public virtual bool GetBoolValue ()
+        {
+            string s = GetStringValue ();
+            return !string.IsNullOrEmpty (s) && !FalseStrings.Contains (s);
+        }
+
+        public virtual double GetDoubleValue ()
+        {
+            string s = GetStringValue ();
+            return s.ToDouble ();
+        }
+
+        public virtual long GetLongValue ()
+        {
+            string s = GetStringValue ();
+            return s.ToLong ();
+        }
+
     }
 
-    public sealed class StringExpression : LiteralExpression
+    public sealed class StringExpression : FinalExpression
     {
         public readonly string Value;
 
@@ -51,7 +87,7 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class LongExpression : LiteralExpression
+    public sealed class LongExpression : FinalExpression
     {
         public readonly long Value;
 
@@ -96,7 +132,7 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class DoubleExpression : LiteralExpression
+    public sealed class DoubleExpression : FinalExpression
     {
         public readonly double Value;
 
@@ -141,7 +177,7 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class BoolExpression : LiteralExpression
+    public sealed class BoolExpression : FinalExpression
     {
         public readonly bool Value;
 
@@ -186,7 +222,7 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class EmptyExpression : Expression
+    public sealed class EmptyExpression : FinalExpression
     {
         public override string GetStringValue ()
         {
@@ -219,7 +255,7 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class NullExpression : Expression
+    public sealed class NullExpression : FinalExpression
     {
         protected override string GetTypeName ()
         {

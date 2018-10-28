@@ -9,17 +9,17 @@ namespace PHP.Execution
     {
         public static readonly Result NULL = new Result (result_value: new NullExpression ());
 
-        public readonly Expression ResultValue;
+        public readonly FinalExpression ResultValue;
         public readonly bool FastReturn;
 
-        public Result (Expression result_value)
+        public Result (FinalExpression result_value)
             : this (result_value, fast_return: false)
         {
         }
 
-        private Result (Expression result_value, bool fast_return)
+        private Result (FinalExpression result_value, bool fast_return)
         {
-            ResultValue = result_value;
+            ResultValue = result_value ?? new EmptyExpression ();
             FastReturn = fast_return;
         }
 

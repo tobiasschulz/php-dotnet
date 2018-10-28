@@ -51,7 +51,7 @@ namespace PHP
             tree.Print ();
 
             ScriptScope script_scope = new ScriptScope (previous_scope);
-            Interpreters.Run (tree, script_scope);
+            Interpreters.Execute (tree, script_scope);
 
             Console.WriteLine ("----------");
 

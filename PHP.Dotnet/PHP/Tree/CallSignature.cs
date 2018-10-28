@@ -10,10 +10,20 @@ namespace PHP.Tree
     public sealed class CallSignature
     {
         public readonly ImmutableArray<CallParameter> Parameters;
-       
+
         public CallSignature (Devsense.PHP.Syntax.Ast.CallSignature e)
         {
             Parameters = e.Parameters.Select (p => new CallParameter (p)).ToImmutableArray ();
+        }
+
+        public CallSignature (IEnumerable<Expression> expressions)
+        {
+            Parameters = expressions.Select (p => new CallParameter (p)).ToImmutableArray ();
+        }
+
+        public CallSignature (Expression expression)
+        {
+            Parameters = new [] { new CallParameter (expression) }.ToImmutableArray ();
         }
     }
 
@@ -30,6 +40,11 @@ namespace PHP.Tree
         //     Gets value indicating whether the parameter is passed with ... prefix and so
         //     it has to be unpacked before passing to the function call.
         public bool IsUnpack { get; }
+
+        public CallParameter (Expression expression)
+        {
+            Expression = expression;
+        }
 
         public CallParameter (ActualParam p)
         {

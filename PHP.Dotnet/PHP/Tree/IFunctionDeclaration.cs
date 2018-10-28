@@ -12,7 +12,7 @@ namespace PHP.Tree
     public interface IFunctionDeclaration
     {
         Name Name { get; }
-        Result Execute ();
+        Result Execute (CallSignature call_signature, Scope scope);
     }
 
     public sealed class FunctionCollection
@@ -21,7 +21,6 @@ namespace PHP.Tree
 
         public FunctionCollection ()
         {
-
         }
 
         public bool TryGetValue (Name name, out IFunctionDeclaration res)
@@ -38,6 +37,11 @@ namespace PHP.Tree
             return false;
         }
 
+        internal ImmutableArray<IFunctionDeclaration> GetAll ()
+        {
+            return _data;
+        }
+
         public void Add (IFunctionDeclaration value)
         {
             if (value == null) return;
@@ -50,6 +54,18 @@ namespace PHP.Tree
             {
                 _data = _data.Add (value);
             }
+        }
+
+        public void Replace (IFunctionDeclaration value)
+        {
+            if (value == null) return;
+
+            if (TryGetValue (value.Name, out var existing_value))
+            {
+                _data = _data.Remove (existing_value);
+            }
+
+            _data = _data.Add (value);
         }
 
     }

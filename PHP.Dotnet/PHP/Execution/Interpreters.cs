@@ -7,7 +7,7 @@ namespace PHP.Execution
 {
     public sealed class Interpreters
     {
-        public static Result Run (Expression expression, Scope scope)
+        public static Result Execute (Expression expression, Scope scope)
         {
             if (expression == null)
             {
@@ -16,6 +16,9 @@ namespace PHP.Execution
 
             switch (expression)
             {
+                case FinalExpression e:
+                    return new Result (e);
+
                 case BlockExpression e:
                     return BlockInterpreter.Run (e, scope);
 
@@ -25,11 +28,11 @@ namespace PHP.Execution
                 case BinaryExpression e:
                     return BinaryInterpreter.Run (e, scope);
 
-                case EchoExpression e:
-                    return FunctionCallInterpreter.Run (e, scope);
-
                 case FunctionCallExpression e:
                     return FunctionCallInterpreter.Run (e, scope);
+
+                case FunctionDeclarationExpression e:
+                    return FunctionDeclarationInterpreter.Run (e, scope);
 
                 default:
                     Log.Error ($"Unable to execute expression: {expression}");
