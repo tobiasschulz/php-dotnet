@@ -264,7 +264,7 @@ namespace PHP.Tree
 
         public override string GetStringValue ()
         {
-            return "null";
+            return "";
         }
 
         public override long GetLongValue ()

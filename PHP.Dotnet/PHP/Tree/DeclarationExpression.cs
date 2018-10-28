@@ -16,20 +16,20 @@ namespace PHP.Tree
     public sealed class FunctionDeclarationExpression : DeclarationExpression
     {
         public readonly Name Name;
-        public readonly DeclarationSignature Signature;
+        public readonly DeclarationSignature DeclarationSignature;
         public readonly Expression Body;
 
         public FunctionDeclarationExpression (FunctionDecl e)
         {
             Name = e.Name;
-            Signature = new DeclarationSignature (e.Signature);
+            DeclarationSignature = new DeclarationSignature (e.Signature);
             Body = Expressions.Parse (e.Body);
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("parameters", Signature.Parameters),
+                ("parameters", DeclarationSignature.Parameters),
                 ("body", Body),
             };
         }

@@ -29,7 +29,7 @@ namespace PHP.Tree
 
     public sealed class CallParameter : Expression
     {
-        public readonly Expression Expression;
+        public readonly Expression Value;
 
         //
         // Summary:
@@ -43,12 +43,12 @@ namespace PHP.Tree
 
         public CallParameter (Expression expression)
         {
-            Expression = expression;
+            Value = expression;
         }
 
         public CallParameter (ActualParam p)
         {
-            Expression = Expressions.Parse (p.Expression);
+            Value = Expressions.Parse (p.Expression);
             Ampersand = p.Ampersand;
             IsUnpack = p.IsUnpack;
         }
@@ -56,7 +56,7 @@ namespace PHP.Tree
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("", Expression)
+                ("", Value)
             };
         }
 

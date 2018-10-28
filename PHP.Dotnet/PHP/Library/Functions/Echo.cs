@@ -17,7 +17,7 @@ namespace PHP.Library.Functions
         {
             foreach (CallParameter p in call_signature.Parameters)
             {
-                Result param_result = Interpreters.Execute (p.Expression, function_scope);
+                Result param_result = Interpreters.Execute (p.Value, function_scope);
                 function_scope.Root.Context.Console.Out.Write (param_result.ResultValue.GetStringValue ());
             }
 
