@@ -9,23 +9,23 @@ using PHP.Execution;
 
 namespace PHP.Tree
 {
-    public interface IFunctionDeclaration
+    public interface IFunction
     {
         Name Name { get; }
-        Result Execute (CallSignature call_signature, Scope scope);
+        Result Execute (EvaluatedCallSignature call_signature, Scope scope);
     }
 
     public sealed class FunctionCollection
     {
-        private ImmutableArray<IFunctionDeclaration> _data = ImmutableArray<IFunctionDeclaration>.Empty;
+        private ImmutableArray<IFunction> _data = ImmutableArray<IFunction>.Empty;
 
         public FunctionCollection ()
         {
         }
 
-        public bool TryGetValue (Name name, out IFunctionDeclaration res)
+        public bool TryGetValue (Name name, out IFunction res)
         {
-            foreach (IFunctionDeclaration value in _data)
+            foreach (IFunction value in _data)
             {
                 if (value.Name == name)
                 {
@@ -37,12 +37,12 @@ namespace PHP.Tree
             return false;
         }
 
-        internal ImmutableArray<IFunctionDeclaration> GetAll ()
+        internal ImmutableArray<IFunction> GetAll ()
         {
             return _data;
         }
 
-        public void Add (IFunctionDeclaration value)
+        public void Add (IFunction value)
         {
             if (value == null) return;
 
@@ -56,7 +56,7 @@ namespace PHP.Tree
             }
         }
 
-        public void Replace (IFunctionDeclaration value)
+        public void Replace (IFunction value)
         {
             if (value == null) return;
 

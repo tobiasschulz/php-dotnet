@@ -15,13 +15,14 @@ namespace PHP
     {
         private readonly Context _context;
         private readonly string _content_string;
+        private readonly CodeScriptBase _script;
         private readonly PhpSyntaxTree _syntax_tree;
 
-        public CodeContent (Context context, string content_string)
+        public CodeContent (Context context, string content_string, CodeScriptBase script)
         {
             _context = context;
             _content_string = content_string;
-
+            _script = script;
 
             string a = @"
 <?php
@@ -50,7 +51,7 @@ namespace PHP
             Expression tree = Expressions.Parse (_syntax_tree.Root);
             tree.Print ();
 
-            ScriptScope script_scope = new ScriptScope (previous_scope);
+            ScriptScope script_scope = new ScriptScope (previous_scope, _script);
             Interpreters.Execute (tree, script_scope);
 
             Console.WriteLine ("----------");

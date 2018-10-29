@@ -9,21 +9,21 @@ namespace PHP.Tree
     {
     }
 
-    public sealed class Variable : LikeVariable
+    public sealed class VariableExpression : LikeVariable
     {
         public readonly VariableName Name;
 
-        public Variable (VariableName name)
+        public VariableExpression (VariableName name)
         {
             Name = name;
         }
 
-        public Variable (DirectVarUse variable)
+        public VariableExpression (DirectVarUse variable)
         {
             Name = variable.VarName;
         }
 
-        public Variable (Name name)
+        public VariableExpression (Name name)
         {
             Name = new VariableName (name.Value);
         }

@@ -33,5 +33,10 @@ namespace PHP
         {
             return File.ReadAllText (Path);
         }
+
+        protected override string GetScriptPath ()
+        {
+            return Path;
+        }
     }
 }

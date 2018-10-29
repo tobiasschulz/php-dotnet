@@ -39,13 +39,13 @@ namespace PHP.Tree
     public sealed class CatchExpression : Expression
     {
         public readonly Expression Body;
-        public readonly Variable Variable;
+        public readonly VariableExpression Variable;
         public readonly TypeRef TargetType;
 
         public CatchExpression (CatchItem e)
         {
             Body = Expressions.Parse (e.Body);
-            Variable = new Variable (e.Variable);
+            Variable = new VariableExpression (e.Variable);
             TargetType = e.TargetType;
         }
 

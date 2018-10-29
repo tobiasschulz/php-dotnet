@@ -27,9 +27,9 @@ namespace PHP.Tree
                     return new FunctionDeclarationExpression (e);
 
                 case DirectVarUse e:
-                    return new Variable (e.VarName);
+                    return new VariableExpression (e.VarName);
                 case GlobalConstUse e:
-                    return new Variable (e.Name);
+                    return new VariableExpression (e.Name);
                 case PseudoConstUse e:
                     return new PseudoConstExpression (e);
 

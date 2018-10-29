@@ -13,7 +13,9 @@ namespace PHP.Tree
     {
         public override string ToString ()
         {
-            return $"[{this.GetType ().Name}: '{GetTypeName ()}']";
+            string typename = GetTypeName ();
+            if (typename.Contains ('\n')) typename = typename.Replace ("\n", "\\n");
+            return $"[{this.GetType ().Name}: '{typename}']";
         }
 
         public virtual ScalarAffinity GetScalarAffinity ()
@@ -29,6 +31,7 @@ namespace PHP.Tree
 
         protected void _printLine (TreeParams p, string value)
         {
+            if (value.Contains ('\n')) value = value.Replace ("\n", "\\n");
             Log.Debug ($"[  ] {p.indent_str} {value}");
         }
 

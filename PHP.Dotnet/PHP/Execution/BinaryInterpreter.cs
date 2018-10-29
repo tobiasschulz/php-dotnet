@@ -46,10 +46,7 @@ namespace PHP.Execution
                         return new Result (new LongExpression (left.GetLongValue () * right.GetLongValue ()));
 
                 case BinaryOp.DIV:
-                    if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE || left.GetScalarAffinity () == ScalarAffinity.DOUBLE)
-                        return new Result (new DoubleExpression (left.GetDoubleValue () / right.GetDoubleValue ()));
-                    else
-                        return new Result (new LongExpression (left.GetLongValue () / right.GetLongValue ()));
+                    return new Result (new DoubleExpression (left.GetDoubleValue () / right.GetDoubleValue ()));
 
                 case BinaryOp.CONCAT:
                     Log.Debug ($"concat result: left = " + left + ", right = " + right + ", concat = " + new StringExpression (left.GetStringValue () + right.GetStringValue ()));

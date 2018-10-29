@@ -12,89 +12,98 @@ namespace PHP.Tree
         {
         }
 
+        public abstract Scope Parent { get; }
         public abstract RootScope Root { get; }
-        public abstract string GetScopeName ();
+        public abstract IVariableCollection Variables { get; }
+        public abstract string ScopeName { get; }
 
         public override string ToString ()
         {
-            return $"[Scope: '{GetScopeName ()}']";
+            return $"[Scope: {ScopeName}]";
+        }
+
+        public void FindNearestScope<TScope> (Action<TScope> a)
+        {
+            Scope s = this;
+            while (s != null)
+            {
+                if (s is TScope desired_scope)
+                {
+                    a (desired_scope);
+                    break;
+                }
+                s = s.Parent;
+            }
         }
     }
 
     public sealed class RootScope : Scope
     {
         private readonly Context _context;
-        private readonly FunctionCollection _globalfunctions;
+        private readonly FunctionCollection _functions;
+        private readonly VariableCollection _variables;
 
         public RootScope (Context context)
         {
             _context = context;
-            _globalfunctions = new FunctionCollection ();
+            _functions = new FunctionCollection ();
+            _variables = new VariableCollection ();
 
-            StandardLibrary.Populate (_globalfunctions);
+            StandardLibrary.Populate (_functions);
         }
 
-        public override RootScope Root
-        {
-            get => this;
-        }
-
-        public Context Context
-        {
-            get => _context;
-        }
-
-        public FunctionCollection GlobalFunctions
-        {
-            get => _globalfunctions;
-        }
-
-        public override string GetScopeName ()
-        {
-            return "root";
-        }
+        public Context Context => _context;
+        public FunctionCollection GlobalFunctions => _functions;
+        public override Scope Parent => null;
+        public override RootScope Root => this;
+        public override IVariableCollection Variables => _variables;
+        public override string ScopeName => "root";
     }
 
     public sealed class ScriptScope : Scope
     {
         private readonly Scope _parentscope;
+        private readonly IScript _script;
+        private readonly IVariableCollection _variables;
 
-        public ScriptScope (Scope value)
+        public ScriptScope (Scope parentscope, IScript script)
         {
-            _parentscope = value;
+            _parentscope = parentscope;
+            _script = script;
+            _variables = new MergedVariableCollection (
+                collection_readonly: _parentscope.Variables,
+                collection_editable: new VariableCollection ()
+            );
         }
 
-        public override RootScope Root
-        {
-            get => _parentscope.Root;
-        }
-
-        public override string GetScopeName ()
-        {
-            return "script";
-        }
+        public IScript Script => _script;
+        public override Scope Parent => _parentscope;
+        public override RootScope Root => _parentscope.Root;
+        public override IVariableCollection Variables => _variables;
+        public override string ScopeName => "script";
     }
 
     public sealed class FunctionScope : Scope
     {
         private readonly Scope _parentscope;
-        private readonly IFunctionDeclaration _function;
+        private readonly IFunction _function;
+        private readonly IVariableCollection _variables;
 
-        public FunctionScope (Scope value, IFunctionDeclaration function)
+        public FunctionScope (Scope parentscope, IFunction function)
         {
-            _parentscope = value;
+            _parentscope = parentscope;
             _function = function;
+            _variables = new MergedVariableCollection (
+                collection_readonly: _parentscope.Variables,
+                collection_editable: new VariableCollection ()
+            );
         }
 
-        public override RootScope Root
-        {
-            get => _parentscope.Root;
-        }
-
-        public override string GetScopeName ()
-        {
-            return $"function: {_function.Name}";
-        }
+        public IFunction Function => _function;
+        public override Scope Parent => _parentscope;
+        public override RootScope Root => _parentscope.Root;
+        public override IVariableCollection Variables => _variables;
+        public override string ScopeName => $"function: {_function.Name}";
     }
 
 }

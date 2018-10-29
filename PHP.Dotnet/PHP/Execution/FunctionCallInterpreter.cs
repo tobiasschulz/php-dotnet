@@ -12,9 +12,9 @@ namespace PHP.Execution
     {
         public static Result Run (FunctionCallExpression expression, Scope scope)
         {
-            if (scope.Root.GlobalFunctions.TryGetValue (expression.Name, out IFunctionDeclaration function))
+            if (scope.Root.GlobalFunctions.TryGetValue (expression.Name, out IFunction function))
             {
-                return function.Execute (expression.CallSignature, scope);
+                return function.Execute (new EvaluatedCallSignature (expression.CallSignature, scope), scope);
             }
             else
             {

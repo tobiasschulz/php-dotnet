@@ -11,6 +11,9 @@ namespace PHP.Library
         public static void Populate (FunctionCollection functions)
         {
             functions.Add (new Echo ());
+            functions.Add (new Define ());
+            functions.Add (new Realpath ());
+            functions.Add (new Dirname ());
         }
     }
 }
