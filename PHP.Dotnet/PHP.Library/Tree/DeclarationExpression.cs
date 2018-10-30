@@ -36,7 +36,7 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"function call: {Name}";
+            return $"function declaration: {Name}";
         }
     }
 
