@@ -18,7 +18,6 @@ namespace PHP.Library
             functions.Add (new dirname ());
             functions.Add (new ini_set ());
             functions.Add (new error_reporting ());
-            functions.Add (new ini_set ());
             functions.Add (new mb_substr ());
             functions.Add (new function_exists ());
         }

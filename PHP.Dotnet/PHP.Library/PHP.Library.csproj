@@ -11,7 +11,7 @@
     <Authors>Digitalkraft</Authors>
     <Description>PHP interpreter for .NET (library)</Description>
     <PackageId>PHP.Dotnet</PackageId>
-    <PackageVersion>3.0.31.170</PackageVersion>
+    <PackageVersion>3.0.0.1</PackageVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 

@@ -42,4 +42,12 @@ namespace PHP.Tree
         CAST_STRING,
         LOGICAL_NEGATION
     }
+
+    public sealed class NotExpression : UnaryExpression
+    {
+        public NotExpression (Expression value)
+            : base (value, UnaryOp.LOGICAL_NEGATION)
+        {
+        }
+    }
 }
