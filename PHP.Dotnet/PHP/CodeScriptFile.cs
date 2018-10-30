@@ -9,34 +9,35 @@ namespace PHP
 {
     public class CodeScriptFile : CodeScriptBase
     {
-        public readonly string Path;
-        public readonly string PathNormalized;
+        public readonly NormalizedPath FullPath;
+        public readonly NormalizedPath RelativePath;
+        public readonly NormalizedPath BaseDirectory;
 
-        public CodeScriptFile (Context context, string path)
+        public CodeScriptFile (Context context, CodeDirectory base_directory, string full_path)
             : base (context)
         {
-            Path = path;
-            PathNormalized = PathHelper.NormalizePath (path);
-        }
-
-        internal bool PathNormalizedEquals (string value)
-        {
-            return PathNormalized == value;
+            FullPath = new NormalizedPath (full_path);
+            BaseDirectory = base_directory.Path;
         }
 
         public override string ToString ()
         {
-            return $"[CodeFile {Path}]";
+            return $"[CodeFile {FullPath}]";
         }
 
         protected override string RetrieveContent ()
         {
-            return File.ReadAllText (Path);
+            return File.ReadAllText (FullPath.Original);
         }
 
-        protected override string GetScriptPath ()
+        public override NormalizedPath GetScriptPath ()
         {
-            return Path;
+            return FullPath;
+        }
+
+        public override NormalizedPath GetScriptBaseDirectory ()
+        {
+            return BaseDirectory;
         }
     }
 }

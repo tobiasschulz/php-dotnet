@@ -54,7 +54,9 @@ namespace PHP.Parser
 
             // TODO: file.IsScript ? scriptParseOptions : parseOptions
             var unit = new CodeSourceUnit (
-                content_string, filename, Encoding.UTF8,
+                content_string,
+                filename,
+                Encoding.UTF8,
                 Lexer.LexicalStates.INITIAL,
                 LanguageFeatures.Php73Set | LanguageFeatures.ShortOpenTags
             );

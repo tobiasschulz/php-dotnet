@@ -2,6 +2,7 @@
 {
     public interface IScript
     {
-        string ScriptPath { get; }
+        NormalizedPath GetScriptPath ();
+        NormalizedPath GetScriptBaseDirectory ();
     }
 }

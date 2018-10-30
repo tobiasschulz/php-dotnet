@@ -22,6 +22,9 @@ namespace PHP.Execution
                 case DocExpression e:
                     return Result.NULL;
 
+                case RequireFileExpression e:
+                    return RequireFileInterpreter.Run (e, scope);
+
                 case BlockExpression e:
                     return BlockInterpreter.Run (e, scope);
 

@@ -27,11 +27,54 @@ namespace PHP
             RootDirectories.Add (new CodeDirectory (this, value));
         }
 
-        public void RunFile (string value)
+        public void RunFile (NormalizedPath value)
         {
-            string value_normalized = PathHelper.NormalizePath (value);
+            CodeScriptFile file = null;
 
-            CodeScriptFile file = RootDirectories.SelectMany (d => d.Files).FirstOrDefault (f => f.PathNormalizedEquals (value_normalized));
+            foreach (var d in RootDirectories)
+            {
+                file = d.Files.FirstOrDefault (f => f.FullPath == value);
+                if (file != null) break;
+            }
+
+            if (file == null)
+            {
+                foreach (var d in RootDirectories)
+                {
+                    NormalizedPath relative_combined = Path.GetFullPath (Path.Combine (d.Path.Original, value.Original));
+                    file = d.Files.FirstOrDefault (f => f.FullPath == relative_combined);
+                    if (file != null) break;
+                }
+            }
+
+            if (file == null)
+            {
+                throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");
+            }
+
+            file.GetContent ().Run (RootScope);
+        }
+
+        public void RequireFile (NormalizedPath value)
+        {
+            CodeScriptFile file = null;
+
+            foreach (var d in RootDirectories)
+            {
+                file = d.Files.FirstOrDefault (f => f.FullPath == value);
+                if (file != null) break;
+            }
+
+            if (file == null)
+            {
+                foreach (var d in RootDirectories)
+                {
+                    NormalizedPath relative_combined = Path.GetFullPath (Path.Combine (d.Path.Original, value.Original));
+                    file = d.Files.FirstOrDefault (f => f.FullPath == relative_combined);
+                    if (file != null) break;
+                }
+            }
+
             if (file == null)
             {
                 throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");

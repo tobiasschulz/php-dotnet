@@ -15,33 +15,16 @@ namespace PHP
     {
         private readonly Context _context;
         private readonly string _content_string;
-        private readonly CodeScriptBase _script;
+        private readonly IScript _script;
         private readonly PhpSyntaxTree _syntax_tree;
 
-        public CodeContent (Context context, string content_string, CodeScriptBase script)
+        public CodeContent (Context context, string content_string, IScript script)
         {
             _context = context;
             _content_string = content_string;
             _script = script;
 
-            string a = @"
-<?php
-
-    $wrapper = Default_Wrapper::getInstance();
-    $a = $wrapper->getMainWrapper()->getBaseModules();
-
-";
-
-            a = @"
-
-    $wrapper = Default_Wrapper::getInstance();
-    $a = $wrapper->getMainWrapper()->getBaseModules();
-
-";
-
-            a = content_string;
-
-            _syntax_tree = PhpSyntaxTree.ParseCode (context, a, "a.php");
+            _syntax_tree = PhpSyntaxTree.ParseCode (context, content_string, script.GetScriptPath ().Original);
         }
 
         internal void Run (Scope previous_scope)

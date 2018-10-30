@@ -28,9 +28,8 @@ namespace PHP
         }
 
         protected abstract string RetrieveContent ();
-        protected abstract string GetScriptPath ();
-
-        string IScript.ScriptPath => GetScriptPath ();
+        public abstract NormalizedPath GetScriptPath ();
+        public abstract NormalizedPath GetScriptBaseDirectory ();
 
     }
 }

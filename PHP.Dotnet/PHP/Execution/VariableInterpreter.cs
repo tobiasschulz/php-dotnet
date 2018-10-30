@@ -24,7 +24,7 @@ namespace PHP.Execution
                         string value = null;
                         scope.FindNearestScope<ScriptScope> (ss =>
                         {
-                            value = ss.Script.ScriptPath;
+                            value = ss.Script.GetScriptPath ().Original;
                         });
                         return new Result (new StringExpression (value));
                     }
