@@ -127,4 +127,17 @@ namespace PHP.Tree
         }
     }
 
+    public sealed class IssetExpression : FunctionCallExpression
+    {
+        public IssetExpression (IssetEx e)
+            : base ("isset", new CallSignature (e.VarList.Select (c => Expressions.Parse (c))))
+        {
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"isset";
+        }
+    }
+
 }

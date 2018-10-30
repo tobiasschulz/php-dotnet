@@ -71,9 +71,12 @@ namespace PHP.Tree
 
                 case PHPDocStmt e:
                     return new DocExpression ();
-
+                    
                 case InstanceOfEx e:
                     return new InstanceOfExpression (e);
+
+                case IssetEx e:
+                    return new IssetExpression ();
 
                 case EchoStmt e:
                     return new EchoExpression (e);
