@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PHP\PHP.csproj" />
+    <ProjectReference Include="..\PHP.Library\PHP.Library.csproj" />
   </ItemGroup>
 
 </Project>
