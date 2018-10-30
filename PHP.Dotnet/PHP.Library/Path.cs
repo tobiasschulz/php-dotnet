@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using PHP.Helper;
+using PHP.Library.Internal;
 
 namespace PHP
 {

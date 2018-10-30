@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
-using PHP.Helper;
 using PHP.Standard;
 using PHP.Tree;
 using PHP.Library.Internal;

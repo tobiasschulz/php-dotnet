@@ -28,7 +28,7 @@ namespace PHP.Execution
             string basedir = null;
             scope.FindNearestScope<ScriptScope> (ss =>
             {
-                basedir = ss.Script.GetScriptBaseDirectory ().Original.Trim ('/', '\\');
+                basedir = ss.Script.GetScriptBaseDirectory ().Original.TrimEnd ('/', '\\');
             });
 
             if (basedir != null)

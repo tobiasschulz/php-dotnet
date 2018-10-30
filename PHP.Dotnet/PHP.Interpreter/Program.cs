@@ -16,7 +16,7 @@ namespace PHP.Interpreter
                 context.AddDirectory (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/dk_" + @"r" + @"m/src");
                 context.AddDirectory (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/dk_" + @"ap" + @"p/src");
 
-                context.RunFile (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/src/public/index.php");
+                context.RunFile (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/dk_" + @"fra" + @"mewo" + @"rk/src/public/index.php");
             }
             else {
                 context.AddDirectory (@"C:\tobias.schulz\GIT\df" + @"d_po" + @"sdb\src");

@@ -4,7 +4,6 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Collections.Immutable;
-using PHP.Helper;
 using PHP.Standard;
 
 namespace PHP
