@@ -7,11 +7,9 @@ namespace PHP.Interpreter
     {
         static void Main (string [] args)
         {
-            Console.WriteLine ("Hello World!");
-
             Context context = new Context ();
 
-            if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k / "))
+            if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k/"))
             {
                 context.AddDirectory (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/df" + @"d_po" + @"sdb/src");
                 context.AddDirectory (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/dk_" + @"fra" + @"mewo" + @"rk/src");
