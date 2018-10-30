@@ -37,6 +37,11 @@ namespace PHP.Tree
             return false;
         }
 
+        public bool Contains (Name name)
+        {
+            return TryGetValue (name, out var dummy);
+        }
+
         internal ImmutableArray<IFunction> GetAll ()
         {
             return _data;

@@ -113,6 +113,8 @@ namespace PHP.Tree
 
                 case UnaryEx e when e.Operation == Operations.StringCast:
                     return new UnaryExpression (e.Expr, UnaryOp.CAST_STRING);
+                case UnaryEx e when e.Operation == Operations.LogicNegation:
+                    return new UnaryExpression (e.Expr, UnaryOp.LOGICAL_NEGATION);
 
                 case Devsense.PHP.Syntax.Ast.Expression e:
                     Log.Error ($"Expression: {e}, {e.Operation}");

@@ -39,7 +39,7 @@ namespace PHP.Tree
 
     public enum UnaryOp
     {
-        StringCast,
-        CAST_STRING
+        CAST_STRING,
+        LOGICAL_NEGATION
     }
 }

@@ -8,23 +8,21 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class realpath : Function
+    public sealed class die : Function
     {
-        public realpath ()
-            : base ("realpath")
+        public die ()
+            : base ("die")
         {
         }
 
         protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
         {
-            if (parameters.Length != 1)
+            foreach (EvaluatedCallParameter p in parameters)
             {
-                throw new WrongParameterCountException (this, expected: 1, actual: parameters.Length);
+                function_scope.Root.Context.Console.Err.Write (p.EvaluatedValue.GetStringValue ());
             }
 
-            string path = parameters [0].EvaluatedValue.GetStringValue ();
-
-            return new Result (new StringExpression (path));
+            return new Result (new NullExpression ()).DoFastReturn ();
         }
     }
 }

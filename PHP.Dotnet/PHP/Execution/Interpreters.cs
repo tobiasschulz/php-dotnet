@@ -35,6 +35,8 @@ namespace PHP.Execution
 
                 case BinaryExpression e:
                     return BinaryInterpreter.Run (e, scope);
+                case UnaryExpression e:
+                    return UnaryInterpreter.Run (e, scope);
 
                 case FunctionCallExpression e:
                     return FunctionCallInterpreter.Run (e, scope);

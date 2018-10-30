@@ -8,10 +8,10 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class define : Function
+    public sealed class ini_set : Function
     {
-        public define ()
-            : base ("define")
+        public ini_set ()
+            : base ("ini_set")
         {
         }
 

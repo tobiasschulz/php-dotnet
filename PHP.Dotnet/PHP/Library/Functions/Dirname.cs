@@ -8,9 +8,9 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class Dirname : Function
+    public sealed class dirname : Function
     {
-        public Dirname ()
+        public dirname ()
             : base ("dirname")
         {
         }

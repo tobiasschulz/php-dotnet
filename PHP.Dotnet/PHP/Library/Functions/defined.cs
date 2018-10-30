@@ -8,10 +8,10 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class realpath : Function
+    public sealed class defined : Function
     {
-        public realpath ()
-            : base ("realpath")
+        public defined ()
+            : base ("defined")
         {
         }
 
@@ -22,9 +22,11 @@ namespace PHP.Library.Functions
                 throw new WrongParameterCountException (this, expected: 1, actual: parameters.Length);
             }
 
-            string path = parameters [0].EvaluatedValue.GetStringValue ();
+            FinalExpression param_1 = parameters [0].EvaluatedValue;
 
-            return new Result (new StringExpression (path));
+            bool does_exist = function_scope.Root.Variables.Contains (new VariableName (param_1.GetStringValue ()));
+
+            return new Result (new BoolExpression (does_exist));
         }
     }
 }
