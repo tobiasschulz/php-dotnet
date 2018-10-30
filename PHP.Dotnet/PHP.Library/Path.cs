@@ -4,8 +4,12 @@ using PHP.Library.Internal;
 
 namespace PHP
 {
-    public struct NormalizedPath : IEquatable<NormalizedPath>
+    public readonly struct NormalizedPath : IEquatable<NormalizedPath>
     {
+        public static readonly NormalizedPath DEFAULT_ROOT = new NormalizedPath ("/");
+        public static readonly NormalizedPath DEFAULT_DOT = new NormalizedPath (".");
+        public static readonly NormalizedPath DEFAULT_EVAL_PHP = new NormalizedPath ("eval.php");
+
         private readonly string _original;
         private readonly string _normalized;
         private readonly int _hashcode;

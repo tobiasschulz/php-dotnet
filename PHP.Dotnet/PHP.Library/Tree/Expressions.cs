@@ -76,7 +76,7 @@ namespace PHP.Tree
                     return new InstanceOfExpression (e);
 
                 case IssetEx e:
-                    return new IssetExpression ();
+                    return new IssetExpression (e);
 
                 case EchoStmt e:
                     return new EchoExpression (e);

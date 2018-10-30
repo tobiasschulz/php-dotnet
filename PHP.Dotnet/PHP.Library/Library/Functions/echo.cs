@@ -16,12 +16,16 @@ namespace PHP.Library.Functions
 
         protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
         {
+            StringBuilder sb = new StringBuilder ();
+
             foreach (EvaluatedCallParameter p in parameters)
             {
-                function_scope.Root.Context.Console.Out.Write (p.EvaluatedValue.GetStringValue ());
+                string s = p.EvaluatedValue.GetStringValue ();
+                sb.Append (s);
+                function_scope.Root.Context.Console.Out.Write (s);
             }
 
-            return Result.NULL;
+            return new Result (new StringExpression (sb.ToString ()));
         }
     }
 }

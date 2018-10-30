@@ -14,6 +14,7 @@ namespace PHP.Library
             functions.Add (new echo ());
             functions.Add (new define ());
             functions.Add (new defined ());
+            functions.Add (new isset ());
             functions.Add (new die ());
             functions.Add (new realpath ());
             functions.Add (new dirname ());

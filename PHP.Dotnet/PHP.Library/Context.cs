@@ -26,6 +26,26 @@ namespace PHP
             RootDirectories.Add (new CodeDirectory (this, value));
         }
 
+        string Eval (string code, out string [] diagnostics, NormalizedPath base_directory = default, NormalizedPath relative_path = default)
+        {
+            base_directory = base_directory != default ? base_directory : NormalizedPath.DEFAULT_DOT;
+            relative_path = relative_path != default ? relative_path : NormalizedPath.DEFAULT_DOT;
+
+            CodeScriptEval file = new CodeScriptEval (this, base_directory, relative_path, code);
+
+            return file.GetContent ().Eval (RootScope, out diagnostics);
+        }
+
+        public string Eval (string code, NormalizedPath base_directory = default, NormalizedPath relative_path = default)
+        {
+            base_directory = base_directory != default ? base_directory : NormalizedPath.DEFAULT_DOT;
+            relative_path = relative_path != default ? relative_path : NormalizedPath.DEFAULT_DOT;
+
+            CodeScriptEval file = new CodeScriptEval (this, base_directory, relative_path, code);
+
+            return file.GetContent ().Eval (RootScope);
+        }
+
         public void RunFile (NormalizedPath value)
         {
             CodeScriptFile file = null;

@@ -7,6 +7,7 @@ using Devsense.PHP.Syntax;
 using PHP.Parser;
 using PHP.Tree;
 using PHP.Execution;
+using System.Linq;
 
 namespace PHP
 {
@@ -26,7 +27,32 @@ namespace PHP
             _syntax_tree = PhpSyntaxTree.ParseCode (context, content_string, script.GetScriptPath ().Original);
         }
 
-        internal void Run (Scope previous_scope)
+        public string Eval (Scope previous_scope, out string [] diagnostics)
+        {
+            Expression tree = Expressions.Parse (_syntax_tree.Root);
+            tree.Print ();
+            ScriptScope script_scope = new ScriptScope (previous_scope, _script);
+            List<string> diags = new List<string> ();
+            foreach (var diag in _syntax_tree.Diagnostics)
+            {
+                diags.Add (diag.ToString ());
+            }
+            string res = Interpreters.Execute (tree, script_scope).ResultValue.GetStringValue ();
+            diagnostics = diags.ToArray ();
+            return res;
+        }
+
+        public string Eval (Scope previous_scope)
+        {
+            string res = Eval (previous_scope, out var diagnostics);
+            if (diagnostics.Length != 0)
+            {
+                throw new Exception (diagnostics.Join ("\n"));
+            }
+            return res;
+        }
+
+        public void Run (Scope previous_scope)
         {
             Console.WriteLine ("----------");
 

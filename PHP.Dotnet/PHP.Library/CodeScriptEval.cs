@@ -6,26 +6,29 @@ using PHP.Standard;
 
 namespace PHP
 {
-    public class CodeScriptFile : CodeScriptBase
+    public class CodeScriptEval : CodeScriptBase
     {
+        private readonly string _code;
         public readonly NormalizedPath FullPath;
         public readonly NormalizedPath BaseDirectory;
 
-        public CodeScriptFile (Context context, CodeDirectory base_directory, string full_path)
+        public CodeScriptEval (Context context, NormalizedPath base_directory, NormalizedPath relative_path, string code)
             : base (context)
         {
-            FullPath = new NormalizedPath (full_path);
-            BaseDirectory = base_directory.Path;
+            _code = code;
+            FullPath = new NormalizedPath (Path.Combine (base_directory.Original, relative_path.Original));
+            BaseDirectory = base_directory;
         }
+
 
         public override string ToString ()
         {
-            return $"[CodeFile {FullPath}]";
+            return $"[CodeEval {FullPath}]";
         }
 
         protected override string RetrieveContent ()
         {
-            return File.ReadAllText (FullPath.Original);
+            return _code;
         }
 
         public override NormalizedPath GetScriptPath ()
