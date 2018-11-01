@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Xunit;
 
 public class SimpleTests : BaseTests

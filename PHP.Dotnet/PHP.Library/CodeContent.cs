@@ -27,50 +27,65 @@ namespace PHP
             _syntax_tree = PhpSyntaxTree.ParseCode (context, content_string, script.GetScriptPath ().Original);
         }
 
-        public string Eval (Scope previous_scope, out string [] diagnostics)
+        public string Eval (Scope previous_scope, ContextOptions options, List<string> diagnostics = null)
         {
             Expression tree = Expressions.Parse (_syntax_tree.Root);
             tree.Print ();
             ScriptScope script_scope = new ScriptScope (previous_scope, _script);
-            List<string> diags = new List<string> ();
-            foreach (var diag in _syntax_tree.Diagnostics)
+
+            if (_syntax_tree.Diagnostics.Length != 0)
             {
-                diags.Add (diag.ToString ());
+                if (diagnostics != null)
+                    foreach (var diag in _syntax_tree.Diagnostics)
+                        diagnostics.Add (diag.ToString ());
+                else
+                    throw new Exception (_syntax_tree.Diagnostics.Join ("\n"));
             }
+
             string res = Interpreters.Execute (tree, script_scope).ResultValue.GetStringValue ();
-            diagnostics = diags.ToArray ();
+
+            if (options.DEBUG_EXECUTION)
+            {
+                Console.ReadLine ();
+            }
+
             return res;
         }
 
-        public string Eval (Scope previous_scope)
+        public void Run (Scope previous_scope, ContextOptions options)
         {
-            string res = Eval (previous_scope, out var diagnostics);
-            if (diagnostics.Length != 0)
+            if (options.DEBUG_EXECUTION)
             {
-                throw new Exception (diagnostics.Join ("\n"));
+                Console.WriteLine ("----------");
+
+                Expression tree = Expressions.Parse (_syntax_tree.Root);
+                tree.Print ();
+
+                ScriptScope script_scope = new ScriptScope (previous_scope, _script);
+                Interpreters.Execute (tree, script_scope);
+
+                Console.WriteLine ("----------");
+
+                foreach (var diag in _syntax_tree.Diagnostics)
+                {
+                    Log.Debug (diag);
+                }
+
+                Console.ReadLine ();
             }
-            return res;
-        }
-
-        public void Run (Scope previous_scope)
-        {
-            Console.WriteLine ("----------");
-
-            Expression tree = Expressions.Parse (_syntax_tree.Root);
-            tree.Print ();
-
-            ScriptScope script_scope = new ScriptScope (previous_scope, _script);
-            Interpreters.Execute (tree, script_scope);
-
-            Console.WriteLine ("----------");
-
-            foreach (var diag in _syntax_tree.Diagnostics)
+            else
             {
-                Log.Debug (diag);
+                Expression tree = Expressions.Parse (_syntax_tree.Root);
+                tree.Print ();
+
+                ScriptScope script_scope = new ScriptScope (previous_scope, _script);
+                Interpreters.Execute (tree, script_scope);
+
+                foreach (var diag in _syntax_tree.Diagnostics)
+                {
+                    Log.Debug (diag);
+                }
             }
-
-            Console.ReadLine ();
-
 
             /*
             _content_tokenized.DumpLog ();

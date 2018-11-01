@@ -25,6 +25,8 @@ namespace PHP.Tree
 
                 case FunctionDecl e:
                     return new FunctionDeclarationExpression (e);
+                case NamedTypeDecl e:
+                    return new ClassDeclarationExpression (e);
 
                 case DirectVarUse e:
                     return new VariableExpression (e.VarName);

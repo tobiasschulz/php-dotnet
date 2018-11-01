@@ -7,7 +7,7 @@ namespace PHP.Interpreter
     {
         static void Main (string [] args)
         {
-            Context context = new Context ();
+            Context context = new Context (new ContextOptions { DEBUG_EXECUTION = true, });
 
             if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k/"))
             {
