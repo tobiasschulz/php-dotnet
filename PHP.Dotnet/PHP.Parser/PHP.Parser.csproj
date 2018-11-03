@@ -9,8 +9,8 @@
     <Version>1.0.0.0</Version>
     <FileVersion>1.0.0.0</FileVersion>
     <Authors>Digitalkraft</Authors>
-    <Description>PHP interpreter for .NET (library)</Description>
-    <PackageId>PHP.Dotnet.Library</PackageId>
+    <Description>PHP interpreter for .NET (parser)</Description>
+    <PackageId>PHP.Dotnet.Parser</PackageId>
     <PackageVersion>3.0.0.1</PackageVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
