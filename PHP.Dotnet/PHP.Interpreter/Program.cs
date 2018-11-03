@@ -7,7 +7,13 @@ namespace PHP.Interpreter
     {
         static void Main (string [] args)
         {
-            Context context = new Context (new ContextOptions { DEBUG_EXECUTION = true, });
+            Context context = new Context (
+                options: new ContextOptions
+                {
+                    DEBUG_EXECUTION = true,
+                },
+                parser: new PHP.Parser.Parser ()
+            );
 
             if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k/"))
             {
@@ -18,7 +24,8 @@ namespace PHP.Interpreter
 
                 context.RunFile (@"/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/dk_" + @"fra" + @"mewo" + @"rk/src/public/index.php");
             }
-            else {
+            else
+            {
                 context.AddDirectory (@"C:\tobias.schulz\GIT\df" + @"d_po" + @"sdb\src");
                 context.AddDirectory (@"C:\tobias.schulz\GIT\dk_" + @"fra" + @"mewo" + @"rk\src");
                 context.AddDirectory (@"C:\tobias.schulz\GIT\dk_" + @"r" + @"m\src");

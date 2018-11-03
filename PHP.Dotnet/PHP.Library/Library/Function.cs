@@ -11,18 +11,18 @@ namespace PHP.Library
 {
     public abstract class Function : IFunction
     {
-        private readonly Name _name;
+        private readonly NameOfFunction _name;
 
-        protected Function (Name name)
+        protected Function (NameOfFunction name)
         {
             _name = name;
         }
 
-        public Name Name => _name;
+        public NameOfFunction Name => _name;
 
         protected abstract Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope);
 
-        Name IFunction.Name => Name;
+        NameOfFunction IFunction.Name => Name;
 
         Result IFunction.Execute (EvaluatedCallSignature call_signature, Scope scope)
         {

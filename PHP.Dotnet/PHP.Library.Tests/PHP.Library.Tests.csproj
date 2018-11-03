@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PHP.Library\PHP.Library.csproj" />
+    <ProjectReference Include="..\PHP.Parser\PHP.Parser.csproj" />
   </ItemGroup>
 </Project>

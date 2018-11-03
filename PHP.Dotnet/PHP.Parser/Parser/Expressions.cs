@@ -76,7 +76,7 @@ namespace PHP.Parser
                     return ToFunctionCallExpression (e);
 
                 case ArrayEx e:
-                    return new ArrayExpression (e);
+                    return ToArrayExpression (e);
 
                 case ValueAssignEx e:
                     return ToAssignExpression (e);
@@ -144,6 +144,42 @@ namespace PHP.Parser
             }
         }
 
+        private static ArrayExpression ToArrayExpression (ArrayEx e)
+        {
+            ImmutableArray<ArrayItemExpression> items = e.Items.Select (i =>
+            {
+                if (i == null) return null;
+                switch (i)
+                {
+                    case ValueItem v:
+                        return (ArrayItemExpression)ToArrayItemValueExpression (v);
+                    case RefItem v:
+                        return (ArrayItemExpression)ToArrayItemRefExpression (v);
+                    default:
+                        Log.Error ($"Unknown kind of array item: {i}");
+                        return null;
+                }
+            }).Where (i => i != null).ToImmutableArray ();
+
+            return new ArrayExpression (items);
+        }
+
+        private static ArrayItemExpression ToArrayItemRefExpression (RefItem e)
+        {
+            return new ArrayItemRefExpression (
+                key: Expressions.Parse (e.Index),
+                value: Expressions.Parse (e.RefToGet)
+            );
+        }
+
+        private static ArrayItemExpression ToArrayItemValueExpression (ValueItem e)
+        {
+            return new ArrayItemValueExpression (
+                key: Expressions.Parse (e.Index),
+                value: Expressions.Parse (e.ValueExpr)
+            );
+        }
+
         private static ConditionalBlockExpression ToConditionalBlockExpression (IfStmt e)
         {
             ImmutableArray<BaseIfExpression> if_expr = ImmutableArray<BaseIfExpression>.Empty;
@@ -154,7 +190,7 @@ namespace PHP.Parser
                 {
                     if (else_expr == null)
                     {
-                        else_expr = new ElseExpression (c);
+                        else_expr = ToElseExpression (c);
                     }
                     else
                     {
@@ -165,11 +201,11 @@ namespace PHP.Parser
                 {
                     if (if_expr.Length == 0)
                     {
-                        if_expr = if_expr.Add (new IfExpression (c));
+                        if_expr = if_expr.Add (ToIfExpression (c));
                     }
                     else
                     {
-                        if_expr = if_expr.Add (new ElseIfExpression (c));
+                        if_expr = if_expr.Add (ToElseIfExpression (c));
                     }
                 }
             }
@@ -178,6 +214,21 @@ namespace PHP.Parser
                 if_expr,
                 else_expr
             );
+        }
+
+        private static IfExpression ToIfExpression (ConditionalStmt c)
+        {
+            return new IfExpression (condition: Expressions.Parse (c.Condition), body: Expressions.Parse (c.Statement));
+        }
+
+        private static ElseIfExpression ToElseIfExpression (ConditionalStmt c)
+        {
+            return new ElseIfExpression (condition: Expressions.Parse (c.Condition), body: Expressions.Parse (c.Statement));
+        }
+
+        private static ElseExpression ToElseExpression (ConditionalStmt c)
+        {
+            return new ElseExpression (body: Expressions.Parse (c.Statement));
         }
 
         private static ForeachExpression ToForeachExpression (ForeachStmt e)

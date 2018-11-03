@@ -9,7 +9,10 @@ public abstract class BaseTests
     {
         ContextOptions options = new ContextOptions ();
         on_options?.Invoke (options);
-        Context context = new Context (options);
+        Context context = new Context (
+            options: options,
+            parser: new PHP.Parser.Parser ()
+        );
         return context.Eval (code);
     }
 

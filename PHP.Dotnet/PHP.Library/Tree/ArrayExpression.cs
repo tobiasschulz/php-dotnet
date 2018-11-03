@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
-using Devsense.PHP.Syntax.Ast;
 
 namespace PHP.Tree
 {
@@ -8,22 +7,9 @@ namespace PHP.Tree
     {
         public readonly ImmutableArray<ArrayItemExpression> Items;
 
-        public ArrayExpression (ArrayEx e)
+        public ArrayExpression (ImmutableArray<ArrayItemExpression> items)
         {
-            Items = e.Items.Select (i =>
-            {
-                if (i == null) return null;
-                switch (i)
-                {
-                    case ValueItem v:
-                        return (ArrayItemExpression)new ArrayItemValueExpression (v);
-                    case RefItem v:
-                        return (ArrayItemExpression)new ArrayItemRefExpression (v);
-                    default:
-                        Log.Error ($"Unknown kind of array item: {i}");
-                        return null;
-                }
-            }).Where (i => i != null).ToImmutableArray ();
+            Items = items;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -62,8 +48,8 @@ namespace PHP.Tree
 
     public sealed class ArrayItemValueExpression : ArrayItemExpression
     {
-        public ArrayItemValueExpression (ValueItem e)
-            : base (Expressions.Parse (e.Index), Expressions.Parse (e.ValueExpr))
+        public ArrayItemValueExpression (Expression key, Expression value)
+            : base (key, value)
         {
         }
 
@@ -75,8 +61,8 @@ namespace PHP.Tree
 
     public sealed class ArrayItemRefExpression : ArrayItemExpression
     {
-        public ArrayItemRefExpression (RefItem e)
-            : base (Expressions.Parse (e.Index), Expressions.Parse (e.RefToGet))
+        public ArrayItemRefExpression (Expression key, Expression value)
+            : base (key, value)
         {
         }
 

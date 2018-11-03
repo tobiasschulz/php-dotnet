@@ -90,10 +90,10 @@ namespace PHP.Tree
         public readonly Expression Condition;
         public readonly Expression Body;
 
-        public BaseIfExpression (ConditionalStmt e)
+        public BaseIfExpression (Expression condition, Expression body)
         {
-            Condition = Expressions.Parse (e.Condition);
-            Body = Expressions.Parse (e.Statement);
+            Condition = condition;
+            Body = body;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -107,8 +107,8 @@ namespace PHP.Tree
 
     public sealed class IfExpression : BaseIfExpression
     {
-        public IfExpression (ConditionalStmt e)
-            : base (e)
+        public IfExpression (Expression condition, Expression body)
+            : base (condition, body)
         {
         }
 
@@ -120,8 +120,8 @@ namespace PHP.Tree
 
     public sealed class ElseIfExpression : BaseIfExpression
     {
-        public ElseIfExpression (ConditionalStmt e)
-            : base (e)
+        public ElseIfExpression (Expression condition, Expression body)
+            : base (condition, body)
         {
         }
 
@@ -135,9 +135,9 @@ namespace PHP.Tree
     {
         public readonly Expression Body;
 
-        public ElseExpression (ConditionalStmt e)
+        public ElseExpression (Expression body)
         {
-            Body = Expressions.Parse (e.Statement);
+            Body = body;
         }
 
         protected override TreeChildGroup [] _getChildren ()

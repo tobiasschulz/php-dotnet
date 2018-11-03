@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace PHP.Tree
 {
+    /*
     public struct Name : IEquatable<Name>, IEquatable<string>
     {
         private readonly string _value;
@@ -138,4 +139,7 @@ namespace PHP.Tree
         }
 
     }
+    */
+
+
 }

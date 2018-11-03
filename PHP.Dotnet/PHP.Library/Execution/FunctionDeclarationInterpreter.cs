@@ -27,7 +27,7 @@ namespace PHP.Execution
                 _expression = expression;
             }
 
-            Name IFunction.Name => _expression.Name;
+            NameOfFunction IFunction.Name => _expression.Name;
 
             Result IFunction.Execute (EvaluatedCallSignature call_signature, Scope outer_scope)
             {

@@ -11,7 +11,7 @@ namespace PHP.Library.TypeSystem
 {
     public interface IFunction
     {
-        Name Name { get; }
+        NameOfFunction Name { get; }
         Result Execute (EvaluatedCallSignature call_signature, Tree.Scope scope);
     }
 
@@ -23,7 +23,7 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        public bool TryGetValue (Name name, out IFunction res)
+        public bool TryGetValue (NameOfFunction name, out IFunction res)
         {
             foreach (IFunction value in _data)
             {
@@ -37,7 +37,7 @@ namespace PHP.Library.TypeSystem
             return false;
         }
 
-        public bool Contains (Name name)
+        public bool Contains (NameOfFunction name)
         {
             return TryGetValue (name, out var dummy);
         }

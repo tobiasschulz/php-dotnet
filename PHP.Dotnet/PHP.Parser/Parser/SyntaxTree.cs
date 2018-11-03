@@ -46,7 +46,7 @@ namespace PHP.Parser
             _source = source ?? throw new ArgumentNullException (nameof (source));
         }
 
-        public static SyntaxTree ParseCode (PhpParser parser, Context context, string content_string, string filename)
+        public static SyntaxTree ParseCode (Parser parser, Context context, string content_string, string filename)
         {
             if (filename == null)
             {

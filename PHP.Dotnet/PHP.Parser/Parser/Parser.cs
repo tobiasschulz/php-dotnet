@@ -6,7 +6,7 @@ using PHP.Tree;
 
 namespace PHP.Parser
 {
-    public sealed class PhpParser : IParser
+    public sealed class Parser : IParser
     {
         IParseResult IParser.ParseCode (Context context, string content_string, string filename)
         {
