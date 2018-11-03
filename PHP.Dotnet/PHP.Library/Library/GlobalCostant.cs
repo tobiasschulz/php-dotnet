@@ -11,19 +11,19 @@ namespace PHP.Library
 {
     public abstract class GlobalConstant : IVariable
     {
-        private readonly VariableName _name;
+        private readonly NameOfVariable _name;
 
-        protected GlobalConstant (VariableName name)
+        protected GlobalConstant (NameOfVariable name)
         {
             _name = name;
         }
 
-        public VariableName Name => _name;
+        public NameOfVariable Name => _name;
         public FinalExpression Value => _getValue ();
 
         internal abstract FinalExpression _getValue ();
 
-        VariableName IVariable.Name => _name;
+        NameOfVariable IVariable.Name => _name;
         FinalExpression IVariable.Value
         {
             get => _getValue ();

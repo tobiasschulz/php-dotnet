@@ -5,7 +5,7 @@ using Devsense.PHP.Text;
 
 namespace PHP.Parser
 {
-    public sealed class PhpNodesFactory : BasicNodesFactory
+    public sealed class NodesFactory : BasicNodesFactory
     {
         private readonly IReadOnlyDictionary<string, string> _defines;
 
@@ -125,7 +125,7 @@ namespace PHP.Parser
             return base.ConstUse (span, name);
         }
 
-        public PhpNodesFactory (SourceUnit sourceUnit, IReadOnlyDictionary<string, string> defines)
+        public NodesFactory (SourceUnit sourceUnit, IReadOnlyDictionary<string, string> defines)
             : base (sourceUnit)
         {
             _defines = defines;

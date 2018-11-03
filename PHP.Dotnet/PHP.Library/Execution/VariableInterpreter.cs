@@ -44,7 +44,7 @@ namespace PHP.Execution
                     Log.Error ($"Pseudo constant is not implemented: {pseudo_const_expression.Type}, scope: {scope}");
                     break;
             }
-            scope.Variables.EnsureExists (new VariableName (pseudo_const_expression.Type.ToString ()), out IVariable variable);
+            scope.Variables.EnsureExists (new NameOfVariable (pseudo_const_expression.Type.ToString ()), out IVariable variable);
             return new Result (variable.Value);
         }
         

@@ -86,30 +86,11 @@ namespace PHP.Tree
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static implicit operator Name (Devsense.PHP.Syntax.Name other)
-        {
-            return new Name (other.Value);
-        }
-
         public static implicit operator Name (string other)
         {
             return new Name (other);
         }
 
-        public static implicit operator Name (Devsense.PHP.Syntax.NameRef other)
-        {
-            return new Name (other.Name.Value);
-        }
-
-        public static implicit operator Name (Devsense.PHP.Syntax.QualifiedName other)
-        {
-            return new Name (other.Name.Value);
-        }
-
-        public static implicit operator Name (Devsense.PHP.Syntax.TranslatedQualifiedName other)
-        {
-            return new Name (other.Name.QualifiedName.Name.Value);
-        }
     }
 
     public static class NameHelper

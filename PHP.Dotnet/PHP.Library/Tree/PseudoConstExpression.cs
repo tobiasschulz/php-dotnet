@@ -1,14 +1,12 @@
-﻿using Devsense.PHP.Syntax.Ast;
-
-namespace PHP.Tree
+﻿namespace PHP.Tree
 {
     public sealed class PseudoConstExpression : Expression
     {
         public readonly PseudoConstType Type;
 
-        public PseudoConstExpression (PseudoConstUse e)
+        public PseudoConstExpression (PseudoConstType type)
         {
-            Type = (PseudoConstType)e.Type;
+            Type = type;
         }
 
         protected override string GetTypeName ()

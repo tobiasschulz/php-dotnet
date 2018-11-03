@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Devsense.PHP.Syntax.Ast;
+using PHP.Library.TypeSystem;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -170,9 +171,9 @@ namespace PHP.Tree
     {
         public readonly ImmutableArray<Expression> VarList;
 
-        public GlobalStmtExpression (GlobalStmt e)
+        public GlobalStmtExpression (ImmutableArray<Expression> varlist)
         {
-            VarList = e.VarList.Select (c => Expressions.Parse (c)).ToImmutableArray ();
+            VarList = varlist;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -193,10 +194,10 @@ namespace PHP.Tree
         public readonly Expression Left;
         public readonly Expression Right;
 
-        public AssignExpression (ValueAssignEx e)
+        public AssignExpression (Expression left, Expression right)
         {
-            Left = Expressions.Parse (e.LValue);
-            Right = Expressions.Parse (e.RValue);
+            Left = left;
+            Right = right;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -215,13 +216,13 @@ namespace PHP.Tree
 
     public sealed class InstanceOfExpression : Expression
     {
-        public readonly Name? TypeName;
+        public readonly NameOfClass Name;
         public readonly Expression Value;
 
-        public InstanceOfExpression (InstanceOfEx e)
+        public InstanceOfExpression (NameOfClass name, Expression value)
         {
-            TypeName = e.ClassNameRef.QualifiedName;
-            Value = Expressions.Parse (e.Expression);
+            Name = name;
+            Value = value;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -233,7 +234,7 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"instance of: {TypeName}";
+            return $"instance of: {Name}";
         }
     }
 
@@ -242,10 +243,10 @@ namespace PHP.Tree
         public readonly InclusionType Mode;
         public readonly Expression FilePath;
 
-        public RequireFileExpression (IncludingEx e)
+        public RequireFileExpression (InclusionType mode, Expression file_path)
         {
-            Mode = (InclusionType)e.InclusionType;
-            FilePath = Expressions.Parse (e.Target);
+            Mode = mode;
+            FilePath = file_path;
         }
 
         protected override TreeChildGroup [] _getChildren ()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Library.TypeSystem;
 using PHP.Standard;
 
@@ -16,15 +15,15 @@ namespace PHP.Tree
 
     public sealed class FunctionDeclarationExpression : DeclarationExpression
     {
-        public readonly Name Name;
+        public readonly NameOfFunction Name;
         public readonly DeclarationSignature DeclarationSignature;
         public readonly Expression Body;
 
-        public FunctionDeclarationExpression (FunctionDecl e)
+        public FunctionDeclarationExpression (NameOfFunction name, DeclarationSignature declaration_signature, Expression body)
         {
-            Name = e.Name;
-            DeclarationSignature = new DeclarationSignature (e.Signature);
-            Body = Expressions.Parse (e.Body);
+            Name = name;
+            DeclarationSignature = declaration_signature;
+            Body = body;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -43,28 +42,13 @@ namespace PHP.Tree
 
     public sealed class ClassDeclarationExpression : DeclarationExpression
     {
-        public readonly Name Name;
+        public readonly NameOfClass Name;
         public readonly ImmutableArray<Expression> Members;
 
-        public ClassDeclarationExpression (NamedTypeDecl e)
+        public ClassDeclarationExpression (NameOfClass name, ImmutableArray<Expression> members)
         {
-            Name = e.Name;
-            Members = e.Members.SelectMany (member =>
-            {
-                MemberAttributes attributes = new MemberAttributes (member.Modifiers);
-                switch (member)
-                {
-                    case FieldDeclList l:
-                        return l.Fields.Select (f => new ClassFieldDeclarationExpression (attributes, f));
-
-                    case MethodDecl l:
-                        return new [] { new ClassMethodDeclarationExpression (attributes, l) };
-
-                    default:
-                        Log.Error ($"Unknown member: {member}");
-                        return Enumerable.Empty<Expression> ();
-                }
-            }).ToImmutableArray ();
+            Name = name;
+            Members = members;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -82,14 +66,14 @@ namespace PHP.Tree
 
     public sealed class ClassFieldDeclarationExpression : DeclarationExpression
     {
-        public readonly VariableName Name;
+        public readonly NameOfVariable Name;
         public readonly Expression Initializer;
         public readonly MemberAttributes Attributes;
 
-        public ClassFieldDeclarationExpression (MemberAttributes attributes, FieldDecl e)
+        public ClassFieldDeclarationExpression (NameOfVariable name, Expression initializer, MemberAttributes attributes)
         {
-            Name = e.Name;
-            Initializer = Expressions.Parse (e.Initializer);
+            Name = name;
+            Initializer = initializer;
             Attributes = attributes;
         }
 
@@ -108,17 +92,16 @@ namespace PHP.Tree
 
     public sealed class ClassMethodDeclarationExpression : DeclarationExpression
     {
-
-        public readonly Name Name;
+        public readonly NameOfMethod Name;
         public readonly DeclarationSignature DeclarationSignature;
         public readonly Expression Body;
         public readonly MemberAttributes Attributes;
 
-        public ClassMethodDeclarationExpression (MemberAttributes attributes, MethodDecl e)
+        public ClassMethodDeclarationExpression (NameOfMethod name, DeclarationSignature declaration_signature, Expression body, MemberAttributes attributes)
         {
-            Name = e.Name;
-            DeclarationSignature = new DeclarationSignature (e.Signature);
-            Body = Expressions.Parse (e.Body);
+            Name = name;
+            DeclarationSignature = declaration_signature;
+            Body = body;
             Attributes = attributes;
         }
 
@@ -143,20 +126,12 @@ namespace PHP.Tree
         public readonly bool IsAbstract;
         public readonly bool IsConstructor;
 
-        public MemberAttributes (Devsense.PHP.Syntax.PhpMemberAttributes modifiers)
+        public MemberAttributes (Publicity publicity, bool is_static, bool is_abstract, bool is_constructor) : this ()
         {
-            if ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Public) != 0)
-                Publicity = Publicity.Public;
-            else if ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Protected) != 0)
-                Publicity = Publicity.Protected;
-            else if ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Private) != 0)
-                Publicity = Publicity.Private;
-            else
-                Publicity = Publicity.Public;
-
-            IsStatic = ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Static) != 0);
-            IsAbstract = ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Abstract) != 0);
-            IsConstructor = ((modifiers & Devsense.PHP.Syntax.PhpMemberAttributes.Constructor) != 0);
+            Publicity = publicity;
+            IsStatic = is_static;
+            IsAbstract = is_abstract;
+            IsConstructor = is_constructor;
         }
 
         public override string ToString ()
@@ -180,9 +155,9 @@ namespace PHP.Tree
     {
         public readonly Expression CountOfLoops;
 
-        public BreakExpression (JumpStmt e)
+        public BreakExpression (Expression count_of_loop)
         {
-            CountOfLoops = Expressions.Parse (e.Expression);
+            CountOfLoops = count_of_loop;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -202,9 +177,9 @@ namespace PHP.Tree
     {
         public readonly Expression CountOfLoops;
 
-        public ContinueExpression (JumpStmt e)
+        public ContinueExpression (Expression count_of_loop)
         {
-            CountOfLoops = Expressions.Parse (e.Expression);
+            CountOfLoops = count_of_loop;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -224,9 +199,9 @@ namespace PHP.Tree
     {
         public readonly Expression ReturnValue;
 
-        public ReturnExpression (JumpStmt e)
+        public ReturnExpression (Expression return_value)
         {
-            ReturnValue = Expressions.Parse (e.Expression);
+            ReturnValue = return_value;
         }
 
         protected override TreeChildGroup [] _getChildren ()

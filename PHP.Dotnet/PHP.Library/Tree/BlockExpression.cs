@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -12,16 +11,11 @@ namespace PHP.Tree
     {
         public readonly ImmutableArray<Expression> Body;
 
-        public BlockExpression (BlockStmt e)
+        public BlockExpression (ImmutableArray<Expression> body)
         {
-            Body = e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ();
+            Body = body;
         }
-
-        public BlockExpression (GlobalCode e)
-        {
-            Body = e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ();
-        }
-
+        
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {

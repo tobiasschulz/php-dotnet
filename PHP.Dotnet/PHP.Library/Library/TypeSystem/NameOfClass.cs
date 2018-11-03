@@ -3,14 +3,14 @@ using System.Diagnostics;
 
 namespace PHP.Library.TypeSystem
 {
-    public struct ClassName : IEquatable<ClassName>, IEquatable<string>
+    public struct NameOfClass : IEquatable<NameOfClass>, IEquatable<string>
     {
         private readonly string _value;
         private readonly int _hashcode;
 
         public string Value => _value;
 
-        public ClassName (string value)
+        public NameOfClass (string value)
         {
             Debug.Assert (value != null);
             this._value = value;
@@ -19,7 +19,7 @@ namespace PHP.Library.TypeSystem
 
         public override bool Equals (object obj)
         {
-            return obj != null && obj.GetType () == typeof (ClassName) && Equals ((ClassName)obj);
+            return obj != null && obj.GetType () == typeof (NameOfClass) && Equals ((NameOfClass)obj);
         }
 
         public override int GetHashCode ()
@@ -32,17 +32,17 @@ namespace PHP.Library.TypeSystem
             return this._value;
         }
 
-        public bool Equals (ClassName other)
+        public bool Equals (NameOfClass other)
         {
             return this.GetHashCode () == other.GetHashCode () && Equals (other.Value);
         }
 
-        public static bool operator == (ClassName name, ClassName other)
+        public static bool operator == (NameOfClass name, NameOfClass other)
         {
             return name.Equals (other);
         }
 
-        public static bool operator != (ClassName name, ClassName other)
+        public static bool operator != (NameOfClass name, NameOfClass other)
         {
             return !name.Equals (other);
         }
@@ -52,29 +52,29 @@ namespace PHP.Library.TypeSystem
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static implicit operator ClassName (Devsense.PHP.Syntax.Name other)
+        public static implicit operator NameOfClass (Devsense.PHP.Syntax.Name other)
         {
-            return new ClassName (other.Value);
+            return new NameOfClass (other.Value);
         }
 
-        public static implicit operator ClassName (string other)
+        public static implicit operator NameOfClass (string other)
         {
-            return new ClassName (other);
+            return new NameOfClass (other);
         }
 
-        public static implicit operator ClassName (Devsense.PHP.Syntax.NameRef other)
+        public static implicit operator NameOfClass (Devsense.PHP.Syntax.NameRef other)
         {
-            return new ClassName (other.Name.Value);
+            return new NameOfClass (other.Name.Value);
         }
 
-        public static implicit operator ClassName (Devsense.PHP.Syntax.QualifiedName other)
+        public static implicit operator NameOfClass (Devsense.PHP.Syntax.QualifiedName other)
         {
-            return new ClassName (other.Name.Value);
+            return new NameOfClass (other.Name.Value);
         }
 
-        public static implicit operator ClassName (Devsense.PHP.Syntax.TranslatedQualifiedName other)
+        public static implicit operator NameOfClass (Devsense.PHP.Syntax.TranslatedQualifiedName other)
         {
-            return new ClassName (other.Name.QualifiedName.Name.Value);
+            return new NameOfClass (other.Name.QualifiedName.Name.Value);
         }
     }
 

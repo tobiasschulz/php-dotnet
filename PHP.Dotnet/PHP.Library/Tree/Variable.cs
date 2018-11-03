@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Devsense.PHP.Syntax;
-using Devsense.PHP.Syntax.Ast;
+using PHP.Library.TypeSystem;
 
 namespace PHP.Tree
 {
@@ -11,23 +10,13 @@ namespace PHP.Tree
 
     public sealed class VariableExpression : LikeVariable
     {
-        public readonly VariableName Name;
+        public readonly NameOfVariable Name;
 
-        public VariableExpression (VariableName name)
+        public VariableExpression (NameOfVariable name)
         {
             Name = name;
         }
-
-        public VariableExpression (DirectVarUse variable)
-        {
-            Name = variable.VarName;
-        }
-
-        public VariableExpression (Name name)
-        {
-            Name = new VariableName (name.Value);
-        }
-
+        
         protected override string GetTypeName ()
         {
             return $"variable: {Name}";

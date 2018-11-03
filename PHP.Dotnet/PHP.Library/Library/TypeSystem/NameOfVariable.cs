@@ -2,12 +2,12 @@
 
 namespace PHP.Library.TypeSystem
 {
-    public struct VariableName : IEquatable<VariableName>, IEquatable<string>
+    public struct NameOfVariable : IEquatable<NameOfVariable>, IEquatable<string>
     {
         public string Value { get => _value; set => _value = value; }
         private string _value;
 
-        public static readonly VariableName ThisVariableName = new VariableName ("this");
+        public static readonly NameOfVariable ThisVariableName = new NameOfVariable ("this");
 
         public const string EnvName = "_ENV";
         public const string ServerName = "_SERVER";
@@ -45,15 +45,15 @@ namespace PHP.Library.TypeSystem
             }
         }
 
-        public VariableName (string value)
+        public NameOfVariable (string value)
         {
             _value = value ?? string.Empty;
         }
 
         public override bool Equals (object obj)
         {
-            if (!(obj is VariableName)) return false;
-            return Equals ((VariableName)obj);
+            if (!(obj is NameOfVariable)) return false;
+            return Equals ((NameOfVariable)obj);
         }
 
         public override int GetHashCode ()
@@ -66,17 +66,17 @@ namespace PHP.Library.TypeSystem
             return _value;
         }
 
-        public bool Equals (VariableName other)
+        public bool Equals (NameOfVariable other)
         {
             return _value.Equals (other._value);
         }
 
-        public static bool operator == (VariableName name, VariableName other)
+        public static bool operator == (NameOfVariable name, NameOfVariable other)
         {
             return name.Equals (other);
         }
 
-        public static bool operator != (VariableName name, VariableName other)
+        public static bool operator != (NameOfVariable name, NameOfVariable other)
         {
             return !name.Equals (other);
         }
@@ -86,24 +86,24 @@ namespace PHP.Library.TypeSystem
             return _value.Equals (other);
         }
 
-        public static bool operator == (VariableName name, string str)
+        public static bool operator == (NameOfVariable name, string str)
         {
             return name.Equals (str);
         }
 
-        public static bool operator != (VariableName name, string str)
+        public static bool operator != (NameOfVariable name, string str)
         {
             return !name.Equals (str);
         }
 
-        public static implicit operator VariableName (Devsense.PHP.Syntax.VariableName other)
+        public static implicit operator NameOfVariable (Devsense.PHP.Syntax.VariableName other)
         {
-            return new VariableName (other.Value);
+            return new NameOfVariable (other.Value);
         }
 
-        public static implicit operator VariableName (Devsense.PHP.Syntax.VariableNameRef other)
+        public static implicit operator NameOfVariable (Devsense.PHP.Syntax.VariableNameRef other)
         {
-            return new VariableName (other.Name.Value);
+            return new NameOfVariable (other.Name.Value);
         }
 
     }

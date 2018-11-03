@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Library.TypeSystem;
 
 namespace PHP.Tree
@@ -11,16 +10,16 @@ namespace PHP.Tree
     public sealed class DeclarationSignature
     {
         public readonly ImmutableArray<DeclarationParameter> Parameters;
-       
-        public DeclarationSignature (Devsense.PHP.Syntax.Ast.Signature e)
+
+        public DeclarationSignature (ImmutableArray<DeclarationParameter> parameters)
         {
-            Parameters = e.FormalParams.Select (p => new DeclarationParameter (p)).ToImmutableArray ();
+            Parameters = parameters;
         }
     }
 
     public sealed class DeclarationParameter : Expression
     {
-        public readonly VariableName Name;
+        public readonly NameOfVariable Name;
         public readonly Expression InitialValue;
 
         //
@@ -41,13 +40,13 @@ namespace PHP.Tree
         //     Initial value expression. Can be null.
         public Expression InitValue { get; }
 
-        public DeclarationParameter (FormalParam p)
+        public DeclarationParameter (NameOfVariable name, Expression initial_value, bool passed_by_ref, bool is_out, bool is_variadic)
         {
-            Name = p.Name;
-            InitialValue = Expressions.Parse (p.InitValue);
-            PassedByRef = p.PassedByRef;
-            IsOut = p.IsOut;
-            IsVariadic = p.IsVariadic;
+            Name = name;
+            InitialValue = initial_value;
+            PassedByRef = passed_by_ref;
+            IsOut = is_out;
+            IsVariadic = is_variadic;
         }
 
         protected override TreeChildGroup [] _getChildren ()

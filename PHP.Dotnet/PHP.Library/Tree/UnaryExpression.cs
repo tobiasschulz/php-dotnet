@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 
 namespace PHP.Tree
 {
@@ -17,13 +16,7 @@ namespace PHP.Tree
             Value = value;
             Operation = operation;
         }
-
-        public UnaryExpression (Devsense.PHP.Syntax.Ast.Expression value, UnaryOp operation)
-        {
-            Value = Expressions.Parse (value);
-            Operation = operation;
-        }
-
+        
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {

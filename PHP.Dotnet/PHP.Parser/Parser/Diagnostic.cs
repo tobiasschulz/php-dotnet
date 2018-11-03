@@ -3,14 +3,14 @@ using Devsense.PHP.Text;
 
 namespace PHP.Parser
 {
-    public class PhpDiagnostic
+    public class Diagnostic : IDiagnostic
     {
-        private readonly PhpSyntaxTree _syntaxTree;
+        private readonly SyntaxTree _syntaxTree;
         private readonly Span _span;
         private readonly ErrorInfo _info;
         private readonly string [] _args;
 
-        public PhpDiagnostic (PhpSyntaxTree syntaxTree, Span span, ErrorInfo info, string [] args)
+        public Diagnostic (SyntaxTree syntaxTree, Span span, ErrorInfo info, string [] args)
         {
             this._syntaxTree = syntaxTree;
             this._span = span;

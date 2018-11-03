@@ -16,15 +16,17 @@ namespace PHP
     
     public sealed class Context
     {
-        public readonly RootScope RootScope;
         public readonly ContextOptions Options;
+        public readonly IParser Parser;
+        public readonly RootScope RootScope;
         public readonly List<CodeDirectory> RootDirectories = new List<CodeDirectory> ();
         public readonly Dictionary<string, string> Defines = new Dictionary<string, string> ();
         public readonly IConsole Console = new StandardConsole ();
 
-        public Context (ContextOptions options)
+        public Context (ContextOptions options, IParser parser)
         {
             Options = options ?? new ContextOptions ();
+            Parser = parser;
             RootScope = new RootScope (this);
         }
 

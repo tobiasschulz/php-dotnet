@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 
 namespace PHP.Tree
 {
@@ -17,13 +16,6 @@ namespace PHP.Tree
         {
             Left = left;
             Right = right;
-            Operation = operation;
-        }
-
-        public BinaryExpression (Devsense.PHP.Syntax.Ast.Expression left, Devsense.PHP.Syntax.Ast.Expression right, BinaryOp operation)
-        {
-            Left = Expressions.Parse (left);
-            Right = Expressions.Parse (right);
             Operation = operation;
         }
 

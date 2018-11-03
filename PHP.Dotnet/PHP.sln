@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Library.Tests", "PHP.Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Library.Tests.Helper", "PHP.Library.Tests.Helper\PHP.Library.Tests.Helper.csproj", "{B48BC4F7-CFB9-47AA-8F53-225C864AF9B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Parser", "PHP.Parser\PHP.Parser.csproj", "{F3996BF0-A3AE-4AC2-AA93-8095E29C3AFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B48BC4F7-CFB9-47AA-8F53-225C864AF9B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B48BC4F7-CFB9-47AA-8F53-225C864AF9B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B48BC4F7-CFB9-47AA-8F53-225C864AF9B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3996BF0-A3AE-4AC2-AA93-8095E29C3AFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3996BF0-A3AE-4AC2-AA93-8095E29C3AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3996BF0-A3AE-4AC2-AA93-8095E29C3AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3996BF0-A3AE-4AC2-AA93-8095E29C3AFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,14 +11,14 @@ namespace PHP.Library.TypeSystem
 {
     public interface IMethod
     {
-        MethodName Name { get; }
+        NameOfMethod Name { get; }
         Result Execute (EvaluatedCallSignature call_signature, Scope scope);
     }
     
     public interface IReadOnlyMethodCollection
     {
-        bool TryGetValue (MethodName name, out IMethod res);
-        bool Contains (MethodName name);
+        bool TryGetValue (NameOfMethod name, out IMethod res);
+        bool Contains (NameOfMethod name);
         IEnumerable<IMethod> GetAll ();
     }
 
@@ -38,12 +38,12 @@ namespace PHP.Library.TypeSystem
             _collection_own = collection_editable;
         }
 
-        bool IReadOnlyMethodCollection.TryGetValue (MethodName name, out IMethod res)
+        bool IReadOnlyMethodCollection.TryGetValue (NameOfMethod name, out IMethod res)
         {
             return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
         }
         
-        bool IReadOnlyMethodCollection.Contains (MethodName name)
+        bool IReadOnlyMethodCollection.Contains (NameOfMethod name)
         {
             return _collection_own.Contains (name) || _collection_parent.Contains (name);
         }
@@ -77,7 +77,7 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        bool IReadOnlyMethodCollection.TryGetValue (MethodName name, out IMethod res)
+        bool IReadOnlyMethodCollection.TryGetValue (NameOfMethod name, out IMethod res)
         {
             foreach (IMethod value in _data)
             {
@@ -91,7 +91,7 @@ namespace PHP.Library.TypeSystem
             return false;
         }
 
-        bool IReadOnlyMethodCollection.Contains (MethodName name)
+        bool IReadOnlyMethodCollection.Contains (NameOfMethod name)
         {
             return ((IReadOnlyMethodCollection)this).TryGetValue (name, out var dummy);
         }

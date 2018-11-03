@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Execution;
 
 namespace PHP.Tree
@@ -12,19 +11,14 @@ namespace PHP.Tree
     {
         public readonly ImmutableArray<CallParameter> Parameters;
 
-        public CallSignature (Devsense.PHP.Syntax.Ast.CallSignature e)
+        public CallSignature (IEnumerable<CallParameter> parameters)
         {
-            Parameters = e.Parameters.Select (p => new CallParameter (p)).ToImmutableArray ();
+            Parameters = parameters.ToImmutableArray ();
         }
 
-        public CallSignature (IEnumerable<Expression> expressions)
+        public CallSignature (CallParameter parameter)
         {
-            Parameters = expressions.Select (p => new CallParameter (p)).ToImmutableArray ();
-        }
-
-        public CallSignature (Expression expression)
-        {
-            Parameters = new [] { new CallParameter (expression) }.ToImmutableArray ();
+            Parameters = new [] { parameter }.ToImmutableArray ();
         }
     }
 
@@ -42,16 +36,11 @@ namespace PHP.Tree
         //     it has to be unpacked before passing to the function call.
         public bool IsUnpack { get; }
 
-        public CallParameter (Expression expression)
+        public CallParameter (Expression expression, bool ampersand, bool is_unpack)
         {
             Value = expression;
-        }
-
-        public CallParameter (ActualParam p)
-        {
-            Value = Expressions.Parse (p.Expression);
-            Ampersand = p.Ampersand;
-            IsUnpack = p.IsUnpack;
+            Ampersand = ampersand;
+            IsUnpack = is_unpack;
         }
 
         protected override TreeChildGroup [] _getChildren ()

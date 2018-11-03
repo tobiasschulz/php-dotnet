@@ -12,22 +12,22 @@ namespace PHP.Library.TypeSystem
 {
     public interface IVariable
     {
-        VariableName Name { get; }
+        NameOfVariable Name { get; }
         FinalExpression Value { get; set; }
     }
 
     public sealed class Variable : IVariable
     {
-        private readonly VariableName _name;
+        private readonly NameOfVariable _name;
         private FinalExpression _value;
 
-        public Variable (VariableName name)
+        public Variable (NameOfVariable name)
         {
             _name = name;
             _value = new NullExpression ();
         }
 
-        public VariableName Name
+        public NameOfVariable Name
         {
             get => _name;
         }
@@ -44,9 +44,9 @@ namespace PHP.Library.TypeSystem
 
     public interface IVariableCollection
     {
-        bool TryGetValue (VariableName name, out IVariable res);
-        void EnsureExists (VariableName name, out IVariable res);
-        bool Contains (VariableName name);
+        bool TryGetValue (NameOfVariable name, out IVariable res);
+        void EnsureExists (NameOfVariable name, out IVariable res);
+        bool Contains (NameOfVariable name);
         IEnumerable<IVariable> GetAll ();
         void Add (IVariable value, bool replace = true);
     }
@@ -62,12 +62,12 @@ namespace PHP.Library.TypeSystem
             _collection_own = collection_editable;
         }
 
-        bool IVariableCollection.TryGetValue (VariableName name, out IVariable res)
+        bool IVariableCollection.TryGetValue (NameOfVariable name, out IVariable res)
         {
             return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
         }
 
-        void IVariableCollection.EnsureExists (VariableName name, out IVariable res)
+        void IVariableCollection.EnsureExists (NameOfVariable name, out IVariable res)
         {
             if (_collection_parent.Contains (name))
             {
@@ -78,7 +78,7 @@ namespace PHP.Library.TypeSystem
                 _collection_own.EnsureExists (name, out res);
             }
         }
-        bool IVariableCollection.Contains (VariableName name)
+        bool IVariableCollection.Contains (NameOfVariable name)
         {
             return _collection_own.Contains (name) || _collection_parent.Contains (name);
         }
@@ -111,7 +111,7 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        public bool TryGetValue (VariableName name, out IVariable res)
+        public bool TryGetValue (NameOfVariable name, out IVariable res)
         {
             foreach (IVariable value in _data)
             {
@@ -125,7 +125,7 @@ namespace PHP.Library.TypeSystem
             return false;
         }
 
-        public void EnsureExists (VariableName name, out IVariable res)
+        public void EnsureExists (NameOfVariable name, out IVariable res)
         {
             if (!TryGetValue (name, out res))
             {
@@ -134,7 +134,7 @@ namespace PHP.Library.TypeSystem
             }
         }
 
-        public bool Contains (VariableName name)
+        public bool Contains (NameOfVariable name)
         {
             return TryGetValue (name, out var dummy);
         }

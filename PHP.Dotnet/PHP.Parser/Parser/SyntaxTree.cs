@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using Devsense.PHP.Syntax;
 using Devsense.PHP.Syntax.Ast;
@@ -7,9 +8,13 @@ using PHP.Standard;
 
 namespace PHP.Parser
 {
-    public sealed class PhpSyntaxTree
+    public sealed class SyntaxTree : IParseResult
     {
         readonly CodeSourceUnit _source;
+
+        public Tree.Expression RootExpression { get; private set; }
+
+        public ImmutableArray<IDiagnostic> Diagnostics { get; private set; }
 
         /// <summary>
         /// Gets constructed lambda nodes.
@@ -36,12 +41,12 @@ namespace PHP.Parser
         /// </summary>
         public ImmutableArray<LangElement> YieldNodes { get; private set; }
 
-        private PhpSyntaxTree (CodeSourceUnit source)
+        private SyntaxTree (CodeSourceUnit source)
         {
             _source = source ?? throw new ArgumentNullException (nameof (source));
         }
 
-        public static PhpSyntaxTree ParseCode (Context context, string content_string, string filename)
+        public static SyntaxTree ParseCode (PhpParser parser, Context context, string content_string, string filename)
         {
             if (filename == null)
             {
@@ -61,16 +66,16 @@ namespace PHP.Parser
                 LanguageFeatures.Php73Set | LanguageFeatures.ShortOpenTags
             );
 
-            var result = new PhpSyntaxTree (unit);
+            var result = new SyntaxTree (unit);
 
             var errorSink = new PhpErrorSink (result);
-            var factory = new PhpNodesFactory (unit, context.Defines);
+            var factory = new NodesFactory (unit, context.Defines);
 
             //
             unit.Parse (factory, errorSink);
 
             //
-            result.Diagnostics = errorSink.Diagnostics;
+            result.Diagnostics = errorSink.Diagnostics.Select (d => (IDiagnostic)d).ToImmutableArray ();
 
             result.Lambdas = factory.Lambdas.AsImmutableSafe ();
             result.Types = factory.Types.AsImmutableSafe ();
@@ -88,11 +93,10 @@ namespace PHP.Parser
                 result.Root = new GlobalCode (fullSpan, ImmutableArray<Statement>.Empty, unit);
             }
 
-            //
+            result.RootExpression = parser.Parse (result.Root);
+
             return result;
         }
-
-        public ImmutableArray<PhpDiagnostic> Diagnostics { get; private set; }
 
 
     }

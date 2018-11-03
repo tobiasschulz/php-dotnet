@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
+using PHP.Library.TypeSystem;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -20,17 +20,17 @@ namespace PHP.Tree
 
     public class FunctionCallExpression : CallExpression
     {
-        public readonly Name Name;
+        public readonly NameOfFunction Name;
         public readonly Expression MemberOf;
 
-        public FunctionCallExpression (DirectFcnCall e)
-            : base (new CallSignature (e.CallSignature))
+        public FunctionCallExpression (NameOfFunction name, Expression member_of, CallSignature call_signature)
+            : base (call_signature)
         {
-            Name = e.FullName;
-            MemberOf = Expressions.Parse (e.IsMemberOf);
+            Name = name;
+            MemberOf = member_of;
         }
 
-        public FunctionCallExpression (Name name, CallSignature call_signature)
+        public FunctionCallExpression (NameOfFunction name, CallSignature call_signature)
             : base (call_signature)
         {
             Name = name;
@@ -52,14 +52,14 @@ namespace PHP.Tree
 
     public sealed class StaticMethodCallExpression : CallExpression
     {
-        public readonly Name Name;
+        public readonly NameOfMethod Name;
         public readonly Expression MemberOf;
 
-        public StaticMethodCallExpression (DirectStMtdCall e)
-            : base (new CallSignature (e.CallSignature))
+        public StaticMethodCallExpression (NameOfMethod name, Expression member_of, CallSignature call_signature)
+            : base (call_signature)
         {
-            Name = e.MethodName;
-            MemberOf = Expressions.Parse (e.IsMemberOf);
+            Name = name;
+            MemberOf = member_of;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -78,12 +78,12 @@ namespace PHP.Tree
 
     public sealed class NewInstanceExpression : CallExpression
     {
-        public readonly Name? TypeName;
+        public readonly NameOfClass Name;
 
-        public NewInstanceExpression (NewEx e)
-            : base (new CallSignature (e.CallSignature))
+        public NewInstanceExpression (NameOfClass name, CallSignature call_signature)
+            : base (call_signature)
         {
-            TypeName = e.ClassNameRef.QualifiedName;
+            Name = name;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -95,14 +95,14 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"new: {TypeName}";
+            return $"new: {Name}";
         }
     }
 
     public sealed class EchoExpression : FunctionCallExpression
     {
-        public EchoExpression (EchoStmt e)
-            : base ("echo", new CallSignature (e.Parameters.Select (c => Expressions.Parse (c))))
+        public EchoExpression (CallSignature call_signature)
+            : base ("echo", call_signature)
         {
         }
 
@@ -116,8 +116,8 @@ namespace PHP.Tree
     {
         public readonly Expression Result;
 
-        public DieExpression (ExitEx e)
-            : base ("die", new CallSignature (Expressions.Parse (e.ResulExpr)))
+        public DieExpression (CallSignature call_signature)
+            : base ("die", call_signature)
         {
         }
 
@@ -129,8 +129,8 @@ namespace PHP.Tree
 
     public sealed class IssetExpression : FunctionCallExpression
     {
-        public IssetExpression (IssetEx e)
-            : base ("isset", new CallSignature (e.VarList.Select (c => Expressions.Parse (c))))
+        public IssetExpression (CallSignature call_signature)
+            : base ("isset", call_signature)
         {
         }
 

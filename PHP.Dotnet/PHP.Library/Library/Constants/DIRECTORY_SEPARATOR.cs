@@ -8,7 +8,7 @@ namespace PHP.Library.Constants
     public class DIRECTORY_SEPARATOR : GlobalConstant
     {
         public DIRECTORY_SEPARATOR ()
-            : base (new VariableName ("DIRECTORY_SEPARATOR"))
+            : base (new NameOfVariable ("DIRECTORY_SEPARATOR"))
         {
         }
 
