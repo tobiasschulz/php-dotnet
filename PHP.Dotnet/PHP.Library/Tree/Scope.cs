@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using PHP.Library;
+using PHP.Library.TypeSystem;
 
 namespace PHP.Tree
 {

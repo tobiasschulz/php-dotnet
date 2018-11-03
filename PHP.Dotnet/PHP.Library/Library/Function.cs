@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using PHP.Execution;
 using PHP.Library.Internal;
+using PHP.Library.TypeSystem;
 using PHP.Tree;
 
 namespace PHP.Library

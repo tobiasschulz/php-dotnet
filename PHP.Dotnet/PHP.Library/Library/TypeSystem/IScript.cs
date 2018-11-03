@@ -1,4 +1,4 @@
-﻿namespace PHP.Tree
+﻿namespace PHP.Library.TypeSystem
 {
     public interface IScript
     {

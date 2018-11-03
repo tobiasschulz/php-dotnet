@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using PHP.Library.Functions;
-using PHP.Library.Library.Constants;
+using PHP.Library.Constants;
 using PHP.Tree;
+using PHP.Library.TypeSystem;
 
 namespace PHP.Library
 {

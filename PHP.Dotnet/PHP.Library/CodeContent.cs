@@ -8,6 +8,7 @@ using PHP.Parser;
 using PHP.Tree;
 using PHP.Execution;
 using System.Linq;
+using PHP.Library.TypeSystem;
 
 namespace PHP
 {

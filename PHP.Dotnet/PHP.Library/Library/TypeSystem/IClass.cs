@@ -7,7 +7,7 @@ using Devsense.PHP.Syntax.Ast;
 using PHP.Standard;
 using PHP.Execution;
 
-namespace PHP.Tree
+namespace PHP.Library.TypeSystem
 {
     public interface IClass
     {

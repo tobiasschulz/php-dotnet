@@ -5,12 +5,17 @@ namespace PHP.Tree
 {
     public struct Name : IEquatable<Name>, IEquatable<string>
     {
-        public string Value
-        {
-            get { return _value; }
-        }
         private readonly string _value;
         private readonly int _hashcode;
+
+        public string Value => _value;
+
+        public Name (string value)
+        {
+            Debug.Assert (value != null);
+            this._value = value;
+            this._hashcode = StringComparer.OrdinalIgnoreCase.GetHashCode (value);
+        }
 
         public static readonly Name [] EmptyNames = new Name [0];
         public static readonly Name EmptyBaseName = new Name ("");
@@ -33,27 +38,6 @@ namespace PHP.Tree
         public static readonly Name ClosureFunctionName = new Name ("{closure}");
         public static readonly Name AnonymousClassName = new Name ("class@anonymous");
 
-        // magic
-        public static readonly Name Construct = new Name ("__construct");
-        public static readonly Name Destruct = new Name ("__destruct");
-        public static readonly Name Clone = new Name ("__clone");
-        public static readonly Name Tostring = new Name ("__tostring");
-        public static readonly Name Sleep = new Name ("__sleep");
-        public static readonly Name Wakeup = new Name ("__wakeup");
-        public static readonly Name Get = new Name ("__get");
-        public static readonly Name Set = new Name ("__set");
-        public static readonly Name Call = new Name ("__call");
-        public static readonly Name Invoke = new Name ("__invoke");
-        public static readonly Name CallStatic = new Name ("__callStatic");
-        public static readonly Name Unset = new Name ("__unset");
-        public static readonly Name Isset = new Name ("__isset");
-
-        public bool IsCloneName => this.Equals (Clone);
-        public bool IsConstructName => this.Equals (Construct);
-        public bool IsDestructName => this.Equals (Destruct);
-        public bool IsCallName => this.Equals (Call);
-        public bool IsCallStaticName => this.Equals (CallStatic);
-        public bool IsToStringName => this.Equals (Tostring);
         public bool IsParentClassName => this.Equals (ParentClassName);
         public bool IsSelfClassName => this.Equals (SelfClassName);
         public bool IsStaticClassName => this.Equals (StaticClassName);
@@ -66,54 +50,6 @@ namespace PHP.Tree
         /// </summary>
         public bool IsGenerated => _value.StartsWith (AnonymousClassName.Value);
 
-
-        public Name (string value)
-        {
-            Debug.Assert (value != null);
-            this._value = value;
-            this._hashcode = StringComparer.OrdinalIgnoreCase.GetHashCode (value);
-        }
-
-        /// <summary>
-        /// Separator of class name and its static field in a form of <c>CLASS::MEMBER</c>.
-        /// </summary>
-        public const string ClassMemberSeparator = "::";
-
-        /// <summary>
-        /// Splits the <paramref name="value"/> into class name and member name if it is double-colon separated.
-        /// </summary>
-        /// <param name="value">Full name.</param>
-        /// <param name="className">Will contain the class name fragment if the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>. Otherwise <c>null</c>.</param>
-        /// <param name="memberName">Will contain the member name fragment if the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>. Otherwise it contains original <paramref name="value"/>.</param>
-        /// <returns>True iff the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.</returns>
-        public static bool IsClassMemberSyntax (string value, out string className, out string memberName)
-        {
-
-            int separator;
-            if ((separator = value.IndexOf (':')) >= 0 &&    // value.Contains( ':' )
-                (separator = System.Globalization.CultureInfo.InvariantCulture.CompareInfo.IndexOf (value, ClassMemberSeparator, separator, value.Length - separator, System.Globalization.CompareOptions.Ordinal)) > 0) // value.Contains( "::" )
-            {
-                className = value.Remove (separator);
-                memberName = value.Substring (separator + ClassMemberSeparator.Length);
-                return true;
-            }
-            else
-            {
-                className = null;
-                memberName = value;
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Determines if given <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.
-        /// </summary>
-        /// <param name="value">Full name.</param>
-        /// <returns>True iff the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.</returns>
-        public static bool IsClassMemberSyntax (string value)
-        {
-            return value != null && value.Contains (ClassMemberSeparator);
-        }
 
         public override bool Equals (object obj)
         {
@@ -176,4 +112,49 @@ namespace PHP.Tree
         }
     }
 
+    public static class NameHelper
+    {
+
+        /// <summary>
+        /// Separator of class name and its static field in a form of <c>CLASS::MEMBER</c>.
+        /// </summary>
+        public const string ClassMemberSeparator = "::";
+
+        /// <summary>
+        /// Splits the <paramref name="value"/> into class name and member name if it is double-colon separated.
+        /// </summary>
+        /// <param name="value">Full name.</param>
+        /// <param name="className">Will contain the class name fragment if the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>. Otherwise <c>null</c>.</param>
+        /// <param name="memberName">Will contain the member name fragment if the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>. Otherwise it contains original <paramref name="value"/>.</param>
+        /// <returns>True iff the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.</returns>
+        public static bool IsClassMemberSyntax (string value, out string className, out string memberName)
+        {
+
+            int separator;
+            if ((separator = value.IndexOf (':')) >= 0 &&    // value.Contains( ':' )
+                (separator = System.Globalization.CultureInfo.InvariantCulture.CompareInfo.IndexOf (value, ClassMemberSeparator, separator, value.Length - separator, System.Globalization.CompareOptions.Ordinal)) > 0) // value.Contains( "::" )
+            {
+                className = value.Remove (separator);
+                memberName = value.Substring (separator + ClassMemberSeparator.Length);
+                return true;
+            }
+            else
+            {
+                className = null;
+                memberName = value;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines if given <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.
+        /// </summary>
+        /// <param name="value">Full name.</param>
+        /// <returns>True iff the <paramref name="value"/> is in a form of <c>CLASS::MEMBER</c>.</returns>
+        public static bool IsClassMemberSyntax (string value)
+        {
+            return value != null && value.Contains (ClassMemberSeparator);
+        }
+
+    }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using PHP.Standard;
 using PHP.Tree;
+using PHP.Library.TypeSystem;
 
 namespace PHP
 {

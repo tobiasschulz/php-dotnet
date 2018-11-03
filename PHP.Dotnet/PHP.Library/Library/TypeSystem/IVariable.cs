@@ -6,8 +6,9 @@ using System.Text;
 using Devsense.PHP.Syntax.Ast;
 using PHP.Standard;
 using PHP.Execution;
+using PHP.Tree;
 
-namespace PHP.Tree
+namespace PHP.Library.TypeSystem
 {
     public interface IVariable
     {
@@ -52,53 +53,53 @@ namespace PHP.Tree
 
     public sealed class MergedVariableCollection : IVariableCollection
     {
-        private readonly IVariableCollection _collection_readonly;
-        private readonly IVariableCollection _collection_editable;
+        private readonly IVariableCollection _collection_parent;
+        private readonly IVariableCollection _collection_own;
 
         public MergedVariableCollection (IVariableCollection collection_readonly, IVariableCollection collection_editable)
         {
-            _collection_readonly = collection_readonly;
-            _collection_editable = collection_editable;
+            _collection_parent = collection_readonly;
+            _collection_own = collection_editable;
         }
 
         bool IVariableCollection.TryGetValue (VariableName name, out IVariable res)
         {
-            return _collection_editable.TryGetValue (name, out res) || _collection_readonly.TryGetValue (name, out res);
+            return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
         }
 
         void IVariableCollection.EnsureExists (VariableName name, out IVariable res)
         {
-            if (_collection_readonly.Contains (name))
+            if (_collection_parent.Contains (name))
             {
-                _collection_readonly.EnsureExists (name, out res);
+                _collection_parent.EnsureExists (name, out res);
             }
             else
             {
-                _collection_editable.EnsureExists (name, out res);
+                _collection_own.EnsureExists (name, out res);
             }
         }
         bool IVariableCollection.Contains (VariableName name)
         {
-            return _collection_editable.Contains (name) || _collection_readonly.Contains (name);
+            return _collection_own.Contains (name) || _collection_parent.Contains (name);
         }
 
         void IVariableCollection.Add (IVariable value, bool replace)
         {
             if (value == null) return;
 
-            if (_collection_readonly.Contains (value.Name))
+            if (_collection_parent.Contains (value.Name))
             {
-                _collection_readonly.Add (value, replace: replace);
+                _collection_parent.Add (value, replace: replace);
             }
             else
             {
-                _collection_editable.Add (value, replace: replace);
+                _collection_own.Add (value, replace: replace);
             }
         }
 
         IEnumerable<IVariable> IVariableCollection.GetAll ()
         {
-            return _collection_editable.GetAll ().Concat (_collection_readonly.GetAll ());
+            return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
         }
     }
 
@@ -152,11 +153,11 @@ namespace PHP.Tree
                 if (replace)
                 {
                     _data = _data.Remove (existing_value);
+                    _data = _data.Add (value);
                 }
                 else
                 {
                     Log.Error ($"Cannot add function {value.Name}: already exists: {existing_value} vs {value}");
-                    return;
                 }
             }
             else

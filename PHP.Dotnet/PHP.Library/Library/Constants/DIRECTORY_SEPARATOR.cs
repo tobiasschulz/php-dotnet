@@ -1,8 +1,9 @@
 ﻿using System;
 using PHP.Tree;
 using System.IO;
+using PHP.Library.TypeSystem;
 
-namespace PHP.Library.Library.Constants
+namespace PHP.Library.Constants
 {
     public class DIRECTORY_SEPARATOR : GlobalConstant
     {

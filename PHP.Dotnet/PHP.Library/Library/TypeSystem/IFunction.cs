@@ -6,13 +6,14 @@ using System.Text;
 using Devsense.PHP.Syntax.Ast;
 using PHP.Standard;
 using PHP.Execution;
+using PHP.Tree;
 
-namespace PHP.Tree
+namespace PHP.Library.TypeSystem
 {
     public interface IFunction
     {
         Name Name { get; }
-        Result Execute (EvaluatedCallSignature call_signature, Scope scope);
+        Result Execute (EvaluatedCallSignature call_signature, Tree.Scope scope);
     }
 
     public sealed class FunctionCollection

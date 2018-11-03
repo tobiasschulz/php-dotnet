@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PHP.Tree
+namespace PHP.Library.TypeSystem
 {
     public struct VariableName : IEquatable<VariableName>, IEquatable<string>
     {
