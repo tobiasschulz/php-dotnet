@@ -28,6 +28,13 @@ namespace PHP.Tree
                 case NamedTypeDecl e:
                     return new ClassDeclarationExpression (e);
 
+                case JumpStmt e when e.Type == JumpStmt.Types.Break:
+                    return new BreakExpression (e);
+                case JumpStmt e when e.Type == JumpStmt.Types.Continue:
+                    return new ContinueExpression (e);
+                case JumpStmt e when e.Type == JumpStmt.Types.Return:
+                    return new ReturnExpression (e);
+
                 case DirectVarUse e:
                     return new VariableExpression (e.VarName);
                 case GlobalConstUse e:

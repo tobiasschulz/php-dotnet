@@ -174,4 +174,71 @@ namespace PHP.Tree
         Protected,
         Private,
     }
+
+    public sealed class BreakExpression : DeclarationExpression
+    {
+        public readonly Expression CountOfLoops;
+
+        public BreakExpression (JumpStmt e)
+        {
+            CountOfLoops = Expressions.Parse (e.Expression);
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("count of loops", CountOfLoops),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"break";
+        }
+    }
+
+    public sealed class ContinueExpression : DeclarationExpression
+    {
+        public readonly Expression CountOfLoops;
+
+        public ContinueExpression (JumpStmt e)
+        {
+            CountOfLoops = Expressions.Parse (e.Expression);
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("count of loops", CountOfLoops),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"continue";
+        }
+    }
+
+    public sealed class ReturnExpression : DeclarationExpression
+    {
+        public readonly Expression ReturnValue;
+
+        public ReturnExpression (JumpStmt e)
+        {
+            ReturnValue = Expressions.Parse (e.Expression);
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("return value", ReturnValue),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"return";
+        }
+    }
+
 }

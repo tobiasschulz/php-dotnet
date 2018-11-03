@@ -12,16 +12,16 @@ namespace PHP.Execution
     {
         public static Result Run (FunctionDeclarationExpression expression, Scope scope)
         {
-            scope.Root.GlobalFunctions.Add (new DeclaredFunction (expression));
+            scope.Root.GlobalFunctions.Add (new InterpretedFunction (expression));
 
             return Result.NULL;
         }
 
-        private sealed class DeclaredFunction : IFunction
+        private sealed class InterpretedFunction : IFunction
         {
             private readonly FunctionDeclarationExpression _expression;
 
-            public DeclaredFunction (FunctionDeclarationExpression expression)
+            public InterpretedFunction (FunctionDeclarationExpression expression)
             {
                 _expression = expression;
             }

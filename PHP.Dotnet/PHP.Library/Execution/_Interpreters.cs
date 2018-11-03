@@ -45,6 +45,8 @@ namespace PHP.Execution
 
                 case FunctionDeclarationExpression e:
                     return FunctionDeclarationInterpreter.Run (e, scope);
+                case ClassDeclarationExpression e:
+                    return ClassDeclarationInterpreter.Run (e, scope);
 
                 case VariableExpression e:
                     return VariableInterpreter.Run (e, scope);

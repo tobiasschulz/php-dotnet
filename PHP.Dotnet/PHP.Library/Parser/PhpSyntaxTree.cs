@@ -48,7 +48,7 @@ namespace PHP.Parser
                 throw new ArgumentNullException (nameof (filename));
             }
 
-            content_string = content_string.Replace ("else if", "elseif");
+            content_string = content_string.Replace ("\r", "").Replace ("else if", "elseif").Trim ();
 
             // TODO: new parser implementation based on Roslyn
 
