@@ -74,29 +74,9 @@ namespace PHP.Library.TypeSystem
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static implicit operator NameOfMethod (Devsense.PHP.Syntax.Name other)
-        {
-            return new NameOfMethod (other.Value);
-        }
-
         public static implicit operator NameOfMethod (string other)
         {
             return new NameOfMethod (other);
-        }
-
-        public static implicit operator NameOfMethod (Devsense.PHP.Syntax.NameRef other)
-        {
-            return new NameOfMethod (other.Name.Value);
-        }
-
-        public static implicit operator NameOfMethod (Devsense.PHP.Syntax.QualifiedName other)
-        {
-            return new NameOfMethod (other.Name.Value);
-        }
-
-        public static implicit operator NameOfMethod (Devsense.PHP.Syntax.TranslatedQualifiedName other)
-        {
-            return new NameOfMethod (other.Name.QualifiedName.Name.Value);
         }
     }
 

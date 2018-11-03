@@ -34,33 +34,10 @@ namespace PHP.Tree
         public readonly ImmutableArray<BaseIfExpression> Ifs = ImmutableArray<BaseIfExpression>.Empty;
         public readonly ElseExpression Else;
 
-        public ConditionalBlockExpression (IfStmt e)
+        public ConditionalBlockExpression (ImmutableArray<BaseIfExpression> if_exprs, ElseExpression else_expr)
         {
-            foreach (var c in e.Conditions)
-            {
-                if (c.Condition == null)
-                {
-                    if (Else == null)
-                    {
-                        Else = new ElseExpression (c);
-                    }
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException ($"Multiple else expressions ???");
-                    }
-                }
-                else
-                {
-                    if (Ifs.Length == 0)
-                    {
-                        Ifs = Ifs.Add (new IfExpression (c));
-                    }
-                    else
-                    {
-                        Ifs = Ifs.Add (new ElseIfExpression (c));
-                    }
-                }
-            }
+            Ifs = if_exprs;
+            Else = else_expr;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -84,12 +61,12 @@ namespace PHP.Tree
         public readonly Expression KeyVariable;
         public readonly Expression ValueVariable;
 
-        public ForeachExpression (ForeachStmt e)
+        public ForeachExpression (Expression enumeree, Expression body, Expression key_variable, Expression value_variable)
         {
-            Enumeree = Expressions.Parse (e.Enumeree);
-            Body = Expressions.Parse (e.Body);
-            KeyVariable = Expressions.Parse ((VarLikeConstructUse)e.KeyVariable?.Variable ?? e.KeyVariable?.List);
-            ValueVariable = Expressions.Parse ((VarLikeConstructUse)e.ValueVariable?.Variable ?? e.ValueVariable?.List);
+            Enumeree = enumeree;
+            Body = body;
+            KeyVariable = key_variable;
+            ValueVariable = value_variable;
         }
 
         protected override TreeChildGroup [] _getChildren ()

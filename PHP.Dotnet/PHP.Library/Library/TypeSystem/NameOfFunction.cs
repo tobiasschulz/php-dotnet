@@ -53,29 +53,9 @@ namespace PHP.Library.TypeSystem
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static implicit operator NameOfFunction (Devsense.PHP.Syntax.Name other)
-        {
-            return new NameOfFunction (other.Value);
-        }
-
         public static implicit operator NameOfFunction (string other)
         {
             return new NameOfFunction (other);
-        }
-
-        public static implicit operator NameOfFunction (Devsense.PHP.Syntax.NameRef other)
-        {
-            return new NameOfFunction (other.Name.Value);
-        }
-
-        public static implicit operator NameOfFunction (Devsense.PHP.Syntax.QualifiedName other)
-        {
-            return new NameOfFunction (other.Name.Value);
-        }
-
-        public static implicit operator NameOfFunction (Devsense.PHP.Syntax.TranslatedQualifiedName other)
-        {
-            return new NameOfFunction (other.Name.QualifiedName.Name.Value);
         }
     }
 

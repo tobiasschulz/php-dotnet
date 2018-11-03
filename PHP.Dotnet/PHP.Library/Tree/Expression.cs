@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Library.TypeSystem;
 using PHP.Standard;
 

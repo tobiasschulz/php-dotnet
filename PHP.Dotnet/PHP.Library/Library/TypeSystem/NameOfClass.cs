@@ -52,30 +52,11 @@ namespace PHP.Library.TypeSystem
             return string.Equals (_value, other, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static implicit operator NameOfClass (Devsense.PHP.Syntax.Name other)
-        {
-            return new NameOfClass (other.Value);
-        }
-
         public static implicit operator NameOfClass (string other)
         {
             return new NameOfClass (other);
         }
 
-        public static implicit operator NameOfClass (Devsense.PHP.Syntax.NameRef other)
-        {
-            return new NameOfClass (other.Name.Value);
-        }
-
-        public static implicit operator NameOfClass (Devsense.PHP.Syntax.QualifiedName other)
-        {
-            return new NameOfClass (other.Name.Value);
-        }
-
-        public static implicit operator NameOfClass (Devsense.PHP.Syntax.TranslatedQualifiedName other)
-        {
-            return new NameOfClass (other.Name.QualifiedName.Name.Value);
-        }
     }
 
 }

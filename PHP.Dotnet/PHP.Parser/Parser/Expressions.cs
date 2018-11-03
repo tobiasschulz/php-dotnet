@@ -50,25 +50,25 @@ namespace PHP.Parser
                     return ToPseudoConstExpression (e);
 
                 case BoolLiteral e:
-                    return new BoolExpression (e);
+                    return new BoolExpression (e.Value);
                 case StringLiteral e:
-                    return new StringExpression (e);
+                    return new StringExpression (e.Value ?? string.Empty);
                 case LongIntLiteral e:
-                    return new LongExpression (e);
+                    return new LongExpression (e.Value);
                 case DoubleLiteral e:
-                    return new DoubleExpression (e);
+                    return new DoubleExpression (e.Value);
 
                 case IfStmt e:
-                    return new ConditionalBlockExpression (e);
+                    return ToConditionalBlockExpression (e);
 
                 case TryStmt e:
-                    return new TryExpression (e);
+                    return ToTryExpression (e);
 
                 case BlockStmt e:
                     return ToBlockExpression (e);
 
                 case ForeachStmt e:
-                    return new ForeachExpression (e);
+                    return ToForeachExpression (e);
 
                 case DirectStMtdCall e:
                     return ToStaticMethodCallExpression (e);
@@ -144,47 +144,68 @@ namespace PHP.Parser
             }
         }
 
-        private static NameOfVariable ToNameOfVariable (VariableName e)
+        private static ConditionalBlockExpression ToConditionalBlockExpression (IfStmt e)
         {
-            return new NameOfVariable (e.Value);
-        }
-
-        private static NameOfVariable ToNameOfVariable (QualifiedName e)
-        {
-            return new NameOfVariable (e.Name.Value);
-        }
-
-        private static NameOfMethod ToNameOfMethod (NameRef e)
-        {
-            return new NameOfMethod (e.Name.Value);
-        }
-
-        private static NameOfFunction ToNameOfFunction (NameRef e)
-        {
-            return new NameOfFunction (e.Name.Value);
-        }
-
-        private static NameOfFunction ToNameOfFunction (QualifiedName e)
-        {
-            return new NameOfFunction (e.Name.Value);
-        }
-
-        private static NameOfClass ToNameOfClass (NameRef e)
-        {
-            return new NameOfClass (e.Name.Value);
-        }
-
-        private static NameOfClass ToNameOfClass (TypeRef e)
-        {
-            if (e.QualifiedName.HasValue)
+            ImmutableArray<BaseIfExpression> if_expr = ImmutableArray<BaseIfExpression>.Empty;
+            ElseExpression else_expr = null;
+            foreach (var c in e.Conditions)
             {
-                return new NameOfClass (e.QualifiedName.Value.Name.Value);
+                if (c.Condition == null)
+                {
+                    if (else_expr == null)
+                    {
+                        else_expr = new ElseExpression (c);
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException ($"Multiple else expressions ???");
+                    }
+                }
+                else
+                {
+                    if (if_expr.Length == 0)
+                    {
+                        if_expr = if_expr.Add (new IfExpression (c));
+                    }
+                    else
+                    {
+                        if_expr = if_expr.Add (new ElseIfExpression (c));
+                    }
+                }
             }
-            else
-            {
-                Log.Error ($"name of class is empty: {e}");
-                return new NameOfClass ();
-            }
+
+            return new ConditionalBlockExpression (
+                if_expr,
+                else_expr
+            );
+        }
+
+        private static ForeachExpression ToForeachExpression (ForeachStmt e)
+        {
+            return new ForeachExpression (
+                enumeree: Expressions.Parse (e.Enumeree),
+                body: Expressions.Parse (e.Body),
+                key_variable: Expressions.Parse ((VarLikeConstructUse)e.KeyVariable?.Variable ?? e.KeyVariable?.List),
+                value_variable: Expressions.Parse ((VarLikeConstructUse)e.ValueVariable?.Variable ?? e.ValueVariable?.List)
+            );
+        }
+
+        private static TryExpression ToTryExpression (TryStmt e)
+        {
+            return new TryExpression (
+                Expressions.Parse (e.Body),
+                e.Catches.Select (c => ToCatchExpression (c)).ToImmutableArray (),
+                Expressions.Parse (e.FinallyItem?.Body)
+            );
+        }
+
+        private static CatchExpression ToCatchExpression (CatchItem e)
+        {
+            return new CatchExpression (
+                Expressions.Parse (e.Body),
+                ToVariableExpression (e.Variable),
+                ToNameOfClass (e.TargetType)
+            );
         }
 
         private static RequireFileExpression ToRequireFileExpression (IncludingEx e)
@@ -420,5 +441,50 @@ namespace PHP.Parser
         {
             return new BlockExpression (e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ());
         }
+
+
+        private static NameOfVariable ToNameOfVariable (VariableName e)
+        {
+            return new NameOfVariable (e.Value);
+        }
+
+        private static NameOfVariable ToNameOfVariable (QualifiedName e)
+        {
+            return new NameOfVariable (e.Name.Value);
+        }
+
+        private static NameOfMethod ToNameOfMethod (NameRef e)
+        {
+            return new NameOfMethod (e.Name.Value);
+        }
+
+        private static NameOfFunction ToNameOfFunction (NameRef e)
+        {
+            return new NameOfFunction (e.Name.Value);
+        }
+
+        private static NameOfFunction ToNameOfFunction (QualifiedName e)
+        {
+            return new NameOfFunction (e.Name.Value);
+        }
+
+        private static NameOfClass ToNameOfClass (NameRef e)
+        {
+            return new NameOfClass (e.Name.Value);
+        }
+
+        private static NameOfClass ToNameOfClass (TypeRef e)
+        {
+            if (e.QualifiedName.HasValue)
+            {
+                return new NameOfClass (e.QualifiedName.Value.Name.Value);
+            }
+            else
+            {
+                Log.Error ($"name of class is empty: {e}");
+                return new NameOfClass ();
+            }
+        }
+
     }
 }

@@ -96,14 +96,9 @@ namespace PHP.Library.TypeSystem
             return !name.Equals (str);
         }
 
-        public static implicit operator NameOfVariable (Devsense.PHP.Syntax.VariableName other)
+        public static implicit operator NameOfVariable (string other)
         {
-            return new NameOfVariable (other.Value);
-        }
-
-        public static implicit operator NameOfVariable (Devsense.PHP.Syntax.VariableNameRef other)
-        {
-            return new NameOfVariable (other.Name.Value);
+            return new NameOfVariable (other);
         }
 
     }

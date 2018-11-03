@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using PHP.Standard;
-using Devsense.PHP.Syntax;
 using PHP.Tree;
 using PHP.Execution;
 using System.Linq;

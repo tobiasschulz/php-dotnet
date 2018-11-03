@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -61,11 +60,6 @@ namespace PHP.Tree
     {
         public readonly string Value;
 
-        public StringExpression (StringLiteral e)
-        {
-            Value = e.Value ?? string.Empty;
-        }
-
         public StringExpression (string value)
         {
             Value = value;
@@ -90,11 +84,6 @@ namespace PHP.Tree
     public sealed class LongExpression : FinalExpression
     {
         public readonly long Value;
-
-        public LongExpression (LongIntLiteral e)
-        {
-            Value = e.Value;
-        }
 
         public LongExpression (long value)
         {
@@ -136,11 +125,6 @@ namespace PHP.Tree
     {
         public readonly double Value;
 
-        public DoubleExpression (DoubleLiteral e)
-        {
-            Value = e.Value;
-        }
-
         public DoubleExpression (double value)
         {
             Value = value;
@@ -180,11 +164,6 @@ namespace PHP.Tree
     public sealed class BoolExpression : FinalExpression
     {
         public readonly bool Value;
-
-        public BoolExpression (BoolLiteral e)
-        {
-            Value = e.Value;
-        }
 
         public BoolExpression (bool value)
         {

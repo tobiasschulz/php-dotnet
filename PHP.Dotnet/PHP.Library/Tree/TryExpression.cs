@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Devsense.PHP.Syntax.Ast;
+using PHP.Library.TypeSystem;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -14,11 +14,11 @@ namespace PHP.Tree
         public readonly ImmutableArray<CatchExpression> Catches;
         public readonly Expression Finally;
 
-        public TryExpression (TryStmt e)
+        public TryExpression (Expression body, ImmutableArray<CatchExpression> catches, Expression @finally)
         {
-            Body = Expressions.Parse (e.Body);
-            Catches = e.Catches.Select (c => new CatchExpression (c)).ToImmutableArray ();
-            Finally = Expressions.Parse (e.FinallyItem?.Body);
+            Body = body;
+            Catches = catches;
+            Finally = @finally;
         }
 
         protected override TreeChildGroup [] _getChildren ()
@@ -40,13 +40,13 @@ namespace PHP.Tree
     {
         public readonly Expression Body;
         public readonly VariableExpression Variable;
-        public readonly TypeRef TargetType;
+        public readonly NameOfClass TargetType;
 
-        public CatchExpression (CatchItem e)
+        public CatchExpression (Expression body, VariableExpression variable, NameOfClass target_type)
         {
-            Body = Expressions.Parse (e.Body);
-            Variable = new VariableExpression (e.Variable);
-            TargetType = e.TargetType;
+            Body = body;
+            Variable = variable;
+            TargetType = target_type;
         }
 
         protected override TreeChildGroup [] _getChildren ()
