@@ -29,7 +29,7 @@ public class ObjectTests : BaseTests
                     return 2;
                 }
             }
-            while (true) { break; }
+            while (true) { break 2; }
         ";
         _eval (defs, o => o.DEBUG_EXECUTION = true);
 

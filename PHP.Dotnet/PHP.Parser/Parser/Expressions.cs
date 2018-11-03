@@ -58,17 +58,16 @@ namespace PHP.Parser
                 case DoubleLiteral e:
                     return new DoubleExpression (e.Value);
 
-                case IfStmt e:
-                    return ToConditionalBlockExpression (e);
-
-                case TryStmt e:
-                    return ToTryExpression (e);
-
                 case BlockStmt e:
                     return ToBlockExpression (e);
-
+                case IfStmt e:
+                    return ToConditionalBlockExpression (e);
+                case TryStmt e:
+                    return ToTryExpression (e);
                 case ForeachStmt e:
                     return ToForeachExpression (e);
+                case WhileStmt e:
+                    return ToWhileExpression (e);
 
                 case DirectStMtdCall e:
                     return ToStaticMethodCallExpression (e);
@@ -229,6 +228,15 @@ namespace PHP.Parser
         private static ElseExpression ToElseExpression (ConditionalStmt c)
         {
             return new ElseExpression (body: Expressions.Parse (c.Statement));
+        }
+
+        private static WhileExpression ToWhileExpression (WhileStmt e)
+        {
+            return new WhileExpression (
+                condition: Expressions.Parse (e.CondExpr),
+                body: Expressions.Parse (e.Body),
+                is_do_while: e.LoopType == WhileStmt.Type.Do
+            );
         }
 
         private static ForeachExpression ToForeachExpression (ForeachStmt e)

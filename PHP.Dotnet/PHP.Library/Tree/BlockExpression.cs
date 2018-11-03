@@ -85,6 +85,33 @@ namespace PHP.Tree
         }
     }
 
+    public sealed class WhileExpression : Expression
+    {
+        public readonly Expression Condition;
+        public readonly Expression Body;
+        public readonly bool IsDoWhile;
+
+        public WhileExpression (Expression condition, Expression body, bool is_do_while)
+        {
+            Condition = condition;
+            Body = body;
+            IsDoWhile = is_do_while;
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("condition", Condition),
+                ("body", Body),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return IsDoWhile ? "do-while" : "while";
+        }
+    }
+
     public abstract class BaseIfExpression : Expression
     {
         public readonly Expression Condition;
