@@ -24,6 +24,15 @@ namespace PHP.Execution
                 case UnaryOp.CAST_STRING:
                     return new Result (new StringExpression (value.GetStringValue ()));
 
+                case UnaryOp.CAST_BOOL:
+                    return new Result (new BoolExpression (value.GetBoolValue ()));
+
+                case UnaryOp.CAST_ARRAY:
+                    return ArrayInterpreter.Run (new ArrayCreateExpression (ImmutableArray<ArrayItemExpression>.Empty), scope);
+
+                case UnaryOp.CAST_OBJECT:
+                    return new Result (value);
+
                 case UnaryOp.LOGICAL_NEGATION:
                     return new Result (new BoolExpression (!value.GetBoolValue ()));
 
@@ -32,10 +41,6 @@ namespace PHP.Execution
 
                 case UnaryOp.AT_SIGN:
                     return new Result (value);
-
-                case UnaryOp.ARRAY_CAST:
-                    Result res = ArrayInterpreter.Run (new ArrayCreateExpression (ImmutableArray<ArrayItemExpression>.Empty), scope);
-                    return res;
 
                 default:
                     Log.Error ($"Unable to execute binary operation: {expression.Operation}");

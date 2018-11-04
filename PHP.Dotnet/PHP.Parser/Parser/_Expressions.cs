@@ -144,16 +144,22 @@ namespace PHP.Parser
 
                 case UnaryEx e when e.Operation == Operations.StringCast:
                     return ToUnaryExpression (e.Expr, UnaryOp.CAST_STRING);
+                case UnaryEx e when e.Operation == Operations.BoolCast:
+                    return ToUnaryExpression (e.Expr, UnaryOp.CAST_BOOL);
+                case UnaryEx e when e.Operation == Operations.ArrayCast:
+                    return ToUnaryExpression (e.Expr, UnaryOp.CAST_ARRAY);
+                case UnaryEx e when e.Operation == Operations.ObjectCast:
+                    return ToUnaryExpression (e.Expr, UnaryOp.CAST_OBJECT);
                 case UnaryEx e when e.Operation == Operations.LogicNegation:
                     return ToUnaryExpression (e.Expr, UnaryOp.LOGICAL_NEGATION);
                 case UnaryEx e when e.Operation == Operations.AtSign:
                     return ToUnaryExpression (e.Expr, UnaryOp.AT_SIGN);
-                case UnaryEx e when e.Operation == Operations.ArrayCast:
-                    return ToUnaryExpression (e.Expr, UnaryOp.ARRAY_CAST);
 
                 case EmptyEx e:
                     return ToUnaryExpression (e.Expression, UnaryOp.IS_EMPTY);
 
+                case ConcatEx e:
+                    return ToBinaryExpression (e);
 
                 case Devsense.PHP.Syntax.Ast.Expression e:
                     Log.Error ($"Expression: {e}, {e.Operation}");
@@ -413,6 +419,25 @@ namespace PHP.Parser
         private static ReturnExpression ToReturnExpression (JumpStmt e)
         {
             return new ReturnExpression (Parse (e.Expression));
+        }
+
+        private static Expression ToBinaryExpression (ConcatEx e)
+        {
+            if (e.Expressions.Length == 0)
+            {
+                return new EmptyExpression ();
+            }
+            else if (e.Expressions.Length == 1)
+            {
+                return Parse (e.Expressions [0]);
+            }
+            else
+            {
+                Expression result_ex = ToBinaryExpression (e.Expressions [0], e.Expressions [1], BinaryOp.CONCAT);
+                foreach (var additional_ex in e.Expressions.Skip (2))
+                    result_ex = ToBinaryExpression (result_ex, Parse (additional_ex), BinaryOp.CONCAT);
+                return result_ex;
+            }
         }
 
         private static BinaryExpression ToBinaryExpression (Devsense.PHP.Syntax.Ast.Expression left, Devsense.PHP.Syntax.Ast.Expression right, BinaryOp operation)

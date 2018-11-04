@@ -23,7 +23,11 @@ namespace PHP.Library
             functions.Add (new ini_set ());
             functions.Add (new error_reporting ());
             functions.Add (new function_exists ());
+            functions.Add (new file_exists ());
             functions.Add (new mb_substr ());
+            functions.Add (new is_array ());
+            functions.Add (new is_object ());
+            functions.Add (new is_null ());
             functions.Add (new memory_get_peak_usage ());
             functions.Add (new memory_get_usage ());
             functions.Add (new microtime ());

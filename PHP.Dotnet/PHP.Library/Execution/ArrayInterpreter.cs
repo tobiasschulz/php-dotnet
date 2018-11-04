@@ -48,23 +48,24 @@ namespace PHP.Execution
 
         public static void Resolve (ArrayAccessExpression expression, Scope scope, Action<IArray, ArrayKey> action)
         {
+            FinalExpression key_expr = Interpreters.Execute (expression.Index, scope).ResultValue;
+            ArrayKey key = new ArrayKey (key_expr.GetStringValue ());
+
             FinalExpression array_expr = Interpreters.Execute (expression.Array, scope).ResultValue;
             if (array_expr is ArrayPointerExpression pointer)
             {
                 if (pointer.GetArray () is IArray arr)
                 {
-                    FinalExpression key_expr = Interpreters.Execute (expression.Index, scope).ResultValue;
-                    ArrayKey key = new ArrayKey (key_expr.GetStringValue ());
                     action (arr, key);
                 }
                 else
                 {
-                    Log.Error ($"Array could not be found: {pointer.GetArrayId ()}, scope: {scope}");
+                    Log.Error ($"Array could not be found: {pointer.GetArrayId ()}, key: '{key}', scope: {scope}");
                 }
             }
             else
             {
-                Log.Error ($"Array access is not performed on an array, but on: {array_expr}, scope: {scope}");
+                Log.Error ($"Array access of key '{key}' is not performed on an array, but on: {array_expr}, scope: {scope}");
             }
         }
 

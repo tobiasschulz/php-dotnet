@@ -33,10 +33,12 @@ namespace PHP.Tree
     public enum UnaryOp
     {
         CAST_STRING,
+        CAST_BOOL,
+        CAST_ARRAY,
+        CAST_OBJECT,
         LOGICAL_NEGATION,
         IS_EMPTY,
         AT_SIGN,
-        ARRAY_CAST,
     }
 
     public sealed class NotExpression : UnaryExpression

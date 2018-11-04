@@ -13,7 +13,7 @@ namespace PHP
     {
         public bool DEBUG_EXECUTION;
     }
-    
+
     public sealed class Context
     {
         public readonly ContextOptions Options;
@@ -22,6 +22,7 @@ namespace PHP
         public readonly List<CodeDirectory> RootDirectories = new List<CodeDirectory> ();
         public readonly Dictionary<string, string> Defines = new Dictionary<string, string> ();
         public readonly IConsole Console = new StandardConsole ();
+        public readonly HashSet<CodeScriptFile> IncludedFiles = new HashSet<CodeScriptFile> ();
 
         public Context (ContextOptions options, IParser parser)
         {
@@ -70,33 +71,52 @@ namespace PHP
                 throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");
             }
 
+            if (IncludedFiles.Contains (file))
+            {
+                Log.Debug ($"File already included: {file}");
+                return;
+            }
+            IncludedFiles.Add (file);
+
             file.GetContent ().Run (RootScope, Options);
         }
 
-        public void RequireFile (NormalizedPath value)
+        public void RequireFile (params NormalizedPath [] possible_paths)
         {
             CodeScriptFile file = null;
 
-            foreach (var d in RootDirectories)
+            foreach (NormalizedPath possible_path in possible_paths)
             {
-                file = d.Files.FirstOrDefault (f => f.FullPath == value);
                 if (file != null) break;
-            }
 
-            if (file == null)
-            {
                 foreach (var d in RootDirectories)
                 {
-                    NormalizedPath relative_combined = Path.GetFullPath (Path.Combine (d.Path.Original, value.Original));
-                    file = d.Files.FirstOrDefault (f => f.FullPath == relative_combined);
+                    file = d.Files.FirstOrDefault (f => f.FullPath == possible_path);
                     if (file != null) break;
+                }
+
+                if (file == null)
+                {
+                    foreach (var d in RootDirectories)
+                    {
+                        NormalizedPath relative_combined = Path.GetFullPath (Path.Combine (d.Path.Original, possible_path.Original));
+                        file = d.Files.FirstOrDefault (f => f.FullPath == relative_combined);
+                        if (file != null) break;
+                    }
                 }
             }
 
             if (file == null)
             {
-                throw new InterpreterException ($"File {value} could not be found. Root directories are: {RootDirectories.Join (", ")}");
+                throw new InterpreterException ($"File {possible_paths.Join ("|")} could not be found. Root directories are: {RootDirectories.Join (", ")}");
             }
+
+            if (IncludedFiles.Contains (file))
+            {
+                Log.Debug ($"File already included: {file}");
+                return;
+            }
+            IncludedFiles.Add (file);
 
             file.GetContent ().Run (RootScope, Options);
         }
