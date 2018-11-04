@@ -27,6 +27,16 @@ namespace PHP.Execution
                 case UnaryOp.LOGICAL_NEGATION:
                     return new Result (new BoolExpression (!value.GetBoolValue ()));
 
+                case UnaryOp.IS_EMPTY:
+                    return new Result (new BoolExpression (string.IsNullOrEmpty (value.GetStringValue ())));
+
+                case UnaryOp.AT_SIGN:
+                    return new Result (value);
+
+                case UnaryOp.ARRAY_CAST:
+                    Result res = ArrayInterpreter.Run (new ArrayCreateExpression (ImmutableArray<ArrayItemExpression>.Empty), scope);
+                    return res;
+
                 default:
                     Log.Error ($"Unable to execute binary operation: {expression.Operation}");
                     return Result.NULL;

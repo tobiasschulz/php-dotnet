@@ -46,7 +46,7 @@ namespace PHP.Execution
                     return BinaryInterpreter.Run (e, scope);
                 case UnaryExpression e:
                     return UnaryInterpreter.Run (e, scope);
-                    
+
                 case CallParameter e:
                     return CallParameterInterpreter.Run (e, scope);
 
@@ -74,6 +74,8 @@ namespace PHP.Execution
                 case PseudoConstExpression e:
                     return VariableInterpreter.Run (e, scope);
                 case AssignExpression e:
+                    return AssignInterpreter.Run (e, scope);
+                case UnsetExpression e:
                     return AssignInterpreter.Run (e, scope);
 
                 default:

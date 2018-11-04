@@ -16,7 +16,7 @@ namespace PHP.Tree
         {
             Name = name;
         }
-        
+
         protected override string GetTypeName ()
         {
             return $"variable: {Name}";

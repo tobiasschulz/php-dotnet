@@ -40,6 +40,33 @@ namespace PHP.Execution
 
             return right_result;
         }
+
+        public static Result Run (UnsetExpression unset, Scope scope)
+        {
+            foreach (Expression expr in unset.Variables)
+            {
+                switch (expr)
+                {
+                    case ArrayAccessExpression array_access_expression:
+                        ArrayInterpreter.Resolve (array_access_expression, scope, (arr, key) =>
+                        {
+                            arr.Set (new ArrayItem (key, new NullExpression ()));
+                        });
+                        break;
+
+                    case VariableExpression variable_expression:
+                        scope.Variables.EnsureExists (variable_expression.Name, out IVariable variable);
+                        variable.Value = new NullExpression ();
+                        break;
+
+                    default:
+                        Log.Error ($"Cannot execute unset expression: Left Value is of unknown type {expr}");
+                        break;
+                }
+            }
+
+            return Result.NULL;
+        }
     }
 
 

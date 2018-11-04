@@ -19,10 +19,14 @@ namespace PHP.Library
             functions.Add (new die ());
             functions.Add (new realpath ());
             functions.Add (new dirname ());
+            functions.Add (new ini_get ());
             functions.Add (new ini_set ());
             functions.Add (new error_reporting ());
-            functions.Add (new mb_substr ());
             functions.Add (new function_exists ());
+            functions.Add (new mb_substr ());
+            functions.Add (new memory_get_peak_usage ());
+            functions.Add (new memory_get_usage ());
+            functions.Add (new microtime ());
         }
 
         public static void Populate (IVariableCollection variables)

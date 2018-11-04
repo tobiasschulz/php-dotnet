@@ -156,4 +156,26 @@ namespace PHP.Tree
         }
     }
 
+    public sealed class UnsetExpression : Expression
+    {
+        public readonly ImmutableArray<Expression> Variables;
+
+        public UnsetExpression (ImmutableArray<Expression> variables)
+        {
+            Variables = variables;
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("variables", Variables),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"unset";
+        }
+    }
+
 }

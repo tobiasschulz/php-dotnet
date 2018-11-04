@@ -99,6 +99,9 @@ namespace PHP.Parser
                 case IssetEx e:
                     return ToIssetExpression (e);
 
+                case UnsetStmt e:
+                    return ToUnsetExpression (e);
+
                 case EchoStmt e:
                     return ToEchoExpression (e);
 
@@ -120,11 +123,15 @@ namespace PHP.Parser
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.CONCAT);
                 case BinaryEx e when e.Operation == Operations.Equal:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL);
+                case BinaryEx e when e.Operation == Operations.Identical:
+                    return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL);
                 case BinaryEx e when e.Operation == Operations.And:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.AND);
                 case BinaryEx e when e.Operation == Operations.Or:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.OR);
                 case BinaryEx e when e.Operation == Operations.NotEqual:
+                    return new NotExpression (ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL));
+                case BinaryEx e when e.Operation == Operations.NotIdentical:
                     return new NotExpression (ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL));
                 case BinaryEx e when e.Operation == Operations.LessThan:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.LESS_THAN);
@@ -139,6 +146,14 @@ namespace PHP.Parser
                     return ToUnaryExpression (e.Expr, UnaryOp.CAST_STRING);
                 case UnaryEx e when e.Operation == Operations.LogicNegation:
                     return ToUnaryExpression (e.Expr, UnaryOp.LOGICAL_NEGATION);
+                case UnaryEx e when e.Operation == Operations.AtSign:
+                    return ToUnaryExpression (e.Expr, UnaryOp.AT_SIGN);
+                case UnaryEx e when e.Operation == Operations.ArrayCast:
+                    return ToUnaryExpression (e.Expr, UnaryOp.ARRAY_CAST);
+
+                case EmptyEx e:
+                    return ToUnaryExpression (e.Expression, UnaryOp.IS_EMPTY);
+
 
                 case Devsense.PHP.Syntax.Ast.Expression e:
                     Log.Error ($"Expression: {e}, {e.Operation}");
@@ -339,6 +354,11 @@ namespace PHP.Parser
         private static IssetExpression ToIssetExpression (IssetEx e)
         {
             return new IssetExpression (ToCallSignature (e.VarList.Select (c => new CallParameter (Parse (c), ampersand: false, is_unpack: false))));
+        }
+
+        private static UnsetExpression ToUnsetExpression (UnsetStmt e)
+        {
+            return new UnsetExpression (e.VarList.Select (c => Parse (c)).ToImmutableArray ());
         }
 
         private static Tree.CallSignature ToCallSignature (IEnumerable<CallParameter> e)

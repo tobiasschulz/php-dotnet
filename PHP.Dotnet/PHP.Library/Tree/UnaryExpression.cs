@@ -16,7 +16,7 @@ namespace PHP.Tree
             Value = value;
             Operation = operation;
         }
-        
+
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
@@ -33,7 +33,10 @@ namespace PHP.Tree
     public enum UnaryOp
     {
         CAST_STRING,
-        LOGICAL_NEGATION
+        LOGICAL_NEGATION,
+        IS_EMPTY,
+        AT_SIGN,
+        ARRAY_CAST,
     }
 
     public sealed class NotExpression : UnaryExpression
