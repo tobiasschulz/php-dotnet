@@ -44,6 +44,7 @@ namespace PHP.Tree
         private readonly IFunctionCollection _functions;
         private readonly IVariableCollection _variables;
         private readonly IClassCollection _classes;
+        private readonly IObjectCollection _objects;
 
         public RootScope (Context context)
         {
@@ -51,6 +52,7 @@ namespace PHP.Tree
             _functions = new FunctionCollection ();
             _variables = new VariableCollection ();
             _classes = new ClassCollection ();
+            _objects = new ObjectCollection ();
 
             StandardLibrary.Populate (_functions);
             StandardLibrary.Populate (_variables);
@@ -59,6 +61,7 @@ namespace PHP.Tree
         public Context Context => _context;
         public IFunctionCollection Functions => _functions;
         public IClassCollection Classes => _classes;
+        public IObjectCollection Objects => _objects;
         public override Scope Parent => null;
         public override RootScope Root => this;
         public override IVariableCollection Variables => _variables;

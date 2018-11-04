@@ -10,7 +10,9 @@ namespace PHP.Library.TypeSystem
 {
     public interface IClass : IElement<NameOfClass>
     {
-        IVariableCollection Fields { get; }
+        IReadOnlyList<NameOfClass> Parents { get; }
+        IReadOnlyList<NameOfClass> Interfaces { get; }
+        IFieldCollection Fields { get; }
         IMethodCollection Methods { get; }
     }
 
