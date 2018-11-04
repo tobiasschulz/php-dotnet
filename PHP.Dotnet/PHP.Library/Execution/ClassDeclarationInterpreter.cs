@@ -35,7 +35,7 @@ namespace PHP.Execution
                 _classes = new ClassCollection ();
             }
 
-            NameOfClass IClass.Name => _name;
+            NameOfClass IElement<NameOfClass>.Name => _name;
             IVariableCollection IClass.Fields => _fields;
             IMethodCollection IClass.Methods => _methods;
         }

@@ -9,111 +9,28 @@ using PHP.Tree;
 
 namespace PHP.Library.TypeSystem
 {
-    public interface IMethod
+    public interface IMethod : IElement<NameOfMethod>
     {
-        NameOfMethod Name { get; }
         Result Execute (EvaluatedCallSignature call_signature, Scope scope);
     }
     
-    public interface IReadOnlyMethodCollection
+    public interface IReadOnlyMethodCollection : IReadOnlyElementCollection<NameOfMethod, IMethod>
     {
-        bool TryGetValue (NameOfMethod name, out IMethod res);
-        bool Contains (NameOfMethod name);
-        IEnumerable<IMethod> GetAll ();
     }
 
-    public interface IMethodCollection : IReadOnlyMethodCollection
+    public interface IMethodCollection : IReadOnlyMethodCollection, IElementCollection<NameOfMethod, IMethod>
     {
-        void Add (IMethod value);
     }
 
-    public sealed class MergedMethodCollection : IMethodCollection, IReadOnlyMethodCollection
+    public sealed class MergedMethodCollection : MergedElementCollection<NameOfMethod, IMethod>, IMethodCollection, IReadOnlyMethodCollection
     {
-        private readonly IMethodCollection _collection_parent;
-        private readonly IMethodCollection _collection_own;
-
-        public MergedMethodCollection (IMethodCollection collection_readonly, IMethodCollection collection_editable)
+        public MergedMethodCollection (IReadOnlyElementCollection<NameOfMethod, IMethod> collection_parent, IElementCollection<NameOfMethod, IMethod> collection_own)
+            : base (collection_parent, collection_own)
         {
-            _collection_parent = collection_readonly;
-            _collection_own = collection_editable;
         }
-
-        bool IReadOnlyMethodCollection.TryGetValue (NameOfMethod name, out IMethod res)
-        {
-            return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
-        }
-        
-        bool IReadOnlyMethodCollection.Contains (NameOfMethod name)
-        {
-            return _collection_own.Contains (name) || _collection_parent.Contains (name);
-        }
-
-        IEnumerable<IMethod> IReadOnlyMethodCollection.GetAll ()
-        {
-            return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
-        }
-
-        void IMethodCollection.Add (IMethod value)
-        {
-            if (value == null) return;
-
-            if (_collection_own.TryGetValue (value.Name, out var existing_value))
-            {
-                Log.Error ($"Cannot add method {value.Name}: already exists: {existing_value} vs {value}");
-            }
-            else
-            {
-                _collection_own.Add (value);
-            }
-        }
-
     }
 
-    public sealed class MethodCollection : IMethodCollection, IReadOnlyMethodCollection
+    public sealed class MethodCollection : ElementCollection<NameOfMethod, IMethod>, IMethodCollection, IReadOnlyMethodCollection
     {
-        private ImmutableArray<IMethod> _data = ImmutableArray<IMethod>.Empty;
-
-        public MethodCollection ()
-        {
-        }
-
-        bool IReadOnlyMethodCollection.TryGetValue (NameOfMethod name, out IMethod res)
-        {
-            foreach (IMethod value in _data)
-            {
-                if (value.Name == name)
-                {
-                    res = value;
-                    return true;
-                }
-            }
-            res = null;
-            return false;
-        }
-
-        bool IReadOnlyMethodCollection.Contains (NameOfMethod name)
-        {
-            return ((IReadOnlyMethodCollection)this).TryGetValue (name, out var dummy);
-        }
-
-        IEnumerable<IMethod> IReadOnlyMethodCollection.GetAll ()
-        {
-            return _data;
-        }
-
-        void IMethodCollection.Add (IMethod value)
-        {
-            if (value == null) return;
-
-            if (((IReadOnlyMethodCollection)this).TryGetValue (value.Name, out var existing_value))
-            {
-                Log.Error ($"Cannot add method {value.Name}: already exists: {existing_value} vs {value}");
-            }
-            else
-            {
-                _data = _data.Add (value);
-            }
-        }
-
     }
 }

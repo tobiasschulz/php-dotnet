@@ -23,7 +23,7 @@ namespace PHP.Library
 
         protected abstract FinalExpression _getValue ();
 
-        NameOfVariable IVariable.Name => _name;
+        NameOfVariable IElement<NameOfVariable>.Name => _name;
         FinalExpression IVariable.Value
         {
             get => _getValue ();

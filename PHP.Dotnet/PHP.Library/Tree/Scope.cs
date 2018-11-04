@@ -76,8 +76,8 @@ namespace PHP.Tree
             _parentscope = parentscope;
             _script = script;
             _variables = new MergedVariableCollection (
-                collection_readonly: _parentscope.Variables,
-                collection_editable: new VariableCollection ()
+                collection_parent: _parentscope.Variables,
+                collection_own: new VariableCollection ()
             );
         }
 
@@ -99,8 +99,8 @@ namespace PHP.Tree
             _parentscope = parentscope;
             _function = function;
             _variables = new MergedVariableCollection (
-                collection_readonly: _parentscope.Variables,
-                collection_editable: new VariableCollection ()
+                collection_parent: _parentscope.Variables,
+                collection_own: new VariableCollection ()
             );
         }
 
