@@ -31,7 +31,7 @@ namespace PHP.Library
             {
                 return _execute (call_signature.Parameters, function_scope);
             }
-            catch (InternalException ex)
+            catch (StandardLibraryUsageException ex)
             {
                 Log.Error (ex.Message);
                 return Result.NULL;

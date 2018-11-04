@@ -13,19 +13,24 @@ namespace PHP.Execution
     {
         public static Result Run (ClassDeclarationExpression expression, Scope scope)
         {
-            // scope.Root.GlobalFunctions.Add (new InterpretedClass (expression));
+            scope.Root.Classes.Add (new InterpretedClass (expression));
 
             return Result.NULL;
         }
 
         private sealed class InterpretedClass : IClass
         {
+            private readonly NameOfClass _name;
             private readonly ClassDeclarationExpression _expression;
 
             public InterpretedClass (ClassDeclarationExpression expression)
             {
+                _name = expression.Name;
                 _expression = expression;
             }
+
+            NameOfClass IClass.Name => _name;
+
 
         }
     }

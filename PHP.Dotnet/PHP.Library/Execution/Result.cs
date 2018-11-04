@@ -33,6 +33,7 @@ namespace PHP.Execution
 
         public bool IsTrue ()
         {
+            // Log.Debug ($"is true? {ResultValue} {Environment.StackTrace}");
             Log.Debug ($"is true? {ResultValue}");
             return ResultValue.GetBoolValue ();
         }

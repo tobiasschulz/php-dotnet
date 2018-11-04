@@ -28,6 +28,9 @@ namespace PHP.Library
         public static void Populate (IVariableCollection variables)
         {
             variables.Add (new DIRECTORY_SEPARATOR ());
+            variables.Add (new @true ());
+            variables.Add (new @false ());
+            variables.Add (new @null ());
         }
     }
 }

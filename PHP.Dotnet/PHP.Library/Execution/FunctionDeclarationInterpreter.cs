@@ -13,7 +13,7 @@ namespace PHP.Execution
     {
         public static Result Run (FunctionDeclarationExpression expression, Scope scope)
         {
-            scope.Root.GlobalFunctions.Add (new InterpretedFunction (expression));
+            scope.Root.Functions.Add (new InterpretedFunction (expression));
 
             return Result.NULL;
         }

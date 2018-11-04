@@ -15,7 +15,15 @@ namespace PHP.Library.TypeSystem
         Result Execute (EvaluatedCallSignature call_signature, Tree.Scope scope);
     }
 
-    public sealed class FunctionCollection
+    public interface IFunctionCollection
+    {
+        bool TryGetValue (NameOfFunction name, out IFunction res);
+        bool Contains (NameOfFunction name);
+        void Add (IFunction value);
+        IEnumerable<IFunction> GetAll ();
+    }
+
+    public sealed class FunctionCollection : IFunctionCollection
     {
         private ImmutableArray<IFunction> _data = ImmutableArray<IFunction>.Empty;
 
@@ -42,7 +50,7 @@ namespace PHP.Library.TypeSystem
             return TryGetValue (name, out var dummy);
         }
 
-        internal ImmutableArray<IFunction> GetAll ()
+        public IEnumerable<IFunction> GetAll ()
         {
             return _data;
         }

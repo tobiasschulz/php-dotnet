@@ -29,9 +29,12 @@ public class ObjectTests : BaseTests
                     return 2;
                 }
             }
-            while (true) { break 2; }
+            while (true) { break; }
         ";
         _eval (defs, o => o.DEBUG_EXECUTION = true);
+
+        _eval (defs + " $a = new A(); $a->myfunc1(9,9.5); ", o => o.DEBUG_EXECUTION = true);
+
 
         //      Assert.Equal ("3", _eval (defs + ""));
     }

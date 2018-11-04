@@ -30,8 +30,17 @@ namespace PHP.Execution
 
                 case ConditionalBlockExpression e:
                     return ConditionalBlockInterpreter.Run (e, scope);
+                case WhileExpression e:
+                    return WhileInterpreter.Run (e, scope);
                 case TryExpression e:
                     return TryInterpreter.Run (e, scope);
+
+                case BreakExpression e:
+                    return BreakInterpreter.Run (e, scope);
+                case ContinueExpression e:
+                    return ContinueInterpreter.Run (e, scope);
+                case ReturnExpression e:
+                    return ReturnInterpreter.Run (e, scope);
 
                 case BinaryExpression e:
                     return BinaryInterpreter.Run (e, scope);

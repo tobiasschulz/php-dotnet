@@ -12,7 +12,7 @@ namespace PHP.Library.Constants
         {
         }
 
-        internal override FinalExpression _getValue ()
+        protected override FinalExpression _getValue ()
         {
             return new StringExpression (Directory.Exists ("/bin") ? "/" : "\\");
         }

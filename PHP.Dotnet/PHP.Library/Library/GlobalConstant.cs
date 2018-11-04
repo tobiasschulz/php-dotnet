@@ -21,7 +21,7 @@ namespace PHP.Library
         public NameOfVariable Name => _name;
         public FinalExpression Value => _getValue ();
 
-        internal abstract FinalExpression _getValue ();
+        protected abstract FinalExpression _getValue ();
 
         NameOfVariable IVariable.Name => _name;
         FinalExpression IVariable.Value

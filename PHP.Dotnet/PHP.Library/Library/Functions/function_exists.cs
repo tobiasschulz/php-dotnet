@@ -24,7 +24,7 @@ namespace PHP.Library.Functions
 
             FinalExpression param_1 = parameters [0].EvaluatedValue;
 
-            bool does_exist = function_scope.Root.GlobalFunctions.Contains (param_1.GetStringValue ());
+            bool does_exist = function_scope.Root.Functions.Contains (param_1.GetStringValue ());
 
             return new Result (new BoolExpression (does_exist));
         }
