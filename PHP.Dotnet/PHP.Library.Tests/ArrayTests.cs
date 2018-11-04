@@ -19,7 +19,7 @@ public class ArrayTests : BaseTests
     public void TestArrayAccess ()
     {
         _eval (_defs);
-        Assert.Equal ("1", _eval (_defs + " $a1['key1'] == $a2['key2'] ? 1 : 0 "));
+        Assert.Equal ("1", _eval (_defs + " $a1['key1'] == $a2['key2'] ? 1 : 0; "));
     }
 
 }

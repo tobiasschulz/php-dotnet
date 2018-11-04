@@ -17,6 +17,7 @@ namespace PHP.Tree
         LONG,
         DOUBLE,
         OBJECT,
+        ARRAY,
     }
 
     public abstract class FinalExpression : Expression
@@ -272,8 +273,8 @@ namespace PHP.Tree
 
     public sealed class ObjectPointerExpression : FinalExpression
     {
-        private static ObjectId _object_id;
-        private static RootScope _rootscope;
+        private ObjectId _object_id;
+        private RootScope _rootscope;
 
         public ObjectPointerExpression (ObjectId object_id, RootScope rootscope)
         {
@@ -305,6 +306,45 @@ namespace PHP.Tree
         public override ScalarAffinity GetScalarAffinity ()
         {
             return ScalarAffinity.OBJECT;
+        }
+
+    }
+
+    public sealed class ArrayPointerExpression : FinalExpression
+    {
+        private ArrayId _array_id;
+        private RootScope _rootscope;
+
+        public ArrayPointerExpression (ArrayId array_id, RootScope rootscope)
+        {
+            _array_id = array_id;
+            _rootscope = rootscope;
+        }
+
+        public ArrayId GetArrayId ()
+        {
+            return _array_id;
+        }
+
+        public IArray GetArray ()
+        {
+            _rootscope.Arrays.TryGetValue (_array_id, out IArray res);
+            return res;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return "array";
+        }
+
+        public override string GetStringValue ()
+        {
+            return GetArray ().ToString ();
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.ARRAY;
         }
 
     }

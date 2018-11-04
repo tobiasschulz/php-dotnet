@@ -69,6 +69,8 @@ namespace PHP.Parser
                     return ToForeachExpression (e);
                 case WhileStmt e:
                     return ToWhileExpression (e);
+                case ConditionalEx e:
+                    return ToConditionalBlockExpression (e);
 
                 case DirectStMtdCall e:
                     return ToStaticMethodCallExpression (e);
@@ -148,7 +150,7 @@ namespace PHP.Parser
             }
         }
 
-        private static ArrayExpression ToArrayExpression (ArrayEx e)
+        private static ArrayCreateExpression ToArrayExpression (ArrayEx e)
         {
             ImmutableArray<ArrayItemExpression> items = e.Items.Select (i =>
             {
@@ -165,7 +167,7 @@ namespace PHP.Parser
                 }
             }).Where (i => i != null).ToImmutableArray ();
 
-            return new ArrayExpression (items);
+            return new ArrayCreateExpression (items);
         }
 
         private static ArrayAccessExpression ToArrayAccessExpression (ItemUse e)
@@ -189,6 +191,14 @@ namespace PHP.Parser
             return new ArrayItemValueExpression (
                 key: Parse (e.Index),
                 value: Parse (e.ValueExpr)
+            );
+        }
+
+        private static ConditionalBlockExpression ToConditionalBlockExpression (ConditionalEx e)
+        {
+            return new ConditionalBlockExpression (
+                new BaseIfExpression [] { new IfExpression (condition: Parse (e.CondExpr), body: Parse (e.TrueExpr)) }.ToImmutableArray (),
+                new ElseExpression (Parse (e.FalseExpr))
             );
         }
 

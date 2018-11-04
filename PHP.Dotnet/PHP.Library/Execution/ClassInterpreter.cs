@@ -10,7 +10,7 @@ using PHP.Tree;
 
 namespace PHP.Execution
 {
-    public static class ClassDeclarationInterpreter
+    public static class ClassInterpreter
     {
         public static Result Run (ClassDeclarationExpression expression, Scope scope)
         {

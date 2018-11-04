@@ -38,6 +38,7 @@ namespace PHP
                     foreach (var diag in _parse_result.Diagnostics)
                         diagnostics.Add (diag.ToString ());
                 else
+
                     throw new Exception (_parse_result.Diagnostics.Join ("\n"));
             }
 

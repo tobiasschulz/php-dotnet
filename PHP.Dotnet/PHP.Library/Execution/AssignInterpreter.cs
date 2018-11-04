@@ -21,8 +21,11 @@ namespace PHP.Execution
 
             switch (assign.Left)
             {
-                case ArrayExpression array_expression:
-                    Log.Error ($"Cannot execute assign expression: Not Implemented: {assign.Left}");
+                case ArrayAccessExpression array_access_expression:
+                    ArrayInterpreter.Resolve (array_access_expression, scope, (arr, key) =>
+                    {
+                        arr.Set (new ArrayItem (key, right_result.ResultValue));
+                    });
                     break;
 
                 case VariableExpression variable_expression:

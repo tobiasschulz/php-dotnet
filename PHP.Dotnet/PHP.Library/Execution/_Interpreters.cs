@@ -46,22 +46,28 @@ namespace PHP.Execution
                     return BinaryInterpreter.Run (e, scope);
                 case UnaryExpression e:
                     return UnaryInterpreter.Run (e, scope);
-
-                case FunctionCallExpression e:
-                    return FunctionCallInterpreter.Run (e, scope);
-                case MethodCallExpression e:
-                    return ClassDeclarationInterpreter.Run (e, scope);
-                case StaticMethodCallExpression e:
-                    return ClassDeclarationInterpreter.Run (e, scope);
+                    
                 case CallParameter e:
                     return CallParameterInterpreter.Run (e, scope);
 
+                case FunctionCallExpression e:
+                    return FunctionInterpreter.Run (e, scope);
                 case FunctionDeclarationExpression e:
-                    return FunctionDeclarationInterpreter.Run (e, scope);
+                    return FunctionInterpreter.Run (e, scope);
+
+                case MethodCallExpression e:
+                    return ClassInterpreter.Run (e, scope);
+                case StaticMethodCallExpression e:
+                    return ClassInterpreter.Run (e, scope);
                 case ClassDeclarationExpression e:
-                    return ClassDeclarationInterpreter.Run (e, scope);
+                    return ClassInterpreter.Run (e, scope);
                 case NewInstanceExpression e:
-                    return ClassDeclarationInterpreter.Run (e, scope);
+                    return ClassInterpreter.Run (e, scope);
+
+                case ArrayCreateExpression e:
+                    return ArrayInterpreter.Run (e, scope);
+                case ArrayAccessExpression e:
+                    return ArrayInterpreter.Run (e, scope);
 
                 case VariableExpression e:
                     return VariableInterpreter.Run (e, scope);

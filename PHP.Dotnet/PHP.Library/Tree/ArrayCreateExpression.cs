@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace PHP.Tree
 {
-    public sealed class ArrayExpression : LikeVariable
+    public sealed class ArrayCreateExpression : LikeVariable
     {
         public readonly ImmutableArray<ArrayItemExpression> Items;
 
-        public ArrayExpression (ImmutableArray<ArrayItemExpression> items)
+        public ArrayCreateExpression (ImmutableArray<ArrayItemExpression> items)
         {
             Items = items;
         }

@@ -71,7 +71,12 @@ public class ProgramTests : BaseTests
         ";
 
         _eval (_defs, o => o.DEBUG_EXECUTION = true);
-        Assert.Equal ("1", _eval (_defs + " $a1['key1'] == $a2['key2'] ? 1 : 0 ", o => o.DEBUG_EXECUTION = true));
+
+
+        Assert.Equal ("blabla", _eval (_defs + " echo $a1['key2']; ", o => o.DEBUG_EXECUTION = true));
+        Assert.Equal ("bla", _eval (_defs + " echo $a1['key1']; ", o => o.DEBUG_EXECUTION = true));
+        Assert.Equal ("bla", _eval (_defs + " echo $a2['key2']; ", o => o.DEBUG_EXECUTION = true));
+        Assert.Equal ("1", _eval (_defs + " ($a1['key1'] == $a2['key2'] ? 1 : 0); ", o => o.DEBUG_EXECUTION = true));
 
 
 
