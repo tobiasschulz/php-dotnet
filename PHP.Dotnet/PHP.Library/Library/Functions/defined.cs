@@ -9,7 +9,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class defined : Function
+    public sealed class defined : ManagedFunction
     {
         public defined ()
             : base ("defined")

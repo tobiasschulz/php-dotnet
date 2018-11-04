@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class mb_substr : Function
+    public sealed class mb_substr : ManagedFunction
     {
         public mb_substr ()
             : base ("mb_substr")

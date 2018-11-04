@@ -166,16 +166,16 @@ namespace PHP.Parser
         private static ArrayItemExpression ToArrayItemRefExpression (RefItem e)
         {
             return new ArrayItemRefExpression (
-                key: Expressions.Parse (e.Index),
-                value: Expressions.Parse (e.RefToGet)
+                key: Parse (e.Index),
+                value: Parse (e.RefToGet)
             );
         }
 
         private static ArrayItemExpression ToArrayItemValueExpression (ValueItem e)
         {
             return new ArrayItemValueExpression (
-                key: Expressions.Parse (e.Index),
-                value: Expressions.Parse (e.ValueExpr)
+                key: Parse (e.Index),
+                value: Parse (e.ValueExpr)
             );
         }
 
@@ -217,24 +217,24 @@ namespace PHP.Parser
 
         private static IfExpression ToIfExpression (ConditionalStmt c)
         {
-            return new IfExpression (condition: Expressions.Parse (c.Condition), body: Expressions.Parse (c.Statement));
+            return new IfExpression (condition: Parse (c.Condition), body: Parse (c.Statement));
         }
 
         private static ElseIfExpression ToElseIfExpression (ConditionalStmt c)
         {
-            return new ElseIfExpression (condition: Expressions.Parse (c.Condition), body: Expressions.Parse (c.Statement));
+            return new ElseIfExpression (condition: Parse (c.Condition), body: Parse (c.Statement));
         }
 
         private static ElseExpression ToElseExpression (ConditionalStmt c)
         {
-            return new ElseExpression (body: Expressions.Parse (c.Statement));
+            return new ElseExpression (body: Parse (c.Statement));
         }
 
         private static WhileExpression ToWhileExpression (WhileStmt e)
         {
             return new WhileExpression (
-                condition: Expressions.Parse (e.CondExpr),
-                body: Expressions.Parse (e.Body),
+                condition: Parse (e.CondExpr),
+                body: Parse (e.Body),
                 is_do_while: e.LoopType == WhileStmt.Type.Do
             );
         }
@@ -242,26 +242,26 @@ namespace PHP.Parser
         private static ForeachExpression ToForeachExpression (ForeachStmt e)
         {
             return new ForeachExpression (
-                enumeree: Expressions.Parse (e.Enumeree),
-                body: Expressions.Parse (e.Body),
-                key_variable: Expressions.Parse ((VarLikeConstructUse)e.KeyVariable?.Variable ?? e.KeyVariable?.List),
-                value_variable: Expressions.Parse ((VarLikeConstructUse)e.ValueVariable?.Variable ?? e.ValueVariable?.List)
+                enumeree: Parse (e.Enumeree),
+                body: Parse (e.Body),
+                key_variable: Parse ((VarLikeConstructUse)e.KeyVariable?.Variable ?? e.KeyVariable?.List),
+                value_variable: Parse ((VarLikeConstructUse)e.ValueVariable?.Variable ?? e.ValueVariable?.List)
             );
         }
 
         private static TryExpression ToTryExpression (TryStmt e)
         {
             return new TryExpression (
-                Expressions.Parse (e.Body),
+                Parse (e.Body),
                 e.Catches.Select (c => ToCatchExpression (c)).ToImmutableArray (),
-                Expressions.Parse (e.FinallyItem?.Body)
+                Parse (e.FinallyItem?.Body)
             );
         }
 
         private static CatchExpression ToCatchExpression (CatchItem e)
         {
             return new CatchExpression (
-                Expressions.Parse (e.Body),
+                Parse (e.Body),
                 ToVariableExpression (e.Variable),
                 ToNameOfClass (e.TargetType)
             );
@@ -269,27 +269,27 @@ namespace PHP.Parser
 
         private static RequireFileExpression ToRequireFileExpression (IncludingEx e)
         {
-            return new RequireFileExpression ((RequireFileExpression.InclusionType)e.InclusionType, Expressions.Parse (e.Target));
+            return new RequireFileExpression ((RequireFileExpression.InclusionType)e.InclusionType, Parse (e.Target));
         }
 
         private static Expression ToInstanceOfExpression (InstanceOfEx e)
         {
-            return new InstanceOfExpression (ToNameOfClass (e.ClassNameRef), Expressions.Parse (e.Expression));
+            return new InstanceOfExpression (ToNameOfClass (e.ClassNameRef), Parse (e.Expression));
         }
 
         private static AssignExpression ToAssignExpression (ValueAssignEx e)
         {
-            return new AssignExpression (Expressions.Parse (e.LValue), Expressions.Parse (e.RValue));
+            return new AssignExpression (Parse (e.LValue), Parse (e.RValue));
         }
 
         private static FunctionCallExpression ToFunctionCallExpression (DirectFcnCall e)
         {
-            return new FunctionCallExpression (ToNameOfFunction (e.FullName.OriginalName), Expressions.Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
+            return new FunctionCallExpression (ToNameOfFunction (e.FullName.OriginalName), Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
         }
 
         private static StaticMethodCallExpression ToStaticMethodCallExpression (DirectStMtdCall e)
         {
-            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), Expressions.Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
+            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
         }
 
         private static NewInstanceExpression ToNewInstanceExpression (NewEx e)
@@ -299,17 +299,17 @@ namespace PHP.Parser
 
         private static DieExpression ToDieExpression (ExitEx e)
         {
-            return new DieExpression (ToCallSignature (new CallParameter (Expressions.Parse (e.ResulExpr), ampersand: false, is_unpack: false)));
+            return new DieExpression (ToCallSignature (new CallParameter (Parse (e.ResulExpr), ampersand: false, is_unpack: false)));
         }
 
         private static EchoExpression ToEchoExpression (EchoStmt e)
         {
-            return new EchoExpression (ToCallSignature (e.Parameters.Select (c => new CallParameter (Expressions.Parse (c), ampersand: false, is_unpack: false))));
+            return new EchoExpression (ToCallSignature (e.Parameters.Select (c => new CallParameter (Parse (c), ampersand: false, is_unpack: false))));
         }
 
         private static IssetExpression ToIssetExpression (IssetEx e)
         {
-            return new IssetExpression (ToCallSignature (e.VarList.Select (c => new CallParameter (Expressions.Parse (c), ampersand: false, is_unpack: false))));
+            return new IssetExpression (ToCallSignature (e.VarList.Select (c => new CallParameter (Parse (c), ampersand: false, is_unpack: false))));
         }
 
         private static Tree.CallSignature ToCallSignature (IEnumerable<CallParameter> e)
@@ -330,7 +330,7 @@ namespace PHP.Parser
         private static CallParameter ToCallParameter (ActualParam p)
         {
             return new CallParameter (
-                Expressions.Parse (p.Expression),
+                Parse (p.Expression),
                 ampersand: p.Ampersand,
                 is_unpack: p.IsUnpack
             );
@@ -353,24 +353,24 @@ namespace PHP.Parser
 
         private static BreakExpression ToBreakExpression (JumpStmt e)
         {
-            return new BreakExpression (Expressions.Parse (e.Expression));
+            return new BreakExpression (Parse (e.Expression));
         }
 
         private static ContinueExpression ToContinueExpression (JumpStmt e)
         {
-            return new ContinueExpression (Expressions.Parse (e.Expression));
+            return new ContinueExpression (Parse (e.Expression));
         }
 
         private static ReturnExpression ToReturnExpression (JumpStmt e)
         {
-            return new ReturnExpression (Expressions.Parse (e.Expression));
+            return new ReturnExpression (Parse (e.Expression));
         }
 
         private static BinaryExpression ToBinaryExpression (Devsense.PHP.Syntax.Ast.Expression left, Devsense.PHP.Syntax.Ast.Expression right, BinaryOp operation)
         {
             return new BinaryExpression (
-                Expressions.Parse (left),
-                Expressions.Parse (right),
+                Parse (left),
+                Parse (right),
                 operation
             );
         }
@@ -387,7 +387,7 @@ namespace PHP.Parser
         private static UnaryExpression ToUnaryExpression (Devsense.PHP.Syntax.Ast.Expression value, UnaryOp operation)
         {
             return new UnaryExpression (
-                Expressions.Parse (value),
+                Parse (value),
                 operation
             );
         }
@@ -419,36 +419,53 @@ namespace PHP.Parser
             return new MemberAttributes (publicity, is_static, is_abstract, is_constructor);
         }
 
+        private static ClassDeclarationExpression ToClassDeclarationExpression (NamedTypeDecl e)
+        {
+            List<ClassFieldDeclarationExpression> fields = new List<ClassFieldDeclarationExpression> ();
+            List<ClassMethodDeclarationExpression> methods = new List<ClassMethodDeclarationExpression> ();
+
+            foreach (TypeMemberDecl member in e.Members)
+            {
+                MemberAttributes attributes = ToMemberAttributes (member.Modifiers);
+                switch (member)
+                {
+                    case FieldDeclList l:
+                        fields.AddRange (l.Fields.Select (f => ToClassFieldDeclarationExpression (attributes, f)));
+                        break;
+                    case MethodDecl l:
+                        methods.Add (ToClassMethodDeclarationExpression (attributes, l));
+                        break;
+                    default:
+                        Log.Error ($"Unknown class member: {member}");
+                        break;
+                }
+            }
+
+            List<NameOfClass> base_classes = new List<NameOfClass> ();
+            if (e.BaseClass != null)
+            {
+                base_classes.Add (ToNameOfClass (e.BaseClass.ClassName));
+            }
+
+            List<NameOfClass> base_interfaces = new List<NameOfClass> ();
+            base_interfaces.AddRange (e.ImplementsList.Select (o => ToNameOfClass (o.ClassName)));
+
+            return new ClassDeclarationExpression (
+                ToNameOfClass (e.Name),
+                base_classes.ToImmutableArray (),
+                base_interfaces.ToImmutableArray (),
+                fields.ToImmutableArray (),
+                methods.ToImmutableArray ()
+            );
+        }
+
         private static ClassMethodDeclarationExpression ToClassMethodDeclarationExpression (MemberAttributes attributes, MethodDecl e)
         {
             return new ClassMethodDeclarationExpression (
                 ToNameOfMethod (e.Name),
                 ToDeclarationSignature (e.Signature),
-                Expressions.Parse (e.Body),
+                Parse (e.Body),
                 attributes
-            );
-        }
-
-        private static ClassDeclarationExpression ToClassDeclarationExpression (NamedTypeDecl e)
-        {
-            return new ClassDeclarationExpression (
-                ToNameOfClass (e.Name),
-                e.Members.SelectMany (member =>
-                {
-                    MemberAttributes attributes = ToMemberAttributes (member.Modifiers);
-                    switch (member)
-                    {
-                        case FieldDeclList l:
-                            return l.Fields.Select (f => ToClassFieldDeclarationExpression (attributes, f));
-
-                        case MethodDecl l:
-                            return new [] { ToClassMethodDeclarationExpression (attributes, l) };
-
-                        default:
-                            Log.Error ($"Unknown member: {member}");
-                            return Enumerable.Empty<Expression> ();
-                    }
-                }).ToImmutableArray ()
             );
         }
 
@@ -456,7 +473,7 @@ namespace PHP.Parser
         {
             return new ClassFieldDeclarationExpression (
                 ToNameOfVariable (e.Name),
-                Expressions.Parse (e.Initializer),
+                Parse (e.Initializer),
                 attributes
             );
         }
@@ -479,7 +496,7 @@ namespace PHP.Parser
         {
             return new DeclarationParameter (
                 ToNameOfVariable (p.Name),
-                Expressions.Parse (p.InitValue),
+                Parse (p.InitValue),
                 p.PassedByRef,
                 p.IsOut,
                 p.IsVariadic
@@ -488,17 +505,17 @@ namespace PHP.Parser
 
         private static GlobalStmtExpression ToGlobalStmtExpression (GlobalStmt e)
         {
-            return new GlobalStmtExpression (e.VarList.Select (c => Expressions.Parse (c)).ToImmutableArray ());
+            return new GlobalStmtExpression (e.VarList.Select (c => Parse (c)).ToImmutableArray ());
         }
 
         private static BlockExpression ToBlockExpression (GlobalCode e)
         {
-            return new BlockExpression (e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ());
+            return new BlockExpression (e.Statements.Select (c => Parse (c)).ToImmutableArray ());
         }
 
         private static BlockExpression ToBlockExpression (BlockStmt e)
         {
-            return new BlockExpression (e.Statements.Select (c => Expressions.Parse (c)).ToImmutableArray ());
+            return new BlockExpression (e.Statements.Select (c => Parse (c)).ToImmutableArray ());
         }
 
 
@@ -528,6 +545,11 @@ namespace PHP.Parser
         }
 
         private static NameOfClass ToNameOfClass (NameRef e)
+        {
+            return new NameOfClass (e.Name.Value);
+        }
+
+        private static NameOfClass ToNameOfClass (QualifiedName e)
         {
             return new NameOfClass (e.Name.Value);
         }

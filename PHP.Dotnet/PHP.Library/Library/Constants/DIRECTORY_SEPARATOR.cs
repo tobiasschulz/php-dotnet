@@ -5,7 +5,7 @@ using PHP.Library.TypeSystem;
 
 namespace PHP.Library.Constants
 {
-    public class DIRECTORY_SEPARATOR : GlobalConstant
+    public class DIRECTORY_SEPARATOR : ManagedGlobalConstant
     {
         public DIRECTORY_SEPARATOR ()
             : base (new NameOfVariable ("DIRECTORY_SEPARATOR"))

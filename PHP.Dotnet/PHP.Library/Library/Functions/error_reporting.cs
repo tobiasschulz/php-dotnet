@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class error_reporting : Function
+    public sealed class error_reporting : ManagedFunction
     {
         public error_reporting ()
             : base ("error_reporting")

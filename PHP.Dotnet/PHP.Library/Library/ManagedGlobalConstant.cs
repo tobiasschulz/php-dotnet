@@ -9,11 +9,11 @@ using PHP.Tree;
 
 namespace PHP.Library
 {
-    public abstract class GlobalConstant : IVariable
+    public abstract class ManagedGlobalConstant : IVariable
     {
         private readonly NameOfVariable _name;
 
-        protected GlobalConstant (NameOfVariable name)
+        protected ManagedGlobalConstant (NameOfVariable name)
         {
             _name = name;
         }

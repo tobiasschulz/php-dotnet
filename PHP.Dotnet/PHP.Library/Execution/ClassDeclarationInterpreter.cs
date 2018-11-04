@@ -22,16 +22,22 @@ namespace PHP.Execution
         {
             private readonly NameOfClass _name;
             private readonly ClassDeclarationExpression _expression;
+            private readonly IMethodCollection _methods;
+            private readonly IVariableCollection _fields;
+            private readonly IClassCollection _classes;
 
             public InterpretedClass (ClassDeclarationExpression expression)
             {
                 _name = expression.Name;
                 _expression = expression;
+                _methods = new MethodCollection ();
+                _fields = new VariableCollection ();
+                _classes = new ClassCollection ();
             }
 
             NameOfClass IClass.Name => _name;
-
-
+            IVariableCollection IClass.Fields => _fields;
+            IMethodCollection IClass.Methods => _methods;
         }
     }
 

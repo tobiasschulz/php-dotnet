@@ -9,11 +9,11 @@ using PHP.Tree;
 
 namespace PHP.Library
 {
-    public abstract class Function : IFunction
+    public abstract class ManagedFunction : IFunction
     {
         private readonly NameOfFunction _name;
 
-        protected Function (NameOfFunction name)
+        protected ManagedFunction (NameOfFunction name)
         {
             _name = name;
         }

@@ -43,18 +43,25 @@ namespace PHP.Tree
     public sealed class ClassDeclarationExpression : DeclarationExpression
     {
         public readonly NameOfClass Name;
-        public readonly ImmutableArray<Expression> Members;
+        public readonly ImmutableArray<NameOfClass> Parents;
+        public readonly ImmutableArray<NameOfClass> Interfaces;
+        public readonly ImmutableArray<ClassFieldDeclarationExpression> Fields;
+        public readonly ImmutableArray<ClassMethodDeclarationExpression> Methods;
 
-        public ClassDeclarationExpression (NameOfClass name, ImmutableArray<Expression> members)
+        public ClassDeclarationExpression (NameOfClass name, ImmutableArray<NameOfClass> parents, ImmutableArray<NameOfClass> interfaces, ImmutableArray<ClassFieldDeclarationExpression> fields, ImmutableArray<ClassMethodDeclarationExpression> methods)
         {
             Name = name;
-            Members = members;
+            Parents = parents;
+            Interfaces = interfaces;
+            Fields = fields;
+            Methods = methods;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("members", Members),
+                ("fields", Fields),
+                ("methods", Methods),
             };
         }
 

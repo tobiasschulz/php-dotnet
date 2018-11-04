@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class isset : Function
+    public sealed class isset : ManagedFunction
     {
         public isset ()
             : base ("isset")

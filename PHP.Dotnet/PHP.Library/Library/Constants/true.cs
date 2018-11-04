@@ -5,7 +5,7 @@ using PHP.Library.TypeSystem;
 
 namespace PHP.Library.Constants
 {
-    public class @true : GlobalConstant
+    public class @true : ManagedGlobalConstant
     {
         public @true ()
             : base (new NameOfVariable ("true"))

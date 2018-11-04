@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class function_exists : Function
+    public sealed class function_exists : ManagedFunction
     {
         public function_exists ()
             : base ("function_exists")

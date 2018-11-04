@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class realpath : Function
+    public sealed class realpath : ManagedFunction
     {
         public realpath ()
             : base ("realpath")

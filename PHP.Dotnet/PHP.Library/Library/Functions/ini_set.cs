@@ -9,7 +9,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class ini_set : Function
+    public sealed class ini_set : ManagedFunction
     {
         public ini_set ()
             : base ("ini_set")

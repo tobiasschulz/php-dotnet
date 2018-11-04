@@ -11,7 +11,8 @@ namespace PHP.Library.TypeSystem
     public interface IClass
     {
         NameOfClass Name { get; }
-
+        IVariableCollection Fields { get; }
+        IMethodCollection Methods { get; }
     }
 
     public interface IReadOnlyClassCollection

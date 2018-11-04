@@ -8,7 +8,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class die : Function
+    public sealed class die : ManagedFunction
     {
         public die ()
             : base ("die")

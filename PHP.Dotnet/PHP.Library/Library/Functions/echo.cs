@@ -7,7 +7,7 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class echo : Function
+    public sealed class echo : ManagedFunction
     {
         public echo ()
             : base ("echo")
