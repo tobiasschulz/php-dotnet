@@ -11,7 +11,7 @@ namespace PHP.Library.TypeSystem
 {
     public interface IMethod : IElement<NameOfMethod>
     {
-        Result Execute (EvaluatedCallSignature call_signature, Scope scope);
+        Result Execute (IObject obj, EvaluatedCallSignature call_signature, Scope scope);
     }
     
     public interface IReadOnlyMethodCollection : IReadOnlyElementCollection<NameOfMethod, IMethod>
@@ -22,9 +22,9 @@ namespace PHP.Library.TypeSystem
     {
     }
 
-    public sealed class MergedMethodCollection : MergedElementCollection<NameOfMethod, IMethod>, IMethodCollection, IReadOnlyMethodCollection
+    public sealed class MergedReadOnlyMethodCollection : MergedReadOnlyElementCollection<NameOfMethod, IMethod>, IReadOnlyMethodCollection
     {
-        public MergedMethodCollection (IReadOnlyElementCollection<NameOfMethod, IMethod> collection_parent, IElementCollection<NameOfMethod, IMethod> collection_own)
+        public MergedReadOnlyMethodCollection (IReadOnlyElementCollection<NameOfMethod, IMethod> collection_parent, IReadOnlyElementCollection<NameOfMethod, IMethod> collection_own)
             : base (collection_parent, collection_own)
         {
         }
@@ -32,5 +32,18 @@ namespace PHP.Library.TypeSystem
 
     public sealed class MethodCollection : ElementCollection<NameOfMethod, IMethod>, IMethodCollection, IReadOnlyMethodCollection
     {
+        public static readonly IReadOnlyMethodCollection Empty = new MethodCollection ();
+
+        internal static IReadOnlyMethodCollection FromClasses (IReadOnlyList<IClass> classes)
+        {
+            IReadOnlyMethodCollection res = MethodCollection.Empty;
+
+            foreach (var t in classes)
+            {
+                res = new MergedReadOnlyMethodCollection (t.Methods, res);
+            }
+
+            return res;
+        }
     }
 }

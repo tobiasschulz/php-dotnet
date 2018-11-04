@@ -20,7 +20,9 @@ namespace PHP.Library.TypeSystem
     public interface IObject : IElement<ObjectId>
     {
         IReadOnlyList<IClass> Classes { get; }
+        IEnumerable<NameOfClass> ClassNames { get; }
         IVariableCollection Variables { get; }
+        IReadOnlyMethodCollection Methods { get; }
     }
 
     public interface IReadOnlyObjectCollection : IReadOnlyElementCollection<ObjectId, IObject>

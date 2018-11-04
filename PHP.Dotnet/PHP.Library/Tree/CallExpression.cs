@@ -21,14 +21,6 @@ namespace PHP.Tree
     public class FunctionCallExpression : CallExpression
     {
         public readonly NameOfFunction Name;
-        public readonly Expression MemberOf;
-
-        public FunctionCallExpression (NameOfFunction name, Expression member_of, CallSignature call_signature)
-            : base (call_signature)
-        {
-            Name = name;
-            MemberOf = member_of;
-        }
 
         public FunctionCallExpression (NameOfFunction name, CallSignature call_signature)
             : base (call_signature)
@@ -39,7 +31,6 @@ namespace PHP.Tree
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("member of", MemberOf),
                 ("parameters", CallSignature.Parameters),
             };
         }
@@ -50,12 +41,12 @@ namespace PHP.Tree
         }
     }
 
-    public sealed class StaticMethodCallExpression : CallExpression
+    public class MethodCallExpression : CallExpression
     {
         public readonly NameOfMethod Name;
         public readonly Expression MemberOf;
 
-        public StaticMethodCallExpression (NameOfMethod name, Expression member_of, CallSignature call_signature)
+        public MethodCallExpression (NameOfMethod name, Expression member_of, CallSignature call_signature)
             : base (call_signature)
         {
             Name = name;
@@ -72,7 +63,32 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"static method call: {Name}";
+            return $"method call: {Name}";
+        }
+    }
+
+    public sealed class StaticMethodCallExpression : CallExpression
+    {
+        public readonly NameOfMethod Name;
+        public readonly NameOfClass TargetType;
+
+        public StaticMethodCallExpression (NameOfMethod name, NameOfClass target_type, CallSignature call_signature)
+            : base (call_signature)
+        {
+            Name = name;
+            TargetType = target_type;
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("parameters", CallSignature.Parameters),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"static method call: {TargetType}::{Name}";
         }
     }
 

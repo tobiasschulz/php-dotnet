@@ -49,12 +49,18 @@ namespace PHP.Execution
 
                 case FunctionCallExpression e:
                     return FunctionCallInterpreter.Run (e, scope);
+                case MethodCallExpression e:
+                    return ClassDeclarationInterpreter.Run (e, scope);
+                case StaticMethodCallExpression e:
+                    return ClassDeclarationInterpreter.Run (e, scope);
                 case CallParameter e:
                     return CallParameterInterpreter.Run (e, scope);
 
                 case FunctionDeclarationExpression e:
                     return FunctionDeclarationInterpreter.Run (e, scope);
                 case ClassDeclarationExpression e:
+                    return ClassDeclarationInterpreter.Run (e, scope);
+                case NewInstanceExpression e:
                     return ClassDeclarationInterpreter.Run (e, scope);
 
                 case VariableExpression e:

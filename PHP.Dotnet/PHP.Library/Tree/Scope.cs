@@ -38,6 +38,10 @@ namespace PHP.Tree
         }
     }
 
+    public interface IFunctionLikeScope
+    {
+    }
+
     public sealed class RootScope : Scope
     {
         private readonly Context _context;
@@ -91,7 +95,7 @@ namespace PHP.Tree
         public override string ScopeName => "script";
     }
 
-    public sealed class FunctionScope : Scope
+    public sealed class FunctionScope : Scope, IFunctionLikeScope
     {
         private readonly Scope _parentscope;
         private readonly IFunction _function;
@@ -112,6 +116,35 @@ namespace PHP.Tree
         public override RootScope Root => _parentscope.Root;
         public override IVariableCollection Variables => _variables;
         public override string ScopeName => $"function: {_function.Name}";
+    }
+
+    public sealed class MethodScope : Scope, IFunctionLikeScope
+    {
+        private readonly Scope _parentscope;
+        private readonly IMethod _method;
+        private readonly IObject _object;
+        private readonly IVariableCollection _variables;
+
+        public MethodScope (Scope parentscope, IMethod method, IObject obj)
+        {
+            _parentscope = parentscope;
+            _method = method;
+            _object = obj;
+            _variables = new MergedVariableCollection (
+                collection_parent: new MergedVariableCollection (
+                    collection_parent: _parentscope.Root.Variables,
+                    collection_own: _object.Variables
+                ),
+                collection_own: new VariableCollection ()
+            );
+        }
+
+        public IMethod Method => _method;
+        public IObject Object => _object;
+        public override Scope Parent => _parentscope;
+        public override RootScope Root => _parentscope.Root;
+        public override IVariableCollection Variables => _variables;
+        public override string ScopeName => $"method: {_method.Name}, object: {_object}";
     }
 
 }

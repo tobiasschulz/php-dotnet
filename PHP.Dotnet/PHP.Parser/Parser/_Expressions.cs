@@ -5,6 +5,7 @@ using System.Linq;
 using Devsense.PHP.Syntax;
 using Devsense.PHP.Syntax.Ast;
 using PHP.Library.TypeSystem;
+using PHP.Standard;
 using PHP.Tree;
 using Expression = PHP.Tree.Expression;
 
@@ -71,7 +72,9 @@ namespace PHP.Parser
 
                 case DirectStMtdCall e:
                     return ToStaticMethodCallExpression (e);
-                case DirectFcnCall e:
+                case DirectFcnCall e when e.IsMemberOf != null:
+                    return ToMethodCallExpression (e);
+                case DirectFcnCall e when e.IsMemberOf == null:
                     return ToFunctionCallExpression (e);
 
                 case ArrayEx e:
@@ -282,14 +285,20 @@ namespace PHP.Parser
             return new AssignExpression (Parse (e.LValue), Parse (e.RValue));
         }
 
-        private static FunctionCallExpression ToFunctionCallExpression (DirectFcnCall e)
-        {
-            return new FunctionCallExpression (ToNameOfFunction (e.FullName.OriginalName), Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
-        }
-
         private static StaticMethodCallExpression ToStaticMethodCallExpression (DirectStMtdCall e)
         {
-            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
+            // Log.Debug (e.TargetType.QualifiedName.ToJson());
+            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), ToNameOfClass (e.TargetType), ToCallSignature (e.CallSignature));
+        }
+
+        private static MethodCallExpression ToMethodCallExpression (DirectFcnCall e)
+        {
+            return new MethodCallExpression (ToNameOfMethod (e.FullName.OriginalName), Parse (e.IsMemberOf), ToCallSignature (e.CallSignature));
+        }
+
+        private static FunctionCallExpression ToFunctionCallExpression (DirectFcnCall e)
+        {
+            return new FunctionCallExpression (ToNameOfFunction (e.FullName.OriginalName), ToCallSignature (e.CallSignature));
         }
 
         private static NewInstanceExpression ToNewInstanceExpression (NewEx e)
@@ -530,6 +539,11 @@ namespace PHP.Parser
         }
 
         private static NameOfMethod ToNameOfMethod (NameRef e)
+        {
+            return new NameOfMethod (e.Name.Value);
+        }
+
+        private static NameOfMethod ToNameOfMethod (QualifiedName e)
         {
             return new NameOfMethod (e.Name.Value);
         }

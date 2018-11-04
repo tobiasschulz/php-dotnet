@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using PHP.Library.TypeSystem;
 using PHP.Standard;
 
 namespace PHP.Tree
@@ -15,6 +16,7 @@ namespace PHP.Tree
         BOOL,
         LONG,
         DOUBLE,
+        OBJECT,
     }
 
     public abstract class FinalExpression : Expression
@@ -264,6 +266,45 @@ namespace PHP.Tree
         public override ScalarAffinity GetScalarAffinity ()
         {
             return ScalarAffinity.NULL;
+        }
+
+    }
+
+    public sealed class ObjectPointerExpression : FinalExpression
+    {
+        private static ObjectId _object_id;
+        private static RootScope _rootscope;
+
+        public ObjectPointerExpression (ObjectId object_id, RootScope rootscope)
+        {
+            _object_id = object_id;
+            _rootscope = rootscope;
+        }
+
+        public ObjectId GetObjectId ()
+        {
+            return _object_id;
+        }
+
+        public IObject GetObject ()
+        {
+            _rootscope.Objects.TryGetValue (_object_id, out IObject res);
+            return res;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return "object";
+        }
+
+        public override string GetStringValue ()
+        {
+            return GetObject ().ToString ();
+        }
+
+        public override ScalarAffinity GetScalarAffinity ()
+        {
+            return ScalarAffinity.OBJECT;
         }
 
     }

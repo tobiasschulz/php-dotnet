@@ -41,7 +41,7 @@ namespace PHP.Library.TypeSystem
         {
             return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
         }
-        
+
         bool IReadOnlyElementCollection<TName, TElement>.Contains (TName name)
         {
             return _collection_own.Contains (name) || _collection_parent.Contains (name);
@@ -64,6 +64,34 @@ namespace PHP.Library.TypeSystem
             {
                 _collection_own.Add (value);
             }
+        }
+
+    }
+
+    public class MergedReadOnlyElementCollection<TName, TElement> : IReadOnlyElementCollection<TName, TElement> where TName : struct where TElement : class, IElement<TName>
+    {
+        protected readonly IReadOnlyElementCollection<TName, TElement> _collection_parent;
+        protected readonly IReadOnlyElementCollection<TName, TElement> _collection_own;
+
+        public MergedReadOnlyElementCollection (IReadOnlyElementCollection<TName, TElement> collection_parent, IReadOnlyElementCollection<TName, TElement> collection_own)
+        {
+            _collection_parent = collection_parent;
+            _collection_own = collection_own;
+        }
+
+        bool IReadOnlyElementCollection<TName, TElement>.TryGetValue (TName name, out TElement res)
+        {
+            return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
+        }
+
+        bool IReadOnlyElementCollection<TName, TElement>.Contains (TName name)
+        {
+            return _collection_own.Contains (name) || _collection_parent.Contains (name);
+        }
+
+        IEnumerable<TElement> IReadOnlyElementCollection<TName, TElement>.GetAll ()
+        {
+            return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
         }
 
     }

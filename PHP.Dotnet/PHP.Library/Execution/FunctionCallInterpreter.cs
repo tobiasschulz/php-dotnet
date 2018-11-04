@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using PHP.Library.Internal;
 using PHP.Library.TypeSystem;
 using PHP.Standard;
 using PHP.Tree;
@@ -15,7 +16,14 @@ namespace PHP.Execution
         {
             if (scope.Root.Functions.TryGetValue (expression.Name, out IFunction function))
             {
-                return function.Execute (new EvaluatedCallSignature (expression.CallSignature, scope), scope);
+                try
+                {
+                    return function.Execute (new EvaluatedCallSignature (expression.CallSignature, scope), scope);
+                }
+                catch (ReturnException ex)
+                {
+                    return new Result (ex.ReturnValue);
+                }
             }
             else
             {

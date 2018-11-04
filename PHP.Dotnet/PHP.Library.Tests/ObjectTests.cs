@@ -3,10 +3,11 @@ using Xunit;
 
 public class ObjectTests : BaseTests
 {
-    [Fact]
-    public void ObjectDeclTests ()
+    private readonly string _defs;
+
+    public ObjectTests ()
     {
-        string defs = @"
+        _defs = @"
             <?php
             class B {
                 private function myfunc2 ($p1, $p2)
@@ -29,14 +30,23 @@ public class ObjectTests : BaseTests
                     return 2;
                 }
             }
+            $zzz_is_set = isset($zzz);
             while (true) { break; }
         ";
-        _eval (defs, o => o.DEBUG_EXECUTION = true);
+    }
 
-        _eval (defs + " $a = new A(); $a->myfunc1(9,9.5); ", o => o.DEBUG_EXECUTION = true);
+    [Fact]
+    public void ObjectDeclTests1 ()
+    {
+        _eval (_defs);
+        Assert.Equal ("2", _eval (_defs + " $a = new A(); $a->myfunc1(9,9.5); "));
+    }
 
+    [Fact]
+    public void ObjectDeclTests2 ()
+    {
+        Assert.Equal ("base(9,9.5)99.5", _eval (_defs + " $a = new A(); $a->myfunc2(9,9.5); "));
 
-        //      Assert.Equal ("3", _eval (defs + ""));
     }
 
 }
