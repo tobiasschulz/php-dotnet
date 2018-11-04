@@ -22,7 +22,7 @@ public class ObjectTests : BaseTests
                 public static $stat_pub_att = 6;
                 private function myfunc2 ($p1, $p2)
                 {
-                    echo parent::myfunc($p1, $p2) . $p1 . $p2;
+                    echo (parent::myfunc2($p1, $p2) . $p1 . $p2);
                 }
                 function myfunc1 ($p1, $p2)
                 {
