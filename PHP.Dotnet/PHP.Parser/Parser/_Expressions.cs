@@ -79,6 +79,8 @@ namespace PHP.Parser
 
                 case ArrayEx e:
                     return ToArrayExpression (e);
+                case ItemUse e:
+                    return ToArrayAccessExpression (e);
 
                 case ValueAssignEx e:
                     return ToAssignExpression (e);
@@ -164,6 +166,14 @@ namespace PHP.Parser
             }).Where (i => i != null).ToImmutableArray ();
 
             return new ArrayExpression (items);
+        }
+
+        private static ArrayAccessExpression ToArrayAccessExpression (ItemUse e)
+        {
+            return new ArrayAccessExpression (
+                array: Parse (e.Array),
+                index: Parse (e.Index)
+            );
         }
 
         private static ArrayItemExpression ToArrayItemRefExpression (RefItem e)

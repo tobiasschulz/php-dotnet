@@ -1,11 +1,11 @@
 ﻿using System;
 using Xunit;
 
-public class ObjectTests : BaseTests
+public class ObjectDeclTests : BaseTests
 {
     private readonly string _defs;
 
-    public ObjectTests ()
+    public ObjectDeclTests ()
     {
         _defs = @"
             <?php

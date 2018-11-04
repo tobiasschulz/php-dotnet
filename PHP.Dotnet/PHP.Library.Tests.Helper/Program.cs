@@ -18,7 +18,7 @@ namespace PHP.Library.Tests.Helper
 public class ProgramTests : BaseTests
 {
 
-    public void Main ()
+    public void Main1 ()
     {
         string _defs = @"
             <?php
@@ -56,5 +56,24 @@ public class ProgramTests : BaseTests
 
 
         //      Assert.Equal ("3", _eval (defs + ""));
+    }
+
+    public void Main ()
+    {
+
+        string _defs = @"
+            <?php
+            $var1 = 'fck';
+            $a1 = array( 'key1' => 'bla', 'key2' => 'blabla', 'key3' => $var1, );
+            $a2 = array( 'key1' => $a1['key2'], 'key2' => $a1['key1'] );
+            $a2['key3'] = 'zzz';
+            $a2[] = 'zzz';
+        ";
+
+        _eval (_defs, o => o.DEBUG_EXECUTION = true);
+        Assert.Equal ("1", _eval (_defs + " $a1['key1'] == $a2['key2'] ? 1 : 0 ", o => o.DEBUG_EXECUTION = true));
+
+
+
     }
 }
