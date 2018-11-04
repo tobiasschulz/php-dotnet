@@ -41,12 +41,16 @@ namespace PHP.Library.TypeSystem
         }
     }
 
-    public interface IVariableCollection
+    public interface IReadOnlyVariableCollection
     {
         bool TryGetValue (NameOfVariable name, out IVariable res);
         void EnsureExists (NameOfVariable name, out IVariable res);
         bool Contains (NameOfVariable name);
         IEnumerable<IVariable> GetAll ();
+    }
+
+    public interface IVariableCollection : IReadOnlyVariableCollection
+    {
         void Add (IVariable value, bool replace = true);
     }
 
@@ -61,12 +65,12 @@ namespace PHP.Library.TypeSystem
             _collection_own = collection_editable;
         }
 
-        bool IVariableCollection.TryGetValue (NameOfVariable name, out IVariable res)
+        bool IReadOnlyVariableCollection.TryGetValue (NameOfVariable name, out IVariable res)
         {
             return _collection_own.TryGetValue (name, out res) || _collection_parent.TryGetValue (name, out res);
         }
 
-        void IVariableCollection.EnsureExists (NameOfVariable name, out IVariable res)
+        void IReadOnlyVariableCollection.EnsureExists (NameOfVariable name, out IVariable res)
         {
             if (_collection_parent.Contains (name))
             {
@@ -77,7 +81,7 @@ namespace PHP.Library.TypeSystem
                 _collection_own.EnsureExists (name, out res);
             }
         }
-        bool IVariableCollection.Contains (NameOfVariable name)
+        bool IReadOnlyVariableCollection.Contains (NameOfVariable name)
         {
             return _collection_own.Contains (name) || _collection_parent.Contains (name);
         }
@@ -96,7 +100,7 @@ namespace PHP.Library.TypeSystem
             }
         }
 
-        IEnumerable<IVariable> IVariableCollection.GetAll ()
+        IEnumerable<IVariable> IReadOnlyVariableCollection.GetAll ()
         {
             return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
         }

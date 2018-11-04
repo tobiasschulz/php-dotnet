@@ -10,7 +10,7 @@ namespace PHP.Library
 {
     public static class StandardLibrary
     {
-        public static void Populate (FunctionCollection functions)
+        public static void Populate (IFunctionCollection functions)
         {
             functions.Add (new echo ());
             functions.Add (new define ());

@@ -14,11 +14,16 @@ namespace PHP.Library.TypeSystem
 
     }
 
-    public interface IClassCollection
+    public interface IReadOnlyClassCollection
     {
         bool TryGetValue (NameOfClass name, out IClass res);
         bool Contains (NameOfClass name);
         IEnumerable<IClass> GetAll ();
+    }
+
+    public interface IClassCollection : IReadOnlyClassCollection
+    {
+        void Add (IClass value);
     }
 
     public sealed class ClassCollection : IClassCollection
@@ -29,7 +34,7 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        public bool TryGetValue (NameOfClass name, out IClass res)
+        bool IReadOnlyClassCollection.TryGetValue (NameOfClass name, out IClass res)
         {
             foreach (IClass value in _data)
             {
@@ -43,21 +48,21 @@ namespace PHP.Library.TypeSystem
             return false;
         }
 
-        public bool Contains (NameOfClass name)
+        bool IReadOnlyClassCollection.Contains (NameOfClass name)
         {
-            return TryGetValue (name, out var dummy);
+            return ((IReadOnlyClassCollection)this).TryGetValue (name, out var dummy);
         }
 
-        public IEnumerable<IClass> GetAll ()
+        IEnumerable<IClass> IReadOnlyClassCollection.GetAll ()
         {
             return _data;
         }
 
-        public void Add (IClass value)
+        void IClassCollection.Add (IClass value)
         {
             if (value == null) return;
 
-            if (TryGetValue (value.Name, out var existing_value))
+            if (((IReadOnlyClassCollection)this).TryGetValue (value.Name, out var existing_value))
             {
                 Log.Error ($"Cannot add function {value.Name}: already exists: {existing_value} vs {value}");
             }
@@ -66,18 +71,6 @@ namespace PHP.Library.TypeSystem
                 _data = _data.Add (value);
             }
         }
-
-        public void Replace (IClass value)
-        {
-            if (value == null) return;
-
-            if (TryGetValue (value.Name, out var existing_value))
-            {
-                _data = _data.Remove (existing_value);
-            }
-
-            _data = _data.Add (value);
-        }
-
+        
     }
 }

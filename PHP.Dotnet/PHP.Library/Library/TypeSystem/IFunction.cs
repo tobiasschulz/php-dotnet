@@ -15,12 +15,16 @@ namespace PHP.Library.TypeSystem
         Result Execute (EvaluatedCallSignature call_signature, Tree.Scope scope);
     }
 
-    public interface IFunctionCollection
+    public interface IReadOnlyFunctionCollection
     {
         bool TryGetValue (NameOfFunction name, out IFunction res);
         bool Contains (NameOfFunction name);
-        void Add (IFunction value);
         IEnumerable<IFunction> GetAll ();
+    }
+
+    public interface IFunctionCollection : IReadOnlyFunctionCollection
+    {
+        void Add (IFunction value);
     }
 
     public sealed class FunctionCollection : IFunctionCollection
@@ -31,7 +35,7 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        public bool TryGetValue (NameOfFunction name, out IFunction res)
+        bool IReadOnlyFunctionCollection.TryGetValue (NameOfFunction name, out IFunction res)
         {
             foreach (IFunction value in _data)
             {
@@ -45,21 +49,21 @@ namespace PHP.Library.TypeSystem
             return false;
         }
 
-        public bool Contains (NameOfFunction name)
+        bool IReadOnlyFunctionCollection.Contains (NameOfFunction name)
         {
-            return TryGetValue (name, out var dummy);
+            return ((IReadOnlyFunctionCollection)this).TryGetValue (name, out var dummy);
         }
 
-        public IEnumerable<IFunction> GetAll ()
+        IEnumerable<IFunction> IReadOnlyFunctionCollection.GetAll ()
         {
             return _data;
         }
 
-        public void Add (IFunction value)
+        void IFunctionCollection.Add (IFunction value)
         {
             if (value == null) return;
 
-            if (TryGetValue (value.Name, out var existing_value))
+            if (((IReadOnlyFunctionCollection)this).TryGetValue (value.Name, out var existing_value))
             {
                 Log.Error ($"Cannot add function {value.Name}: already exists: {existing_value} vs {value}");
             }
@@ -73,7 +77,7 @@ namespace PHP.Library.TypeSystem
         {
             if (value == null) return;
 
-            if (TryGetValue (value.Name, out var existing_value))
+            if (((IReadOnlyFunctionCollection)this).TryGetValue (value.Name, out var existing_value))
             {
                 _data = _data.Remove (existing_value);
             }

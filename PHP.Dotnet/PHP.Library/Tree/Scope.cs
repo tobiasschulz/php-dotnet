@@ -41,7 +41,7 @@ namespace PHP.Tree
     public sealed class RootScope : Scope
     {
         private readonly Context _context;
-        private readonly FunctionCollection _functions;
+        private readonly IFunctionCollection _functions;
         private readonly IVariableCollection _variables;
         private readonly IClassCollection _classes;
 
