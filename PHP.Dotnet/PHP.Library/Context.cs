@@ -11,6 +11,7 @@ namespace PHP
 {
     public sealed class ContextOptions
     {
+        public bool WRITE_AST;
         public bool DEBUG_EXECUTION;
     }
 

@@ -12,7 +12,8 @@ namespace PHP.Interpreter
             Context context = new Context (
                 options: new ContextOptions
                 {
-                    DEBUG_EXECUTION = false
+                    DEBUG_EXECUTION = false,
+                    WRITE_AST = true,
                 },
                 parser: new PHP.Parser.Parser ()
             );

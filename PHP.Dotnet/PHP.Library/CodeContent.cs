@@ -54,6 +54,14 @@ namespace PHP
 
         public void Run (Scope previous_scope, ContextOptions options)
         {
+            if (options.WRITE_AST)
+            {
+                Expression tree = _parse_result.RootExpression;
+                StringBuilder sb = new StringBuilder ();
+                tree.Print (new Expression.TreeParams (default, write_line: line => sb.Append (line).Append ("\n")));
+                File.WriteAllText (_script.GetScriptPath ().Original + ".ast", sb.ToString ());
+            }
+
             if (options.DEBUG_EXECUTION)
             {
                 Console.WriteLine ("----------");

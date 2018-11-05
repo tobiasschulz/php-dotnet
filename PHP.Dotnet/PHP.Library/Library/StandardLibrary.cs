@@ -25,7 +25,10 @@ namespace PHP.Library
             functions.Add (new function_exists ());
             functions.Add (new class_exists ());
             functions.Add (new interface_exists ());
+            functions.Add (new get_class ());
             functions.Add (new file_exists ());
+            functions.Add (new is_file ());
+            functions.Add (new is_dir ());
             functions.Add (new mb_substr ());
             functions.Add (new is_array ());
             functions.Add (new is_object ());
@@ -43,6 +46,8 @@ namespace PHP.Library
             functions.Add (new strripos ());
             functions.Add (new str_replace ());
             functions.Add (new str_ireplace ());
+            functions.Add (new count ());
+            functions.Add (new gethostbyname ());
         }
 
         public static void Populate (IVariableCollection variables)

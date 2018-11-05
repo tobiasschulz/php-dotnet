@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,12 @@ namespace PHP.Tree
         protected void _printLine (TreeParams p, string value)
         {
             if (value.Contains ('\n')) value = value.Replace ("\n", "\\n");
-            Log.Debug ($"[  ] {p.indent_str} {value}");
+            string line = $"[  ] {p.indent_str} {value}";
+
+            if (p.write_line is Action<string> write_line)
+                write_line (line);
+            else
+                Log.Debug (line);
         }
 
         protected virtual void _printSelf (TreeParams p)
@@ -94,13 +100,15 @@ namespace PHP.Tree
 
         public readonly struct TreeParams
         {
+            public readonly Action<string> write_line;
             public readonly int indent;
             public readonly bool is_not_last_child;
             public readonly ImmutableArray<int> lines;
             public readonly string indent_str;
 
-            public TreeParams (TreeParams p, int diff = 0, bool is_not_last = false, bool add_line = false)
+            public TreeParams (TreeParams p, int diff = 0, bool is_not_last = false, bool add_line = false, Action<string> write_line = null)
             {
+                this.write_line = write_line ?? p.write_line;
                 this.indent = p.indent + diff;
                 this.is_not_last_child = is_not_last;
                 this.lines = p.lines;
@@ -215,25 +223,26 @@ namespace PHP.Tree
 
     public sealed class InstanceOfExpression : Expression
     {
-        public readonly NameOfClass Name;
+        public readonly Expression ClassName;
         public readonly Expression Value;
 
-        public InstanceOfExpression (NameOfClass name, Expression value)
+        public InstanceOfExpression (Expression class_name, Expression value)
         {
-            Name = name;
+            ClassName = class_name;
             Value = value;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
+                ("class_name", ClassName),
                 ("value", Value),
             };
         }
 
         protected override string GetTypeName ()
         {
-            return $"instance of: {Name}";
+            return $"instance of";
         }
     }
 

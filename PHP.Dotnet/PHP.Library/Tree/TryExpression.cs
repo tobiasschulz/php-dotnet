@@ -40,18 +40,19 @@ namespace PHP.Tree
     {
         public readonly Expression Body;
         public readonly VariableExpression Variable;
-        public readonly NameOfClass TargetType;
+        public readonly Expression ClassName;
 
-        public CatchExpression (Expression body, VariableExpression variable, NameOfClass target_type)
+        public CatchExpression (Expression body, VariableExpression variable, Expression class_name)
         {
             Body = body;
             Variable = variable;
-            TargetType = target_type;
+            ClassName = class_name;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
+                ("class_name", ClassName),
                 ("variable", Variable),
                 ("body", Body),
             };
@@ -59,7 +60,7 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"catch: {TargetType}";
+            return $"catch";
         }
     }
 

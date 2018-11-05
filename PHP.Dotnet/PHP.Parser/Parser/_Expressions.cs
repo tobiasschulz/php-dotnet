@@ -309,7 +309,7 @@ namespace PHP.Parser
             return new CatchExpression (
                 Parse (e.Body),
                 ToVariableExpression (e.Variable),
-                ToNameOfClass (e.TargetType)
+                FromTypeRef (e.TargetType)
             );
         }
 
@@ -320,7 +320,7 @@ namespace PHP.Parser
 
         private static Expression ToInstanceOfExpression (InstanceOfEx e)
         {
-            return new InstanceOfExpression (ToNameOfClass (e.ClassNameRef), Parse (e.Expression));
+            return new InstanceOfExpression (FromTypeRef (e.ClassNameRef), Parse (e.Expression));
         }
 
         private static AssignExpression ToAssignExpression (ValueAssignEx e)
@@ -331,12 +331,12 @@ namespace PHP.Parser
         private static StaticMethodCallExpression ToStaticMethodCallExpression (DirectStMtdCall e)
         {
             // Log.Debug (e.TargetType.QualifiedName.ToJson());
-            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), ToNameOfClass (e.TargetType), ToCallSignature (e.CallSignature));
+            return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), FromTypeRef (e.TargetType), ToCallSignature (e.CallSignature));
         }
 
         private static StaticFieldAccessExpression ToStaticFieldUseExpression (DirectStFldUse e)
         {
-            return new StaticFieldAccessExpression (ToNameOfVariable (e.PropertyName), ToNameOfClass (e.TargetType));
+            return new StaticFieldAccessExpression (ToNameOfVariable (e.PropertyName), FromTypeRef (e.TargetType));
         }
 
         private static MethodCallExpression ToMethodCallExpression (DirectFcnCall e)
@@ -351,7 +351,27 @@ namespace PHP.Parser
 
         private static NewInstanceExpression ToNewInstanceExpression (NewEx e)
         {
-            return new NewInstanceExpression (ToNameOfClass (e.ClassNameRef), ToCallSignature (e.CallSignature));
+            return new NewInstanceExpression (FromTypeRef (e.ClassNameRef), ToCallSignature (e.CallSignature));
+        }
+
+        private static Expression FromTypeRef (TypeRef e)
+        {
+            switch (e)
+            {
+                case ClassTypeRef class_type_ref:
+                    return new StringExpression (class_type_ref.ClassName.Name.Value);
+
+                case IndirectTypeRef indirect_type_ref:
+                    return Parse (indirect_type_ref.ClassNameVar);
+
+                case TranslatedTypeRef translated_type_ref:
+                    Log.Debug ($"Translated type ref: from {translated_type_ref.OriginalType} to {translated_type_ref.ClassName.Name.Value}");
+                    return new StringExpression (translated_type_ref.ClassName.Name.Value);
+
+                default:
+                    Log.Error ($"Unknown kind of type ref: {e}");
+                    return new EmptyExpression ();
+            }
         }
 
         private static DieExpression ToDieExpression (ExitEx e)
@@ -638,19 +658,6 @@ namespace PHP.Parser
         private static NameOfClass ToNameOfClass (QualifiedName e)
         {
             return new NameOfClass (e.Name.Value);
-        }
-
-        private static NameOfClass ToNameOfClass (TypeRef e)
-        {
-            if (e.QualifiedName.HasValue)
-            {
-                return new NameOfClass (e.QualifiedName.Value.Name.Value);
-            }
-            else
-            {
-                Log.Error ($"name of class is empty: {e}");
-                return new NameOfClass ();
-            }
         }
 
     }

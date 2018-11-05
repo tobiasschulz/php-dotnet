@@ -119,7 +119,8 @@ namespace PHP.Execution
 
         public static Result Run (NewInstanceExpression expression, Scope scope)
         {
-            if (scope.Root.Classes.TryGetValue (expression.Name, out IClass type))
+            NameOfClass class_name = Interpreters.Execute (expression.ClassName, scope).ResultValue.GetStringValue ();
+            if (scope.Root.Classes.TryGetValue (class_name, out IClass type))
             {
                 IObject obj = new InterpretedObject (type, scope.Root);
                 scope.Root.Objects.Add (obj);
@@ -128,7 +129,7 @@ namespace PHP.Execution
             }
             else
             {
-                Log.Error ($"Class could not be found: {expression.Name}, scope: {scope}");
+                Log.Error ($"Class could not be found: {class_name}, scope: {scope}");
                 Log.Error ($"  existing classes: {scope.Root.Classes.GetAll ().Select (f => f.Name).Join (", ")}");
                 return Result.NULL;
             }
@@ -169,8 +170,8 @@ namespace PHP.Execution
 
         public static Result Run (MethodCallExpression expression, Scope scope)
         {
-            FinalExpression member_of = Interpreters.Execute (expression.MemberOf, scope).ResultValue;
-            if (member_of is ObjectPointerExpression pointer)
+            FinalExpression obj_reference = Interpreters.Execute (expression.ObjectReference, scope).ResultValue;
+            if (obj_reference is ObjectPointerExpression pointer)
             {
                 if (pointer.Object is IObject obj)
                 {
@@ -201,14 +202,15 @@ namespace PHP.Execution
             }
             else
             {
-                Log.Error ($"Method is not called on an object, but on: {member_of}, scope: {scope}");
+                Log.Error ($"Method is not called on an object, but on: {obj_reference}, scope: {scope}");
                 return Result.NULL;
             }
         }
 
         public static Result Run (StaticMethodCallExpression expression, Scope scope)
         {
-            if (scope.Root.Classes.TryGetValue (expression.TargetType, out IClass type))
+            NameOfClass class_name = Interpreters.Execute (expression.ClassName, scope).ResultValue.GetStringValue ();
+            if (scope.Root.Classes.TryGetValue (class_name, out IClass type))
             {
                 IReadOnlyList<IClass> classes = scope.Root.Classes.GetWithParentClasses (type);
                 IReadOnlyMethodCollection methods_of_type = MethodCollection.FromClasses (classes);
@@ -225,14 +227,14 @@ namespace PHP.Execution
                 if (previous_scope_obj != null)
                 {
                     ImmutableArray<NameOfClass> obj_class_names = previous_scope_obj.ClassNames.ToImmutableArray ();
-                    if (obj_class_names.Contains (expression.TargetType))
+                    if (obj_class_names.Contains (class_name))
                     {
                         types_match_with_previous_scope_obj = true;
-                        Log.Debug ($"Static method call: target type is one of the object's types: target type = {expression.TargetType}, object types: {obj_class_names.Join (",")}");
+                        Log.Debug ($"Static method call: target type is one of the object's types: class name = {class_name}, object types: {obj_class_names.Join (",")}");
                     }
                     else
                     {
-                        Log.Debug ($"Static method call: target type is NOT one of the object's types: target type = {expression.TargetType}, object types: {obj_class_names.Join (",")}");
+                        Log.Debug ($"Static method call: target type is NOT one of the object's types: class name = {class_name}, object types: {obj_class_names.Join (",")}");
                     }
                 }
 
@@ -276,7 +278,8 @@ namespace PHP.Execution
 
         public static void Resolve (StaticFieldAccessExpression expression, Scope scope, Action<IVariable> action)
         {
-            if (scope.Root.Classes.TryGetValue (expression.TargetType, out IClass type))
+            NameOfClass class_name = Interpreters.Execute (expression.ClassName, scope).ResultValue.GetStringValue ();
+            if (scope.Root.Classes.TryGetValue (class_name, out IClass type))
             {
                 NameOfVariable variable_name = expression.Name;
                 IReadOnlyList<IClass> classes = scope.Root.Classes.GetWithParentClasses (type);

@@ -10,10 +10,10 @@ using System.Linq;
 
 namespace PHP.Library.Functions
 {
-    public sealed class file_exists : ManagedFunction
+    public sealed class is_file : ManagedFunction
     {
-        public file_exists ()
-            : base ("file_exists")
+        public is_file ()
+            : base ("is_file")
         {
         }
 
@@ -28,8 +28,8 @@ namespace PHP.Library.Functions
 
             var possible_paths = IncludePathHelper.ResolveToFull (param_1.GetStringValue (), function_scope);
 
-            Log.Debug ($"check if path is a file or directory: {possible_paths.Select (p => p.Original).Join (", ")}");
-            bool does_exist = possible_paths.Any (p => System.IO.File.Exists (p.Original) || System.IO.Directory.Exists (p.Original));
+            Log.Debug ($"check if path is a regular file: {possible_paths.Select (p => p.Original).Join (", ")}");
+            bool does_exist = possible_paths.Any (p => System.IO.File.Exists (p.Original));
 
             return new Result (new BoolExpression (does_exist));
         }

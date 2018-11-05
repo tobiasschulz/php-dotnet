@@ -44,19 +44,19 @@ namespace PHP.Tree
     public class MethodCallExpression : CallExpression
     {
         public readonly NameOfMethod Name;
-        public readonly Expression MemberOf;
+        public readonly Expression ObjectReference;
 
-        public MethodCallExpression (NameOfMethod name, Expression member_of, CallSignature call_signature)
+        public MethodCallExpression (NameOfMethod name, Expression obj_reference, CallSignature call_signature)
             : base (call_signature)
         {
             Name = name;
-            MemberOf = member_of;
+            ObjectReference = obj_reference;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
-                ("member of", MemberOf),
+                ("object ref", ObjectReference),
                 ("parameters", CallSignature.Parameters),
             };
         }
@@ -70,65 +70,74 @@ namespace PHP.Tree
     public sealed class StaticMethodCallExpression : CallExpression
     {
         public readonly NameOfMethod Name;
-        public readonly NameOfClass TargetType;
+        public readonly Expression ClassName;
 
-        public StaticMethodCallExpression (NameOfMethod name, NameOfClass target_type, CallSignature call_signature)
+        public StaticMethodCallExpression (NameOfMethod name, Expression class_name, CallSignature call_signature)
             : base (call_signature)
         {
             Name = name;
-            TargetType = target_type;
+            ClassName = class_name;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
+                ("class_name", ClassName),
                 ("parameters", CallSignature.Parameters),
             };
         }
 
         protected override string GetTypeName ()
         {
-            return $"static method call: {TargetType}::{Name}";
+            return $"static method call: {Name}";
         }
     }
 
     public sealed class StaticFieldAccessExpression : Expression
     {
         public readonly NameOfVariable Name;
-        public readonly NameOfClass TargetType;
+        public readonly Expression ClassName;
 
-        public StaticFieldAccessExpression (NameOfVariable name, NameOfClass target_type)
+        public StaticFieldAccessExpression (NameOfVariable name, Expression class_name)
         {
             Name = name;
-            TargetType = target_type;
-        }
-
-        protected override string GetTypeName ()
-        {
-            return $"static field use: {TargetType}::{Name}";
-        }
-    }
-
-    public sealed class NewInstanceExpression : CallExpression
-    {
-        public readonly NameOfClass Name;
-
-        public NewInstanceExpression (NameOfClass name, CallSignature call_signature)
-            : base (call_signature)
-        {
-            Name = name;
+            ClassName = class_name;
         }
 
         protected override TreeChildGroup [] _getChildren ()
         {
             return new TreeChildGroup [] {
+                ("class_name", ClassName),
+            };
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"static field use: {Name}";
+        }
+    }
+
+    public sealed class NewInstanceExpression : CallExpression
+    {
+        public readonly Expression ClassName;
+
+        public NewInstanceExpression (Expression class_name, CallSignature call_signature)
+            : base (call_signature)
+        {
+            ClassName = class_name;
+        }
+
+        protected override TreeChildGroup [] _getChildren ()
+        {
+            return new TreeChildGroup [] {
+                ("class_name", ClassName),
                 ("parameters", CallSignature.Parameters),
             };
         }
 
         protected override string GetTypeName ()
         {
-            return $"new: {Name}";
+            return $"new";
         }
     }
 
