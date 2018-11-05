@@ -18,7 +18,7 @@ namespace PHP.Library.Functions
 
         protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
         {
-            if (parameters.Length != 1)
+            if (parameters.Length != 1 && parameters.Length != 2)
             {
                 throw new WrongParameterCountException (this, expected: 1, actual: parameters.Length);
             }

@@ -34,7 +34,7 @@ namespace PHP.Execution
         public bool IsTrue ()
         {
             // Log.Debug ($"is true? {ResultValue} {Environment.StackTrace}");
-            Log.Debug ($"is true? {ResultValue}");
+            Log.Debug ($"Check for truth: {ResultValue}");
             return ResultValue.GetBoolValue ();
         }
     }

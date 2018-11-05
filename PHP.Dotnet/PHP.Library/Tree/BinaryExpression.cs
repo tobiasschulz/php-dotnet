@@ -45,6 +45,7 @@ namespace PHP.Tree
 
         CONCAT,
         EQUAL,
+        IDENTICAL,
         LESS_THAN,
     }
 }

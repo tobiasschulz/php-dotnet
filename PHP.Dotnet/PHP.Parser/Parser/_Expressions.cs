@@ -124,7 +124,7 @@ namespace PHP.Parser
                 case BinaryEx e when e.Operation == Operations.Equal:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL);
                 case BinaryEx e when e.Operation == Operations.Identical:
-                    return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL);
+                    return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.IDENTICAL);
                 case BinaryEx e when e.Operation == Operations.And:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.AND);
                 case BinaryEx e when e.Operation == Operations.Or:
@@ -132,7 +132,7 @@ namespace PHP.Parser
                 case BinaryEx e when e.Operation == Operations.NotEqual:
                     return new NotExpression (ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL));
                 case BinaryEx e when e.Operation == Operations.NotIdentical:
-                    return new NotExpression (ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.EQUAL));
+                    return new NotExpression (ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.IDENTICAL));
                 case BinaryEx e when e.Operation == Operations.LessThan:
                     return ToBinaryExpression (e.LeftExpr, e.RightExpr, BinaryOp.LESS_THAN);
                 case BinaryEx e when e.Operation == Operations.LessThanOrEqual:

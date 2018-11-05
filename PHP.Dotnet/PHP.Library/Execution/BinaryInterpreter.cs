@@ -53,19 +53,41 @@ namespace PHP.Execution
                     return new Result (new StringExpression (left.GetStringValue () + right.GetStringValue ()));
 
                 case BinaryOp.EQUAL:
-                    if (left.GetScalarAffinity () == ScalarAffinity.BOOL || left.GetScalarAffinity () == ScalarAffinity.BOOL)
+                    if (left.GetScalarAffinity () == ScalarAffinity.ARRAY && right.GetScalarAffinity () == ScalarAffinity.ARRAY)
+                        return new Result (new BoolExpression ((left as ArrayPointerExpression)?.Array?.Name == (right as ArrayPointerExpression)?.Array?.Name));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.OBJECT && right.GetScalarAffinity () == ScalarAffinity.OBJECT)
+                        return new Result (new BoolExpression ((left as ObjectPointerExpression)?.Object?.Name == (right as ObjectPointerExpression)?.Object?.Name));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.BOOL || right.GetScalarAffinity () == ScalarAffinity.BOOL)
                         return new Result (new BoolExpression (left.GetBoolValue () == right.GetBoolValue ()));
-                    else if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE || left.GetScalarAffinity () == ScalarAffinity.DOUBLE)
+                    else if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE || right.GetScalarAffinity () == ScalarAffinity.DOUBLE)
                         return new Result (new BoolExpression (left.GetDoubleValue () == right.GetDoubleValue ()));
-                    else if (left.GetScalarAffinity () == ScalarAffinity.LONG || left.GetScalarAffinity () == ScalarAffinity.LONG)
+                    else if (left.GetScalarAffinity () == ScalarAffinity.LONG || right.GetScalarAffinity () == ScalarAffinity.LONG)
                         return new Result (new BoolExpression (left.GetLongValue () == right.GetLongValue ()));
                     else
                         return new Result (new BoolExpression (left.GetStringValue () == right.GetStringValue ()));
 
+                case BinaryOp.IDENTICAL:
+                    if (left.GetScalarAffinity () == ScalarAffinity.ARRAY && right.GetScalarAffinity () == ScalarAffinity.ARRAY)
+                        return new Result (new BoolExpression ((left as ArrayPointerExpression)?.Array?.Name == (right as ArrayPointerExpression)?.Array?.Name));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.OBJECT && right.GetScalarAffinity () == ScalarAffinity.OBJECT)
+                        return new Result (new BoolExpression ((left as ObjectPointerExpression)?.Object?.Name == (right as ObjectPointerExpression)?.Object?.Name));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.BOOL && right.GetScalarAffinity () == ScalarAffinity.BOOL)
+                        return new Result (new BoolExpression (left.GetBoolValue () == right.GetBoolValue ()));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE && right.GetScalarAffinity () == ScalarAffinity.DOUBLE)
+                        return new Result (new BoolExpression (left.GetDoubleValue () == right.GetDoubleValue ()));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.LONG && right.GetScalarAffinity () == ScalarAffinity.LONG)
+                        return new Result (new BoolExpression (left.GetLongValue () == right.GetLongValue ()));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.NULL && right.GetScalarAffinity () == ScalarAffinity.NULL)
+                        return new Result (new BoolExpression (left.GetLongValue () == right.GetLongValue ()));
+                    else if (left.GetScalarAffinity () == ScalarAffinity.STRING && right.GetScalarAffinity () == ScalarAffinity.STRING)
+                        return new Result (new BoolExpression (left.GetStringValue () == right.GetStringValue ()));
+                    else
+                        return new Result (new BoolExpression (false));
+
                 case BinaryOp.LESS_THAN:
-                    if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE || left.GetScalarAffinity () == ScalarAffinity.DOUBLE)
+                    if (left.GetScalarAffinity () == ScalarAffinity.DOUBLE || right.GetScalarAffinity () == ScalarAffinity.DOUBLE)
                         return new Result (new BoolExpression (left.GetDoubleValue () < right.GetDoubleValue ()));
-                    else if (left.GetScalarAffinity () == ScalarAffinity.LONG || left.GetScalarAffinity () == ScalarAffinity.LONG)
+                    else if (left.GetScalarAffinity () == ScalarAffinity.LONG || right.GetScalarAffinity () == ScalarAffinity.LONG)
                         return new Result (new BoolExpression (left.GetLongValue () < right.GetLongValue ()));
                     else
                         return new Result (new BoolExpression (left.GetStringValue ().CompareTo (right.GetStringValue ()) < 0));

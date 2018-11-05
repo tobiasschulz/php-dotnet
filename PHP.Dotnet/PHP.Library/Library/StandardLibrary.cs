@@ -29,10 +29,20 @@ namespace PHP.Library
             functions.Add (new mb_substr ());
             functions.Add (new is_array ());
             functions.Add (new is_object ());
+            functions.Add (new is_string ());
             functions.Add (new is_null ());
             functions.Add (new memory_get_peak_usage ());
             functions.Add (new memory_get_usage ());
             functions.Add (new microtime ());
+            functions.Add (new trim ());
+            functions.Add (new ltrim ());
+            functions.Add (new rtrim ());
+            functions.Add (new strpos ());
+            functions.Add (new stripos ());
+            functions.Add (new strrpos ());
+            functions.Add (new strripos ());
+            functions.Add (new str_replace ());
+            functions.Add (new str_ireplace ());
         }
 
         public static void Populate (IVariableCollection variables)

@@ -4,15 +4,14 @@ using System.Collections.Immutable;
 using System.Text;
 using PHP.Execution;
 using PHP.Library.Internal;
-using PHP.Library.TypeSystem;
 using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class class_exists : ManagedFunction
+    public sealed class ltrim : ManagedFunction
     {
-        public class_exists ()
-            : base ("class_exists")
+        public ltrim ()
+            : base ("ltrim")
         {
         }
 
@@ -23,11 +22,19 @@ namespace PHP.Library.Functions
                 throw new WrongParameterCountException (this, expected: 1, actual: parameters.Length);
             }
 
-            FinalExpression param_1 = parameters [0].EvaluatedValue;
+            string path = parameters [0].EvaluatedValue.GetStringValue ();
+            string mask = parameters.Length >= 2 ? parameters [1].EvaluatedValue.GetStringValue () : null;
 
-            bool does_exist = function_scope.Root.Classes.Contains (param_1.GetStringValue ());
+            if (!string.IsNullOrEmpty (mask))
+            {
+                path = path.TrimStart (mask.ToCharArray ());
+            }
+            else
+            {
+                path = path.TrimStart ();
+            }
 
-            return new Result (new BoolExpression (does_exist));
+            return new Result (new StringExpression (path));
         }
     }
 }
