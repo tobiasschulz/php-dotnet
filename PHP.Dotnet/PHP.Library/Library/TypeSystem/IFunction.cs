@@ -13,6 +13,7 @@ namespace PHP.Library.TypeSystem
     {
         NameOfFunction Name { get; }
         Result Execute (EvaluatedCallSignature call_signature, Tree.Scope scope);
+        ScriptScope GetDeclarationScope ();
     }
 
     public interface IReadOnlyFunctionCollection

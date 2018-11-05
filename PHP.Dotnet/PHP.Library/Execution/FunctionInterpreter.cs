@@ -35,7 +35,10 @@ namespace PHP.Execution
 
         public static Result Run (FunctionDeclarationExpression expression, Scope scope)
         {
-            scope.Root.Functions.Add (new InterpretedFunction (expression));
+            ScriptScope script_scope = null;
+            scope.FindNearestScope<ScriptScope> (ss => script_scope = ss);
+
+            scope.Root.Functions.Add (new InterpretedFunction (expression, script_scope));
 
             return Result.NULL;
         }
@@ -43,10 +46,12 @@ namespace PHP.Execution
         private sealed class InterpretedFunction : IFunction
         {
             private readonly FunctionDeclarationExpression _expression;
+            private readonly ScriptScope _script_scope;
 
-            public InterpretedFunction (FunctionDeclarationExpression expression)
+            public InterpretedFunction (FunctionDeclarationExpression expression, ScriptScope script_scope)
             {
                 _expression = expression;
+                _script_scope = script_scope;
             }
 
             NameOfFunction IFunction.Name => _expression.Name;
@@ -71,6 +76,16 @@ namespace PHP.Execution
                 }
 
                 return Interpreters.Execute (_expression.Body, function_scope);
+            }
+
+            ScriptScope IFunction.GetDeclarationScope ()
+            {
+                return _script_scope;
+            }
+
+            public override string ToString ()
+            {
+                return $"[Function: {_expression.Name}]";
             }
         }
     }

@@ -9,10 +9,10 @@ using PHP.Tree;
 
 namespace PHP.Library.Functions
 {
-    public sealed class defined : ManagedFunction
+    public sealed class interface_exists : ManagedFunction
     {
-        public defined ()
-            : base ("defined")
+        public interface_exists ()
+            : base ("interface_exists")
         {
         }
 
@@ -25,7 +25,7 @@ namespace PHP.Library.Functions
 
             FinalExpression param_1 = parameters [0].EvaluatedValue;
 
-            bool does_exist = function_scope.Root.Variables.Contains (param_1.GetStringValue ());
+            bool does_exist = function_scope.Root.Classes.Contains (param_1.GetStringValue ());
 
             return new Result (new BoolExpression (does_exist));
         }

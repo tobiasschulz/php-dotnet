@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using PHP.Library.Internal;
 
 namespace PHP
@@ -20,7 +21,7 @@ namespace PHP
         public NormalizedPath (string value)
         {
             Debug.Assert (value != null);
-            this._original = value;
+            this._original = value.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             this._normalized = PathHelper.NormalizePath (value);
             this._hashcode = StringComparer.OrdinalIgnoreCase.GetHashCode (this._normalized);
         }

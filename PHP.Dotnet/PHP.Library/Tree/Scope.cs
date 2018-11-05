@@ -40,6 +40,7 @@ namespace PHP.Tree
 
     public interface IFunctionLikeScope
     {
+        ScriptScope GetDeclarationScopeOfFunction ();
     }
 
     public sealed class RootScope : Scope
@@ -119,6 +120,7 @@ namespace PHP.Tree
         public override RootScope Root => _parentscope.Root;
         public override IVariableCollection Variables => _variables;
         public override string ScopeName => $"function: {_function.Name}";
+        public ScriptScope GetDeclarationScopeOfFunction () => _function.GetDeclarationScope ();
     }
 
     public sealed class MethodScope : Scope, IFunctionLikeScope
@@ -148,6 +150,7 @@ namespace PHP.Tree
         public override RootScope Root => _parentscope.Root;
         public override IVariableCollection Variables => _variables;
         public override string ScopeName => $"method: {_method.Name}, object: {_object}";
+        public ScriptScope GetDeclarationScopeOfFunction () => _method.GetDeclarationScope ();
     }
 
 }

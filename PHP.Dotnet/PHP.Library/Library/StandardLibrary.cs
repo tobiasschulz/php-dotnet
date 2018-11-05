@@ -23,6 +23,8 @@ namespace PHP.Library
             functions.Add (new ini_set ());
             functions.Add (new error_reporting ());
             functions.Add (new function_exists ());
+            functions.Add (new class_exists ());
+            functions.Add (new interface_exists ());
             functions.Add (new file_exists ());
             functions.Add (new mb_substr ());
             functions.Add (new is_array ());

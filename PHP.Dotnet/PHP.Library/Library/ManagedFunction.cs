@@ -37,6 +37,11 @@ namespace PHP.Library
                 return Result.NULL;
             }
         }
+
+        ScriptScope IFunction.GetDeclarationScope ()
+        {
+            return null;
+        }
     }
 
 }

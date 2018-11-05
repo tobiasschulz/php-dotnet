@@ -49,6 +49,11 @@ namespace PHP.Standard
             return string.Join (delimiter, enumerable.Select (e => e.ToString ()).ToArray ());
         }
 
+        public static string Join<T> (this IEnumerable<T> enumerable, char delimiter)
+        {
+            return string.Join (delimiter.ToString (), enumerable.Select (e => e.ToString ()).ToArray ());
+        }
+
         public static T [] Extend<T> (this T [] firstArray, params T [] secondArray) where T : class
         {
             if (secondArray == null)

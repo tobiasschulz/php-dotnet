@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Library", "PHP.Library\PHP.Library.csproj", "{C919115D-214B-4B05-A11E-FAB49B457400}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHP.Library", "PHP.Library\PHP.Library.csproj", "{C919115D-214B-4B05-A11E-FAB49B457400}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Interpreter", "PHP.Interpreter\PHP.Interpreter.csproj", "{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHP.Interpreter", "PHP.Interpreter\PHP.Interpreter.csproj", "{4414E2B2-DFA6-4D5E-B266-B2FB77AB298E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHP.Library.Tests", "PHP.Library.Tests\PHP.Library.Tests.csproj", "{EDB8A750-2005-4499-AAAC-6E4497E5F523}"
 EndProject

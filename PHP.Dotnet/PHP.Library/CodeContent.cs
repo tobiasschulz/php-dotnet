@@ -76,7 +76,7 @@ namespace PHP
             else
             {
                 Expression tree = _parse_result.RootExpression;
-                tree.Print ();
+                //tree.Print ();
 
                 ScriptScope script_scope = new ScriptScope (previous_scope, _script);
                 Interpreters.Execute (tree, script_scope);

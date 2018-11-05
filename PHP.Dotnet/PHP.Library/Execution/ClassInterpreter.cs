@@ -39,9 +39,12 @@ namespace PHP.Execution
                 _classes = new ClassCollection ();
                 _rootscope = scope.Root;
 
+                ScriptScope script_scope = null;
+                scope.FindNearestScope<ScriptScope> (ss => script_scope = ss);
+
                 foreach (ClassMethodDeclarationExpression m in expression.Methods)
                 {
-                    _methods.Add (new InterpretedMethod (m));
+                    _methods.Add (new InterpretedMethod (m, script_scope));
                 }
             }
 
@@ -60,10 +63,12 @@ namespace PHP.Execution
         private sealed class InterpretedMethod : IMethod
         {
             private readonly ClassMethodDeclarationExpression _expression;
+            private readonly ScriptScope _script_scope;
 
-            public InterpretedMethod (ClassMethodDeclarationExpression expression)
+            public InterpretedMethod (ClassMethodDeclarationExpression expression, ScriptScope script_scope)
             {
                 _expression = expression;
+                _script_scope = script_scope;
             }
 
             NameOfMethod IElement<NameOfMethod>.Name => _expression.Name;
@@ -88,6 +93,11 @@ namespace PHP.Execution
                 }
 
                 return Interpreters.Execute (_expression.Body, function_scope);
+            }
+
+            ScriptScope IMethod.GetDeclarationScope ()
+            {
+                return _script_scope;
             }
 
             public override string ToString ()
