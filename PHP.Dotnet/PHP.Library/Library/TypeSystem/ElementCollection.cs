@@ -19,6 +19,7 @@ namespace PHP.Library.TypeSystem
         bool TryGetValue (TName name, out TElement res);
         bool Contains (TName name);
         IEnumerable<TElement> GetAll ();
+        TElement this [TName key] { get; }
     }
 
     public interface IElementCollection<TName, TElement> : IReadOnlyElementCollection<TName, TElement> where TName : struct where TElement : class, IElement<TName>
@@ -33,8 +34,8 @@ namespace PHP.Library.TypeSystem
 
         public MergedElementCollection (IReadOnlyElementCollection<TName, TElement> collection_parent, IElementCollection<TName, TElement> collection_own)
         {
-            _collection_parent = collection_parent;
-            _collection_own = collection_own;
+            _collection_parent = collection_parent ?? new ElementCollection<TName, TElement> ();
+            _collection_own = collection_own ?? new ElementCollection<TName, TElement> ();
         }
 
         bool IReadOnlyElementCollection<TName, TElement>.TryGetValue (TName name, out TElement res)
@@ -50,6 +51,11 @@ namespace PHP.Library.TypeSystem
         IEnumerable<TElement> IReadOnlyElementCollection<TName, TElement>.GetAll ()
         {
             return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
+        }
+
+        TElement IReadOnlyElementCollection<TName, TElement>.this [TName key]
+        {
+            get => ((IReadOnlyElementCollection<TName, TElement>)this).TryGetValue (key, out var res) ? res : null;
         }
 
         void IElementCollection<TName, TElement>.Add (TElement value)
@@ -75,8 +81,8 @@ namespace PHP.Library.TypeSystem
 
         public MergedReadOnlyElementCollection (IReadOnlyElementCollection<TName, TElement> collection_parent, IReadOnlyElementCollection<TName, TElement> collection_own)
         {
-            _collection_parent = collection_parent;
-            _collection_own = collection_own;
+            _collection_parent = collection_parent ?? new ElementCollection<TName, TElement> ();
+            _collection_own = collection_own ?? new ElementCollection<TName, TElement> ();
         }
 
         bool IReadOnlyElementCollection<TName, TElement>.TryGetValue (TName name, out TElement res)
@@ -92,6 +98,11 @@ namespace PHP.Library.TypeSystem
         IEnumerable<TElement> IReadOnlyElementCollection<TName, TElement>.GetAll ()
         {
             return _collection_own.GetAll ().Concat (_collection_parent.GetAll ());
+        }
+
+        TElement IReadOnlyElementCollection<TName, TElement>.this [TName key]
+        {
+            get => ((IReadOnlyElementCollection<TName, TElement>)this).TryGetValue (key, out var res) ? res : null;
         }
 
     }
@@ -126,6 +137,11 @@ namespace PHP.Library.TypeSystem
         IEnumerable<TElement> IReadOnlyElementCollection<TName, TElement>.GetAll ()
         {
             return _data;
+        }
+
+        TElement IReadOnlyElementCollection<TName, TElement>.this [TName key]
+        {
+            get => ((IReadOnlyElementCollection<TName, TElement>)this).TryGetValue (key, out var res) ? res : null;
         }
 
         void IElementCollection<TName, TElement>.Add (TElement value)

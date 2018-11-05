@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using PHP.Execution;
+using PHP.Standard;
 using PHP.Library.Internal;
 using PHP.Tree;
+using System.Linq;
 
 namespace PHP.Library.Functions
 {
@@ -24,7 +26,10 @@ namespace PHP.Library.Functions
 
             FinalExpression param_1 = parameters [0].EvaluatedValue;
 
-            bool does_exist = System.IO.File.Exists (param_1.GetStringValue ());
+            var possible_paths = IncludePathHelper.ResolveToFull (param_1.GetStringValue (), function_scope);
+
+            Log.Debug ($"check if file exists: {possible_paths.Select (p => p.Original).Join (", ")}");
+            bool does_exist = possible_paths.Any (p => System.IO.File.Exists (p.Original));
 
             return new Result (new BoolExpression (does_exist));
         }

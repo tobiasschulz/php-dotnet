@@ -82,7 +82,7 @@ namespace PHP.Execution
                     }
                     if (parameter_expression != null)
                     {
-                        function_scope.Variables.EnsureExists (decl_parameter.Name, out IVariable variable);
+                        IVariable variable = function_scope.Variables.EnsureExists (decl_parameter.Name);
                         variable.Value = Interpreters.Execute (parameter_expression, outer_scope).ResultValue;
                     }
                 }
@@ -103,7 +103,7 @@ namespace PHP.Execution
                 IObject obj = new InterpretedObject (type, scope.Root);
                 scope.Root.Objects.Add (obj);
 
-                return new Result (new ObjectPointerExpression (obj.Name, scope.Root));
+                return new Result (obj.AsExpression);
             }
             else
             {
@@ -133,6 +133,7 @@ namespace PHP.Execution
             IEnumerable<NameOfClass> IObject.ClassNames => GetClassNames ();
             IVariableCollection IObject.Variables => _variables;
             IReadOnlyMethodCollection IObject.Methods => _methods;
+            FinalExpression IObject.AsExpression => new ObjectPointerExpression (this);
 
             public IEnumerable<NameOfClass> GetClassNames ()
             {
@@ -150,7 +151,7 @@ namespace PHP.Execution
             FinalExpression member_of = Interpreters.Execute (expression.MemberOf, scope).ResultValue;
             if (member_of is ObjectPointerExpression pointer)
             {
-                if (pointer.GetObject () is IObject obj)
+                if (pointer.Object is IObject obj)
                 {
                     if (obj.Methods.TryGetValue (expression.Name, out IMethod method))
                     {
@@ -173,7 +174,7 @@ namespace PHP.Execution
                 }
                 else
                 {
-                    Log.Error ($"Object could not be found: {pointer.GetObjectId ()}, scope: {scope}");
+                    Log.Error ($"Object could not be found: {pointer.Object.Name}, scope: {scope}");
                     return Result.NULL;
                 }
             }

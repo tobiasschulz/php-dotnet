@@ -14,7 +14,7 @@ namespace PHP.Execution
     {
         public static Result Run (ArrayCreateExpression expression, Scope scope)
         {
-            IArray arr = new ArrayImpl ();
+            IArray arr = new ArrayStructure ();
             scope.Root.Arrays.Add (arr);
 
             foreach (ArrayItemExpression item_expr in expression.Items)
@@ -25,7 +25,7 @@ namespace PHP.Execution
                 arr.Set (new ArrayItem (key, value_expr));
             }
 
-            return new Result (new ArrayPointerExpression (arr.Name, scope.Root));
+            return new Result (arr.AsExpression);
         }
 
         public static Result Run (ArrayAccessExpression expression, Scope scope)
@@ -54,13 +54,13 @@ namespace PHP.Execution
             FinalExpression array_expr = Interpreters.Execute (expression.Array, scope).ResultValue;
             if (array_expr is ArrayPointerExpression pointer)
             {
-                if (pointer.GetArray () is IArray arr)
+                if (pointer.Array is IArray arr)
                 {
                     action (arr, key);
                 }
                 else
                 {
-                    Log.Error ($"Array could not be found: {pointer.GetArrayId ()}, key: '{key}', scope: {scope}");
+                    Log.Error ($"Array could not be found: {pointer.Array.Name}, key: '{key}', scope: {scope}");
                 }
             }
             else

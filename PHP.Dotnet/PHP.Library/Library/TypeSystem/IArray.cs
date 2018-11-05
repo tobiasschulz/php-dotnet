@@ -24,6 +24,8 @@ namespace PHP.Library.TypeSystem
         bool Contains (ArrayKey key);
         IEnumerable<ArrayItem> GetAll ();
         void Set (ArrayItem item);
+        FinalExpression this [ArrayKey key] { get; set; }
+        FinalExpression AsExpression { get; }
     }
 
     public interface IReadOnlyArrayCollection : IReadOnlyElementCollection<ArrayId, IArray>
@@ -50,14 +52,14 @@ namespace PHP.Library.TypeSystem
         }
     }
 
-    public sealed class ArrayImpl : IArray
+    public sealed class ArrayStructure : IArray
     {
         private readonly ArrayId _id;
         private readonly HashSet<ArrayKey> _keys = new HashSet<ArrayKey> ();
         private ImmutableArray<ArrayItem> _data = ImmutableArray<ArrayItem>.Empty;
         private long _highest_integer_key = 0;
 
-        public ArrayImpl ()
+        public ArrayStructure ()
         {
             _id = ++ArrayExtensions.LastestArrayId;
         }
@@ -119,6 +121,23 @@ namespace PHP.Library.TypeSystem
                 long k = key.Value.ToLong ();
                 _highest_integer_key = k > _highest_integer_key ? k : _highest_integer_key;
             }
+        }
+
+        public FinalExpression this [ArrayKey key]
+        {
+            get
+            {
+                return TryGetValue (key, out var item) ? item.Value : new NullExpression ();
+            }
+            set
+            {
+                Set (new ArrayItem (key, value));
+            }
+        }
+
+        public FinalExpression AsExpression
+        {
+            get => new ArrayPointerExpression (this);
         }
 
     }

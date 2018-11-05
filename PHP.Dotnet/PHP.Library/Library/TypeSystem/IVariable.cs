@@ -46,7 +46,8 @@ namespace PHP.Library.TypeSystem
 
     public interface IVariableCollection : IReadOnlyVariableCollection, IElementCollection<NameOfVariable, IVariable>
     {
-        void EnsureExists (NameOfVariable name, out IVariable res);
+        IVariable EnsureExists (NameOfVariable name);
+        new FinalExpression this [NameOfVariable key] { get; set; }
     }
 
     public sealed class MergedVariableCollection : MergedElementCollection<NameOfVariable, IVariable>, IVariableCollection, IReadOnlyVariableCollection
@@ -56,25 +57,38 @@ namespace PHP.Library.TypeSystem
         {
         }
 
-        void IVariableCollection.EnsureExists (NameOfVariable name, out IVariable res)
+        IVariable IVariableCollection.EnsureExists (NameOfVariable name)
         {
-            if (!_collection_parent.TryGetValue (name, out res))
+            if (!_collection_parent.TryGetValue (name, out var res))
             {
-                ((IVariableCollection)_collection_own).EnsureExists (name, out res);
+                res = ((IVariableCollection)_collection_own).EnsureExists (name);
             }
+            return res;
+        }
+
+        FinalExpression IVariableCollection.this [NameOfVariable key]
+        {
+            get => ((IVariableCollection)this).EnsureExists (key).Value;
+            set => ((IVariableCollection)this).EnsureExists (key).Value = value;
         }
     }
 
     public sealed class VariableCollection : ElementCollection<NameOfVariable, IVariable>, IVariableCollection, IReadOnlyVariableCollection
     {
-        public void EnsureExists (NameOfVariable name, out IVariable res)
+        public IVariable EnsureExists (NameOfVariable name)
         {
-            if (!((IVariableCollection)this).TryGetValue (name, out res))
+            if (!((IVariableCollection)this).TryGetValue (name, out var res))
             {
                 res = new Variable (name);
                 ((IVariableCollection)this).Add (res);
             }
+            return res;
         }
 
+        FinalExpression IVariableCollection.this [NameOfVariable key]
+        {
+            get => ((IVariableCollection)this).EnsureExists (key).Value;
+            set => ((IVariableCollection)this).EnsureExists (key).Value = value;
+        }
     }
 }

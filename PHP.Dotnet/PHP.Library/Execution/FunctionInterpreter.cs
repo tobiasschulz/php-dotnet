@@ -65,7 +65,7 @@ namespace PHP.Execution
                     }
                     if (parameter_expression != null)
                     {
-                        function_scope.Variables.EnsureExists (decl_parameter.Name, out IVariable variable);
+                        IVariable variable = function_scope.Variables.EnsureExists (decl_parameter.Name);
                         variable.Value = Interpreters.Execute (parameter_expression, outer_scope).ResultValue;
                     }
                 }

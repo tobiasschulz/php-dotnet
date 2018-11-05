@@ -26,7 +26,7 @@ namespace PHP.Library.Functions
             FinalExpression param_1 = parameters [0].EvaluatedValue;
             FinalExpression param_2 = parameters [1].EvaluatedValue;
 
-            function_scope.Root.Variables.EnsureExists (new NameOfVariable (param_1.GetStringValue ()), out IVariable variable);
+            IVariable variable = function_scope.Root.Variables.EnsureExists (new NameOfVariable (param_1.GetStringValue ()));
             variable.Value = param_2;
 
             return Result.NULL;

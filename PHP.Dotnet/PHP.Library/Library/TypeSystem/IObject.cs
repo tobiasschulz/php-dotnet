@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using PHP.Standard;
 using PHP.Execution;
+using PHP.Tree;
 
 namespace PHP.Library.TypeSystem
 {
@@ -23,6 +24,7 @@ namespace PHP.Library.TypeSystem
         IEnumerable<NameOfClass> ClassNames { get; }
         IVariableCollection Variables { get; }
         IReadOnlyMethodCollection Methods { get; }
+        FinalExpression AsExpression { get; }
     }
 
     public interface IReadOnlyObjectCollection : IReadOnlyElementCollection<ObjectId, IObject>

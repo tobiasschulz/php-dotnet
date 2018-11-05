@@ -29,7 +29,7 @@ namespace PHP.Execution
                     break;
 
                 case VariableExpression variable_expression:
-                    scope.Variables.EnsureExists (variable_expression.Name, out IVariable variable);
+                    IVariable variable = scope.Variables.EnsureExists (variable_expression.Name);
                     variable.Value = right_result.ResultValue;
                     break;
 
@@ -55,7 +55,7 @@ namespace PHP.Execution
                         break;
 
                     case VariableExpression variable_expression:
-                        scope.Variables.EnsureExists (variable_expression.Name, out IVariable variable);
+                        IVariable variable = scope.Variables.EnsureExists (variable_expression.Name);
                         variable.Value = new NullExpression ();
                         break;
 

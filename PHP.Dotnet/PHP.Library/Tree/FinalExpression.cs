@@ -57,6 +57,26 @@ namespace PHP.Tree
             return s.ToLong ();
         }
 
+        public static implicit operator FinalExpression (string other)
+        {
+            return new StringExpression (other);
+        }
+
+        public static implicit operator FinalExpression (long other)
+        {
+            return new LongExpression (other);
+        }
+
+        public static implicit operator FinalExpression (double other)
+        {
+            return new DoubleExpression (other);
+        }
+
+        public static implicit operator FinalExpression (bool other)
+        {
+            return new BoolExpression (other);
+        }
+
     }
 
     public sealed class StringExpression : FinalExpression
@@ -273,25 +293,14 @@ namespace PHP.Tree
 
     public sealed class ObjectPointerExpression : FinalExpression
     {
-        private ObjectId _object_id;
-        private RootScope _rootscope;
+        private readonly IObject _object;
 
-        public ObjectPointerExpression (ObjectId object_id, RootScope rootscope)
+        public ObjectPointerExpression (IObject obj)
         {
-            _object_id = object_id;
-            _rootscope = rootscope;
+            _object = obj;
         }
 
-        public ObjectId GetObjectId ()
-        {
-            return _object_id;
-        }
-
-        public IObject GetObject ()
-        {
-            _rootscope.Objects.TryGetValue (_object_id, out IObject res);
-            return res;
-        }
+        public IObject Object => _object;
 
         protected override string GetTypeName ()
         {
@@ -300,7 +309,7 @@ namespace PHP.Tree
 
         public override string GetStringValue ()
         {
-            return GetObject ().ToString ();
+            return Object.ToString ();
         }
 
         public override ScalarAffinity GetScalarAffinity ()
@@ -312,25 +321,14 @@ namespace PHP.Tree
 
     public sealed class ArrayPointerExpression : FinalExpression
     {
-        private ArrayId _array_id;
-        private RootScope _rootscope;
+        private readonly IArray _array;
 
-        public ArrayPointerExpression (ArrayId array_id, RootScope rootscope)
+        public ArrayPointerExpression (IArray array)
         {
-            _array_id = array_id;
-            _rootscope = rootscope;
+            _array = array;
         }
 
-        public ArrayId GetArrayId ()
-        {
-            return _array_id;
-        }
-
-        public IArray GetArray ()
-        {
-            _rootscope.Arrays.TryGetValue (_array_id, out IArray res);
-            return res;
-        }
+        public IArray Array => _array;
 
         protected override string GetTypeName ()
         {
@@ -339,7 +337,7 @@ namespace PHP.Tree
 
         public override string GetStringValue ()
         {
-            return GetArray ().ToString ();
+            return Array.ToString ();
         }
 
         public override ScalarAffinity GetScalarAffinity ()

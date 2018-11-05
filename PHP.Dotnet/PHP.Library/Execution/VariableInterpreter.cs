@@ -12,10 +12,10 @@ namespace PHP.Execution
     {
         public static Result Run (VariableExpression variable_expression, Scope scope)
         {
-            scope.Variables.EnsureExists (variable_expression.Name, out IVariable variable);
+            IVariable variable = scope.Variables.EnsureExists (variable_expression.Name);
             return new Result (variable.Value);
         }
-        
+
         public static Result Run (PseudoConstExpression pseudo_const_expression, Scope scope)
         {
             switch (pseudo_const_expression.Type)
@@ -44,10 +44,10 @@ namespace PHP.Execution
                     Log.Error ($"Pseudo constant is not implemented: {pseudo_const_expression.Type}, scope: {scope}");
                     break;
             }
-            scope.Variables.EnsureExists (new NameOfVariable (pseudo_const_expression.Type.ToString ()), out IVariable variable);
+            IVariable variable = scope.Variables.EnsureExists (new NameOfVariable (pseudo_const_expression.Type.ToString ()));
             return new Result (variable.Value);
         }
-        
+
     }
 
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using PHP.Library.TypeSystem;
+using PHP.Tree;
 
 namespace PHP.Interpreter
 {
@@ -14,6 +16,10 @@ namespace PHP.Interpreter
                 },
                 parser: new PHP.Parser.Parser ()
             );
+
+            IArray array_server = new ArrayStructure ();
+            array_server ["HTTP_HOST"] = "seg.posdb.de";
+            context.RootScope.Variables ["_SERVER"] = array_server.AsExpression;
 
             if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k/"))
             {

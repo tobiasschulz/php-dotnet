@@ -136,7 +136,7 @@ namespace PHP.Tree
             _variables = new MergedVariableCollection (
                 collection_parent: new MergedVariableCollection (
                     collection_parent: _parentscope.Root.Variables,
-                    collection_own: _object.Variables
+                    collection_own: _object?.Variables
                 ),
                 collection_own: new VariableCollection ()
             );
