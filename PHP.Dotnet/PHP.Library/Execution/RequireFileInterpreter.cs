@@ -11,7 +11,7 @@ namespace PHP.Execution
         {
             string filepath_raw = Interpreters.Execute (require.FilePath, scope).ResultValue.GetStringValue ();
 
-            scope.Root.Context.RequireFile (IncludePathHelper.ResolveToRelative (filepath_raw, scope));
+            scope.Root.Context.RequireFile (scope, IncludePathHelper.ResolveToRelative (filepath_raw, scope));
 
             return Result.NULL;
         }

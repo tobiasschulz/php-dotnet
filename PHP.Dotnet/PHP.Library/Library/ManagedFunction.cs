@@ -20,16 +20,23 @@ namespace PHP.Library
 
         public NameOfFunction Name => _name;
 
-        protected abstract Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope);
+        protected abstract Result _execute (ImmutableArray<EvaluatedParameter> parameters, FunctionScope function_scope);
+
+        protected virtual IEnumerable<DeclarationParameter> _getDeclarationParameters ()
+        {
+            yield break;
+        }
 
         NameOfFunction IFunction.Name => Name;
 
-        Result IFunction.Execute (EvaluatedCallSignature call_signature, Scope scope)
+        DeclarationSignature IFunction.DeclarationSignature => new DeclarationSignature (_getDeclarationParameters ().ToImmutableArray ());
+
+        Result IFunction.Execute (EvaluatedSignature evaluated_signature, Scope scope)
         {
-            FunctionScope function_scope = new FunctionScope (scope, this);
+            FunctionScope function_scope = new FunctionScope (scope, this, evaluated_signature);
             try
             {
-                return _execute (call_signature.Parameters, function_scope);
+                return _execute (evaluated_signature.Parameters, function_scope);
             }
             catch (StandardLibraryUsageException ex)
             {

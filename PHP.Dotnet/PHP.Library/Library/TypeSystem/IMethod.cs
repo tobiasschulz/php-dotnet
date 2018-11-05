@@ -11,8 +11,9 @@ namespace PHP.Library.TypeSystem
 {
     public interface IMethod : IElement<NameOfMethod>
     {
-        Result Execute (IObject obj, EvaluatedCallSignature call_signature, Scope scope);
+        Result Execute (IObject obj, IReadOnlyList<IClass> classes, EvaluatedSignature call_signature, Scope scope);
         ScriptScope GetDeclarationScope ();
+        DeclarationSignature DeclarationSignature { get; }
     }
     
     public interface IReadOnlyMethodCollection : IReadOnlyElementCollection<NameOfMethod, IMethod>

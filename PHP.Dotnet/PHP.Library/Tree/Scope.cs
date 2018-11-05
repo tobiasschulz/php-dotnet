@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
+using PHP.Execution;
 using PHP.Library;
 using PHP.Library.TypeSystem;
+using PHP.Standard;
 
 namespace PHP.Tree
 {
@@ -17,6 +20,26 @@ namespace PHP.Tree
         public abstract RootScope Root { get; }
         public abstract IVariableCollection Variables { get; }
         public abstract string ScopeName { get; }
+        public string StackTrace => _formatStackTrace ();
+
+        private string _formatStackTrace ()
+        {
+            List<string> l = new List<string> ();
+            Scope s = this;
+            while (s != null)
+            {
+                if (s is MethodScope method_scope)
+                {
+                    l.Add ($"   at {method_scope.Classes.First ().Name}::{method_scope.Method.Name} ()");
+                }
+                else if (s is FunctionScope function_scope)
+                {
+                    l.Add ($"   at global::{function_scope.Function.Name} ()");
+                }
+                s = s.Parent;
+            }
+            return l.Join ("\n");
+        }
 
         public override string ToString ()
         {
@@ -41,6 +64,7 @@ namespace PHP.Tree
     public interface IFunctionLikeScope
     {
         ScriptScope GetDeclarationScopeOfFunction ();
+        EvaluatedSignature Signature { get; }
     }
 
     public sealed class RootScope : Scope
@@ -104,11 +128,13 @@ namespace PHP.Tree
         private readonly Scope _parentscope;
         private readonly IFunction _function;
         private readonly IVariableCollection _variables;
+        private readonly EvaluatedSignature _signature;
 
-        public FunctionScope (Scope parentscope, IFunction function)
+        public FunctionScope (Scope parentscope, IFunction function, EvaluatedSignature signature)
         {
             _parentscope = parentscope;
             _function = function;
+            _signature = signature;
             _variables = new MergedVariableCollection (
                 collection_parent: _parentscope.Variables,
                 collection_own: new VariableCollection ()
@@ -116,6 +142,7 @@ namespace PHP.Tree
         }
 
         public IFunction Function => _function;
+        public EvaluatedSignature Signature => _signature;
         public override Scope Parent => _parentscope;
         public override RootScope Root => _parentscope.Root;
         public override IVariableCollection Variables => _variables;
@@ -129,12 +156,16 @@ namespace PHP.Tree
         private readonly IMethod _method;
         private readonly IObject _object;
         private readonly IVariableCollection _variables;
+        private readonly IReadOnlyList<IClass> _classes;
+        private readonly EvaluatedSignature _signature;
 
-        public MethodScope (Scope parentscope, IMethod method, IObject obj)
+        public MethodScope (Scope parentscope, IMethod method, EvaluatedSignature signature, IObject obj, IReadOnlyList<IClass> classes)
         {
             _parentscope = parentscope;
             _method = method;
+            _signature = signature;
             _object = obj;
+            _classes = classes;
             _variables = new MergedVariableCollection (
                 collection_parent: new MergedVariableCollection (
                     collection_parent: _parentscope.Root.Variables,
@@ -145,7 +176,9 @@ namespace PHP.Tree
         }
 
         public IMethod Method => _method;
+        public EvaluatedSignature Signature => _signature;
         public IObject Object => _object;
+        public IReadOnlyList<IClass> Classes => _classes;
         public override Scope Parent => _parentscope;
         public override RootScope Root => _parentscope.Root;
         public override IVariableCollection Variables => _variables;

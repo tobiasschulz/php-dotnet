@@ -73,26 +73,25 @@ namespace PHP.Execution
 
             NameOfMethod IElement<NameOfMethod>.Name => _expression.Name;
 
-            Result IMethod.Execute (IObject obj, EvaluatedCallSignature call_signature, Scope outer_scope)
+            Result IMethod.Execute (IObject obj, IReadOnlyList<IClass> classes, EvaluatedSignature evaluated_signature, Scope outer_scope)
             {
-                MethodScope function_scope = new MethodScope (outer_scope, this, obj);
+                MethodScope function_scope = new MethodScope (outer_scope, this, evaluated_signature, obj, classes);
 
-                foreach ((DeclarationParameter decl_parameter, int i) in _expression.DeclarationSignature.Parameters.Select ((o, i) => (o, i)))
+                foreach (EvaluatedParameter parameter in evaluated_signature.Parameters)
                 {
-                    EvaluatedCallParameter call_parameter = i < call_signature.Parameters.Length ? call_signature.Parameters [i] : null;
-                    Expression parameter_expression = decl_parameter.InitialValue;
-                    if (call_parameter != null)
+                    if (!parameter.Name.IsEmpty)
                     {
-                        parameter_expression = call_parameter.EvaluatedValue;
-                    }
-                    if (parameter_expression != null)
-                    {
-                        IVariable variable = function_scope.Variables.EnsureExists (decl_parameter.Name);
-                        variable.Value = Interpreters.Execute (parameter_expression, outer_scope).ResultValue;
+                        IVariable variable = function_scope.Variables.EnsureExists (parameter.Name);
+                        variable.Value = parameter.EvaluatedValue;
                     }
                 }
 
                 return Interpreters.Execute (_expression.Body, function_scope);
+            }
+
+            DeclarationSignature IMethod.DeclarationSignature
+            {
+                get => _expression.DeclarationSignature;
             }
 
             ScriptScope IMethod.GetDeclarationScope ()
@@ -168,7 +167,7 @@ namespace PHP.Execution
                         Log.Message ($"call method {method}");
                         try
                         {
-                            return method.Execute (obj, new EvaluatedCallSignature (expression.CallSignature, scope), scope);
+                            return method.Execute (obj, obj.Classes, new EvaluatedSignature (expression.CallSignature, method.DeclarationSignature, scope), scope);
                         }
                         catch (ReturnException ex)
                         {
@@ -199,7 +198,8 @@ namespace PHP.Execution
         {
             if (scope.Root.Classes.TryGetValue (expression.TargetType, out IClass type))
             {
-                IReadOnlyMethodCollection methods_of_type = MethodCollection.FromClasses (scope.Root.Classes.GetWithParentClasses (type));
+                IReadOnlyList<IClass> classes = scope.Root.Classes.GetWithParentClasses (type);
+                IReadOnlyMethodCollection methods_of_type = MethodCollection.FromClasses (classes);
 
                 IObject previous_scope_obj = null;
                 IFunctionLikeScope function_like_scope = null;
@@ -230,7 +230,7 @@ namespace PHP.Execution
                     {
                         Log.Message ($"call static method {method}");
                         IObject obj = types_match_with_previous_scope_obj ? previous_scope_obj : null;
-                        return method.Execute (obj, new EvaluatedCallSignature (expression.CallSignature, scope), scope);
+                        return method.Execute (obj, classes, new EvaluatedSignature (expression.CallSignature, method.DeclarationSignature, scope), scope);
                     }
                     catch (ReturnException ex)
                     {

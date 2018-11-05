@@ -2,10 +2,11 @@
 
 namespace PHP.Library.TypeSystem
 {
-    public struct NameOfVariable : IEquatable<NameOfVariable>, IEquatable<string>
+    public readonly struct NameOfVariable : IEquatable<NameOfVariable>, IEquatable<string>
     {
-        public string Value { get => _value; set => _value = value; }
-        private string _value;
+        private readonly string _value;
+
+        public string Value => _value ?? string.Empty;
 
         public static readonly NameOfVariable ThisVariableName = new NameOfVariable ("this");
 
@@ -47,8 +48,10 @@ namespace PHP.Library.TypeSystem
 
         public NameOfVariable (string value)
         {
-            _value = value ?? string.Empty;
+            _value = !string.IsNullOrEmpty (value) ? value : null;
         }
+
+        public bool IsEmpty => this.Value.Length == 0;
 
         public override bool Equals (object obj)
         {
@@ -58,17 +61,17 @@ namespace PHP.Library.TypeSystem
 
         public override int GetHashCode ()
         {
-            return _value.GetHashCode ();
+            return Value.GetHashCode ();
         }
 
         public override string ToString ()
         {
-            return _value;
+            return Value;
         }
 
         public bool Equals (NameOfVariable other)
         {
-            return _value.Equals (other._value);
+            return Value.Equals (other.Value);
         }
 
         public static bool operator == (NameOfVariable name, NameOfVariable other)
@@ -83,7 +86,7 @@ namespace PHP.Library.TypeSystem
 
         public bool Equals (string other)
         {
-            return _value.Equals (other);
+            return Value.Equals (other);
         }
 
         public static bool operator == (NameOfVariable name, string str)

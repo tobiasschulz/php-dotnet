@@ -52,7 +52,7 @@ namespace PHP.Tree
 
         protected override string GetTypeName ()
         {
-            return $"parameter";
+            return $"call parameter";
         }
 
     }

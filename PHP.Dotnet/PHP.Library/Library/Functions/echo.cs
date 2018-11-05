@@ -14,11 +14,11 @@ namespace PHP.Library.Functions
         {
         }
 
-        protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
+        protected override Result _execute (ImmutableArray<EvaluatedParameter> parameters, FunctionScope function_scope)
         {
             StringBuilder sb = new StringBuilder ();
 
-            foreach (EvaluatedCallParameter p in parameters)
+            foreach (EvaluatedParameter p in parameters)
             {
                 string s = p.EvaluatedValue.GetStringValue ();
                 sb.Append (s);

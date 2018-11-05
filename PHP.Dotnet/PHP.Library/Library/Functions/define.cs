@@ -16,7 +16,13 @@ namespace PHP.Library.Functions
         {
         }
 
-        protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
+        protected override IEnumerable<DeclarationParameter> _getDeclarationParameters ()
+        {
+            yield return new DeclarationParameter ("name");
+            yield return new DeclarationParameter ("value");
+        }
+
+        protected override Result _execute (ImmutableArray<EvaluatedParameter> parameters, FunctionScope function_scope)
         {
             if (parameters.Length != 2)
             {

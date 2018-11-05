@@ -18,7 +18,7 @@ namespace PHP.Execution
             {
                 try
                 {
-                    return function.Execute (new EvaluatedCallSignature (expression.CallSignature, scope), scope);
+                    return function.Execute (new EvaluatedSignature (expression.CallSignature, function.DeclarationSignature, scope), scope);
                 }
                 catch (ReturnException ex)
                 {
@@ -56,26 +56,25 @@ namespace PHP.Execution
 
             NameOfFunction IFunction.Name => _expression.Name;
 
-            Result IFunction.Execute (EvaluatedCallSignature call_signature, Scope outer_scope)
+            Result IFunction.Execute (EvaluatedSignature evaluated_signature, Scope outer_scope)
             {
-                FunctionScope function_scope = new FunctionScope (outer_scope, this);
+                FunctionScope function_scope = new FunctionScope (outer_scope, this, evaluated_signature);
 
-                foreach ((DeclarationParameter decl_parameter, int i) in _expression.DeclarationSignature.Parameters.Select ((o, i) => (o, i)))
+                foreach (EvaluatedParameter parameter in evaluated_signature.Parameters)
                 {
-                    EvaluatedCallParameter call_parameter = i < call_signature.Parameters.Length ? call_signature.Parameters [i] : null;
-                    Expression parameter_expression = decl_parameter.InitialValue;
-                    if (call_parameter != null)
+                    if (!parameter.Name.IsEmpty)
                     {
-                        parameter_expression = call_parameter.EvaluatedValue;
-                    }
-                    if (parameter_expression != null)
-                    {
-                        IVariable variable = function_scope.Variables.EnsureExists (decl_parameter.Name);
-                        variable.Value = Interpreters.Execute (parameter_expression, outer_scope).ResultValue;
+                        IVariable variable = function_scope.Variables.EnsureExists (parameter.Name);
+                        variable.Value = parameter.EvaluatedValue;
                     }
                 }
 
                 return Interpreters.Execute (_expression.Body, function_scope);
+            }
+
+            DeclarationSignature IFunction.DeclarationSignature
+            {
+                get => _expression.DeclarationSignature;
             }
 
             ScriptScope IFunction.GetDeclarationScope ()

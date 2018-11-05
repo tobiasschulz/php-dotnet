@@ -15,9 +15,9 @@ namespace PHP.Library.Functions
         {
         }
 
-        protected override Result _execute (ImmutableArray<EvaluatedCallParameter> parameters, FunctionScope function_scope)
+        protected override Result _execute (ImmutableArray<EvaluatedParameter> parameters, FunctionScope function_scope)
         {
-            foreach (EvaluatedCallParameter p in parameters)
+            foreach (EvaluatedParameter p in parameters)
             {
                 function_scope.Root.Context.Console.Err.Write (p.EvaluatedValue.GetStringValue ());
             }

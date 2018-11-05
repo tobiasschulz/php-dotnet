@@ -81,7 +81,7 @@ namespace PHP
             file.GetContent ().Run (RootScope, Options);
         }
 
-        public void RequireFile (params NormalizedPath [] possible_paths)
+        public void RequireFile (Scope scope, params NormalizedPath [] possible_paths)
         {
             CodeScriptFile file = null;
 
@@ -108,7 +108,7 @@ namespace PHP
 
             if (file == null)
             {
-                throw new InterpreterException ($"File {possible_paths.Join ("|")} could not be found. Root directories are: {RootDirectories.Join (", ")}");
+                throw new InterpreterException ($"File {possible_paths.Join ("|")} could not be found. Root directories are: {RootDirectories.Join (", ")}.\n{scope.StackTrace}");
             }
 
             if (IncludedFiles.Contains (file))
