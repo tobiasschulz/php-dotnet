@@ -21,6 +21,7 @@ namespace PHP.Interpreter
             IArray array_server = new ArrayStructure ();
             array_server ["HTTP_HOST"] = "seg.posdb.de";
             array_server ["REMOTE_ADDR"] = "127.0.0.1";
+            array_server ["SERVER_ADDR"] = "127.0.0.1";
             context.RootScope.Variables ["_SERVER"] = array_server.AsExpression;
 
             if (Directory.Exists ("/Users/tobias/di" + "gi" + "tal" + "kr" + "aft/git/d" + @"k_fr" + @"am" + @"ew" + @"or" + @"k/"))
