@@ -48,6 +48,15 @@ namespace PHP.Execution
                 {
                     _methods.Add (new InterpretedMethod (m, script_scope));
                 }
+
+                foreach (ClassFieldDeclarationExpression f in expression.Fields)
+                {
+                    IVariable var = _static_variables.EnsureExists (f.Name);
+                    if (f.Initializer is Expression initializer_expr)
+                    {
+                        var.Value = Interpreters.Execute (initializer_expr, script_scope).ResultValue;
+                    }
+                }
             }
 
             NameOfClass IElement<NameOfClass>.Name => _name;

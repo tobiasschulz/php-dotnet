@@ -60,7 +60,6 @@ public class ProgramTests : BaseTests
 
     public void Main2 ()
     {
-
         string _defs = @"
             <?php
             $var1 = 'fck';
@@ -82,7 +81,6 @@ public class ProgramTests : BaseTests
 
     public void Main ()
     {
-
         string _defs = @"
             <?php
          
