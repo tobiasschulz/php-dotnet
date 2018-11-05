@@ -63,6 +63,8 @@ namespace PHP.Execution
                     return ClassInterpreter.Run (e, scope);
                 case NewInstanceExpression e:
                     return ClassInterpreter.Run (e, scope);
+                case StaticFieldAccessExpression e:
+                    return ClassInterpreter.Run (e, scope);
 
                 case ArrayCreateExpression e:
                     return ArrayInterpreter.Run (e, scope);

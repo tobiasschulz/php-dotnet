@@ -58,7 +58,7 @@ public class ProgramTests : BaseTests
         //      Assert.Equal ("3", _eval (defs + ""));
     }
 
-    public void Main ()
+    public void Main2 ()
     {
 
         string _defs = @"
@@ -77,6 +77,29 @@ public class ProgramTests : BaseTests
         Assert.Equal ("bla", _eval (_defs + " echo $a1['key1']; ", o => o.DEBUG_EXECUTION = true));
         Assert.Equal ("bla", _eval (_defs + " echo $a2['key2']; ", o => o.DEBUG_EXECUTION = true));
         Assert.Equal ("1", _eval (_defs + " ($a1['key1'] == $a2['key2'] ? 1 : 0); ", o => o.DEBUG_EXECUTION = true));
+
+    }
+
+    public void Main ()
+    {
+
+        string _defs = @"
+            <?php
+         
+class Zend_Registry extends ArrayObject
+{
+    private static $_registryClassName = 'Zend_Registry';
+    protected static function init()
+    {
+        echo 'self::$_registryClassName is ' . self::$_registryClassName . '\n';
+ self::$_registryClassName ='a';
+        echo 'self::$_registryClassName is ' . self::$_registryClassName . '\n';
+    }
+}
+        ";
+
+        _eval (_defs + "$o = new Zend_Registry(); $o->init();", o => o.DEBUG_EXECUTION = true);
+
 
 
 

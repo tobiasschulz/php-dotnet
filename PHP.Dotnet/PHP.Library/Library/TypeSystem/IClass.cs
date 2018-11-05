@@ -14,6 +14,7 @@ namespace PHP.Library.TypeSystem
         IReadOnlyList<NameOfClass> Interfaces { get; }
         IReadOnlyFieldCollection Fields { get; }
         IReadOnlyMethodCollection Methods { get; }
+        IVariableCollection StaticVariables { get; }
     }
 
     public interface IReadOnlyClassCollection : IReadOnlyElementCollection<NameOfClass, IClass>

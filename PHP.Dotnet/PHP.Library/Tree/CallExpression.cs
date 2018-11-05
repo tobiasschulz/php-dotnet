@@ -92,6 +92,23 @@ namespace PHP.Tree
         }
     }
 
+    public sealed class StaticFieldAccessExpression : Expression
+    {
+        public readonly NameOfVariable Name;
+        public readonly NameOfClass TargetType;
+
+        public StaticFieldAccessExpression (NameOfVariable name, NameOfClass target_type)
+        {
+            Name = name;
+            TargetType = target_type;
+        }
+
+        protected override string GetTypeName ()
+        {
+            return $"static field use: {TargetType}::{Name}";
+        }
+    }
+
     public sealed class NewInstanceExpression : CallExpression
     {
         public readonly NameOfClass Name;

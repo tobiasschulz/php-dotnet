@@ -21,23 +21,25 @@ namespace PHP.Execution
 
         private sealed class InterpretedClass : IClass
         {
+            private readonly RootScope _rootscope;
             private readonly NameOfClass _name;
             private readonly ImmutableArray<NameOfClass> _parents;
             private readonly ImmutableArray<NameOfClass> _interfaces;
             private readonly IMethodCollection _methods;
             private readonly IFieldCollection _fields;
             private readonly IClassCollection _classes;
-            private readonly RootScope _rootscope;
+            private readonly IVariableCollection _static_variables;
 
             public InterpretedClass (ClassDeclarationExpression expression, Scope scope)
             {
+                _rootscope = scope.Root;
                 _name = expression.Name;
                 _parents = expression.Parents;
                 _interfaces = expression.Interfaces;
                 _methods = new MethodCollection ();
                 _fields = new FieldCollection ();
                 _classes = new ClassCollection ();
-                _rootscope = scope.Root;
+                _static_variables = new VariableCollection ();
 
                 ScriptScope script_scope = null;
                 scope.FindNearestScope<ScriptScope> (ss => script_scope = ss);
@@ -53,6 +55,7 @@ namespace PHP.Execution
             IReadOnlyList<NameOfClass> IClass.Interfaces => _interfaces;
             IReadOnlyFieldCollection IClass.Fields => _fields;
             IReadOnlyMethodCollection IClass.Methods => _methods;
+            IVariableCollection IClass.StaticVariables => _static_variables;
 
             public override string ToString ()
             {
@@ -249,6 +252,38 @@ namespace PHP.Execution
                 Log.Error ($"Class could not be found: {expression.Name}, scope: {scope}");
                 Log.Error ($"  existing classes: {scope.Root.Classes.GetAll ().Select (f => f.Name).Join (", ")}");
                 return Result.NULL;
+            }
+        }
+
+        public static Result Run (StaticFieldAccessExpression expression, Scope scope)
+        {
+            Result res = Result.NULL;
+            Resolve (expression, scope, (var) =>
+            {
+                res = new Result (var.Value);
+            });
+            return res;
+        }
+
+        public static void Resolve (StaticFieldAccessExpression expression, Scope scope, Action<IVariable> action)
+        {
+            if (scope.Root.Classes.TryGetValue (expression.TargetType, out IClass type))
+            {
+                NameOfVariable variable_name = expression.Name;
+                IReadOnlyList<IClass> classes = scope.Root.Classes.GetWithParentClasses (type);
+                IClass best_matching_class = classes.First ();
+                foreach (IClass c in classes)
+                {
+                    if (c.StaticVariables.Contains (variable_name))
+                        best_matching_class = c;
+                }
+                IVariable variable = best_matching_class.StaticVariables.EnsureExists (variable_name);
+                action (variable);
+            }
+            else
+            {
+                Log.Error ($"Class could not be found: {expression.Name}, scope: {scope}");
+                Log.Error ($"  existing classes: {scope.Root.Classes.GetAll ().Select (f => f.Name).Join (", ")}");
             }
         }
 

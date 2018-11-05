@@ -49,6 +49,8 @@ namespace PHP.Parser
                     return ToVariableExpression (e);
                 case PseudoConstUse e:
                     return ToPseudoConstExpression (e);
+                case DirectStFldUse e:
+                    return ToStaticFieldUseExpression (e);
 
                 case BoolLiteral e:
                     return new BoolExpression (e.Value);
@@ -330,6 +332,11 @@ namespace PHP.Parser
         {
             // Log.Debug (e.TargetType.QualifiedName.ToJson());
             return new StaticMethodCallExpression (ToNameOfMethod (e.MethodName), ToNameOfClass (e.TargetType), ToCallSignature (e.CallSignature));
+        }
+
+        private static StaticFieldAccessExpression ToStaticFieldUseExpression (DirectStFldUse e)
+        {
+            return new StaticFieldAccessExpression (ToNameOfVariable (e.PropertyName), ToNameOfClass (e.TargetType));
         }
 
         private static MethodCallExpression ToMethodCallExpression (DirectFcnCall e)

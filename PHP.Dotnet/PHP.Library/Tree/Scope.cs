@@ -30,11 +30,11 @@ namespace PHP.Tree
             {
                 if (s is MethodScope method_scope)
                 {
-                    l.Add ($"   at {method_scope.Classes.First ().Name}::{method_scope.Method.Name} ()");
+                    l.Add ($"   at {method_scope.Classes.First ().Name}::{method_scope.Method.Name} ({method_scope.Signature.Parameters.Select (p => p.EvaluatedValue).Join (", ")})");
                 }
                 else if (s is FunctionScope function_scope)
                 {
-                    l.Add ($"   at global::{function_scope.Function.Name} ()");
+                    l.Add ($"   at global::{function_scope.Function.Name} ({function_scope.Signature.Parameters.Select (p => p.EvaluatedValue).Join (", ")})");
                 }
                 s = s.Parent;
             }

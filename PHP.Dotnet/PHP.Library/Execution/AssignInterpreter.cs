@@ -33,6 +33,13 @@ namespace PHP.Execution
                     variable.Value = right_result.ResultValue;
                     break;
 
+                case StaticFieldAccessExpression static_field_access_expression:
+                    ClassInterpreter.Resolve (static_field_access_expression, scope, (var) =>
+                    {
+                        var.Value = right_result.ResultValue;
+                    });
+                    break;
+
                 default:
                     Log.Error ($"Cannot execute assign expression: Left Value is of unknown type {assign.Left}");
                     break;

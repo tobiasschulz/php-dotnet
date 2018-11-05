@@ -34,6 +34,11 @@ namespace PHP.Tree
             "0.0",
         }.ToImmutableHashSet ();
 
+        public override string ToString ()
+        {
+            return GetTypeName ();
+        }
+
         public virtual string GetStringValue ()
         {
             return "";
