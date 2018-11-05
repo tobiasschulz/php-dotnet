@@ -59,6 +59,16 @@ namespace PHP.Tree
                 s = s.Parent;
             }
         }
+
+        public void ForAllScopes (Action<Scope> a)
+        {
+            Scope s = this;
+            while (s != null)
+            {
+                a (s);
+                s = s.Parent;
+            }
+        }
     }
 
     public interface IFunctionLikeScope

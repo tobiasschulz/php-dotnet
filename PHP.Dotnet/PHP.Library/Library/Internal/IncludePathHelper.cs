@@ -3,6 +3,7 @@ using System.IO;
 using PHP.Standard;
 using PHP.Tree;
 using System.Linq;
+using System.Collections.Immutable;
 
 namespace PHP.Execution
 {
@@ -34,23 +35,36 @@ namespace PHP.Execution
             return script_scope;
         }
 
+        public static ImmutableArray<ScriptScope> GetAllScriptScopes (Scope scope)
+        {
+            List<ScriptScope> script_scopes = new List<ScriptScope> ();
+            scope.ForAllScopes (s =>
+            {
+                if (s is IFunctionLikeScope fs && fs.GetDeclarationScopeOfFunction () is ScriptScope fss) script_scopes.Add (fss);
+                if (s is ScriptScope ss) script_scopes.Add (ss);
+            });
+            return script_scopes.ToImmutableArray ();
+        }
+
         public static NormalizedPath [] ResolveToRelative (string filepath_raw, Scope scope)
         {
             filepath_raw = filepath_raw.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
-            ScriptScope script_scope = GetBestScriptScope (scope);
+            ImmutableArray<ScriptScope> script_scopes = GetAllScriptScopes (scope);
 
-            string basedir = null;
-            string scriptdir = null;
-            if (script_scope != null)
-            {
-                basedir = script_scope.Script.GetScriptBaseDirectory ().Original.TrimEnd ('/', '\\');
-                scriptdir = Path.GetDirectoryName (script_scope.Script.GetScriptPath ().Original);
-            }
+            ImmutableArray<string> basedirs = script_scopes
+                .Select (ss => ss.Script.GetScriptBaseDirectory ().Original.TrimEnd ('/', '\\'))
+                .Distinct ()
+                .ToImmutableArray ();
+
+            ImmutableArray<string> scriptdirs = script_scopes
+                .Select (ss => Path.GetDirectoryName (ss.Script.GetScriptPath ().Original))
+                .Distinct ()
+                .ToImmutableArray ();
 
             string _stripBaseDir (string p)
             {
-                if (basedir != null)
+                foreach (string basedir in basedirs)
                 {
                     p = p.ReplaceStart (basedir, "").Trim ('/', '\\');
                 }
@@ -65,21 +79,19 @@ namespace PHP.Execution
             }
             else
             {
-                if (scriptdir != null)
-                {
-                    scriptdir = _stripBaseDir (scriptdir);
+                possible_filepaths.Add (_stripBaseDir (filepath_raw));
 
-                    Log.Debug ($"script in {scriptdir} includes {filepath_raw}");
-                    List<string> scriptdir_parts = scriptdir.Split (Path.DirectorySeparatorChar).ToList ();
+                Log.Debug ($"script in {scriptdirs.Join ("|")} includes {filepath_raw}");
+                foreach (string scriptdir in scriptdirs)
+                {
+                    string scriptdir_without_basedir = _stripBaseDir (scriptdir);
+
+                    List<string> scriptdir_parts = scriptdir_without_basedir.Split (Path.DirectorySeparatorChar).ToList ();
                     while (scriptdir_parts.Count != 0)
                     {
                         possible_filepaths.Add (Path.Combine (scriptdir_parts.Join (Path.DirectorySeparatorChar), _stripBaseDir (filepath_raw)));
                         scriptdir_parts.RemoveAt (scriptdir_parts.Count - 1);
                     }
-                }
-                else
-                {
-                    possible_filepaths.Add (Path.Combine (scriptdir, _stripBaseDir (filepath_raw)));
                 }
             }
 

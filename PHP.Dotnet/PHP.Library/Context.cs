@@ -119,7 +119,7 @@ namespace PHP
             }
             IncludedFiles.Add (file);
 
-            file.GetContent ().Run (RootScope, Options);
+            file.GetContent ().Run (scope, Options);
         }
     }
 }
