@@ -66,6 +66,7 @@ namespace PHP.Library
             functions.Add (new in_array ());
             functions.Add (new array_key_exists ());
             functions.Add (new array_merge ());
+            functions.Add (new array_shift ());
 
             // network
             functions.Add (new gethostbyname ());

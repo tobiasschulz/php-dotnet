@@ -202,7 +202,7 @@ namespace PHP.Execution
             }
             else
             {
-                Log.Error ($"Method is not called on an object, but on: {obj_reference}, scope: {scope}");
+                Log.Error ($"Method '{expression.Name}' is not called on an object, but on: {obj_reference}, scope: {scope}");
                 return Result.NULL;
             }
         }

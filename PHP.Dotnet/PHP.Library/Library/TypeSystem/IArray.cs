@@ -26,6 +26,8 @@ namespace PHP.Library.TypeSystem
         void Set (ArrayItem item);
         FinalExpression this [ArrayKey key] { get; set; }
         FinalExpression AsExpression { get; }
+        ArrayItem Shift ();
+        void Clear ();
     }
 
     public interface IReadOnlyArrayCollection : IReadOnlyElementCollection<ArrayId, IArray>
@@ -56,8 +58,8 @@ namespace PHP.Library.TypeSystem
     {
         private readonly ArrayId _id;
         private readonly HashSet<ArrayKey> _keys = new HashSet<ArrayKey> ();
-        private ImmutableArray<ArrayItem> _data = ImmutableArray<ArrayItem>.Empty;
-        private long _highest_integer_key = 0;
+        private readonly List<ArrayItem> _data = new List<ArrayItem> ();
+        private long _highest_integer_key = -1;
 
         public ArrayStructure ()
         {
@@ -102,16 +104,16 @@ namespace PHP.Library.TypeSystem
 
             if (key.Value.Length == 0)
             {
-                key = new ArrayKey (_highest_integer_key.ToString ());
+                key = new ArrayKey ((_highest_integer_key + 1).ToString ());
                 item = new ArrayItem (key, item.Value);
             }
 
             if (TryGetValue (key, out ArrayItem item_old))
             {
-                _data = _data.Remove (item_old);
+                _data.Remove (item_old);
             }
 
-            _data = _data.Add (item);
+            _data.Add (item);
             _keys.Add (key);
 
             Log.Debug ($"set array value: arr = {_id}, key = {item.Key}, value = {item.Value}");
@@ -121,6 +123,38 @@ namespace PHP.Library.TypeSystem
                 long k = key.Value.ToLong ();
                 _highest_integer_key = k > _highest_integer_key ? k : _highest_integer_key;
             }
+        }
+
+        public ArrayItem Shift ()
+        {
+            if (_data.Count == 0)
+            {
+                return null;
+            }
+
+            ArrayItem first = _data [0];
+            var old_remaining = _data.Skip (1).ToArray ();
+            Clear ();
+            foreach (var old_item in old_remaining)
+            {
+                ArrayKey key = old_item.Key;
+                FinalExpression value = old_item.Value;
+                if (key.IsDigitsOnly ())
+                {
+                    key = new ArrayKey ((_highest_integer_key + 1).ToString ());
+                }
+
+                _data.Add (new ArrayItem (key, value));
+                _keys.Add (key);
+            }
+            return first;
+        }
+
+        public void Clear ()
+        {
+            _data.Clear ();
+            _keys.Clear ();
+            _highest_integer_key = -1;
         }
 
         public FinalExpression this [ArrayKey key]
