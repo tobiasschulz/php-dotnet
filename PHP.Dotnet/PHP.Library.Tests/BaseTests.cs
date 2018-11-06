@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using PHP;
 using Xunit;
 
@@ -14,6 +15,11 @@ public abstract class BaseTests
             parser: new PHP.Parser.Parser ()
         );
         return context.Eval (code);
+    }
+
+    protected string _trimLines (string value)
+    {
+        return string.Join ("\n", value.Trim ().Replace ("\r", "").Split ("\n").Select (l => l.Trim ())).Trim ();
     }
 
 }

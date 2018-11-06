@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 public class ArrayTests : BaseTests
@@ -21,5 +23,4 @@ public class ArrayTests : BaseTests
         _eval (_defs);
         Assert.Equal ("1", _eval (_defs + " $a1['key1'] == $a2['key2'] ? 1 : 0; "));
     }
-
 }

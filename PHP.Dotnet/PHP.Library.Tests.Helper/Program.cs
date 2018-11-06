@@ -79,7 +79,7 @@ public class ProgramTests : BaseTests
 
     }
 
-    public void Main ()
+    public void Main3 ()
     {
         string _defs = @"
             <?php
@@ -97,6 +97,25 @@ class Zend_Registry extends ArrayObject
         ";
 
         _eval (_defs + "$o = new Zend_Registry(); $o->init();", o => o.DEBUG_EXECUTION = true);
+
+
+
+
+
+    }
+
+    public void Main ()
+    {
+        string _defs = @"
+            <?php
+$a = [1 => 1, 'zwei' => 2, 3 => 'drei' ];
+foreach ($a as $k => $v) {
+    echo 'k = ' . $k . ""\n"";
+    echo 'v = ' . $v . ""\n"";
+}
+        ";
+
+        _eval (_defs + "  ", o => o.DEBUG_EXECUTION = true);
 
 
 
