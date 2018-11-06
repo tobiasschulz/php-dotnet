@@ -260,7 +260,7 @@ namespace PHP.Execution
             }
             else
             {
-                Log.Error ($"Class could not be found: {expression.Name}, scope: {scope}");
+                Log.Error ($"Class could not be found: {class_name}, scope: {scope}");
                 Log.Error ($"  existing classes: {scope.Root.Classes.GetAll ().Select (f => f.Name).Join (", ")}");
                 return Result.NULL;
             }
@@ -294,7 +294,7 @@ namespace PHP.Execution
             }
             else
             {
-                Log.Error ($"Class could not be found: {expression.Name}, scope: {scope}");
+                Log.Error ($"Class could not be found: {class_name}, scope: {scope}");
                 Log.Error ($"  existing classes: {scope.Root.Classes.GetAll ().Select (f => f.Name).Join (", ")}");
             }
         }

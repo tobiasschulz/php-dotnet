@@ -21,6 +21,7 @@ namespace PHP.Library
             functions.Add (new ini_get ());
             functions.Add (new ini_set ());
             functions.Add (new error_reporting ());
+            functions.Add (new func_get_args ());
 
             // system
             functions.Add (new memory_get_peak_usage ());
@@ -64,9 +65,11 @@ namespace PHP.Library
             functions.Add (new @sizeof ());
             functions.Add (new in_array ());
             functions.Add (new array_key_exists ());
+            functions.Add (new array_merge ());
 
             // network
             functions.Add (new gethostbyname ());
+            functions.Add (new gethostname ());
         }
 
         public static void Populate (IVariableCollection variables)
